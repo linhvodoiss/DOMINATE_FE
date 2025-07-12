@@ -19,5 +19,5 @@ export default async function page({ params }: Props) {
   const user = (
     cookieStore.get(AUTH.userInfo)?.value ? JSON.parse(cookieStore.get(AUTH.userInfo)!.value) : undefined
   ) as User | undefined
-  return <OrderPage user={user as User} data={data as PackageResponse} />
+  return <OrderPage user={user as User} data={data as PackageResponse} id={id} />
 }

@@ -2,34 +2,68 @@
 import { PackageResponse } from '#/package'
 import { User } from '#/user'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import BankTransferPayment from './bank-payment'
 import PayosPayment from './payos-payment'
 import { PaymentResponse } from '#/payment'
+import { useSearchParams } from 'next/navigation'
+import http from '~/utils/http'
+import { LINKS } from '~/constants/links'
+import { OrderResponse } from '#/order'
 
 interface Props {
   data: PackageResponse
   user: User
+  id: string
 }
 
-export default function OrderPage({ data, user }: Props) {
+export default function OrderPage({ data, user, id }: Props) {
+  const searchParams = useSearchParams()
   const [paymentMethod, setPaymentMethod] = useState<string | undefined>(undefined)
   const [paymentInfo, setPaymentInfo] = useState<PaymentResponse>()
   const [isPaymentSubmitted, setIsPaymentSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
+  const orderId = searchParams.get('orderId')
+  useEffect(() => {
+    if (!orderId) {
+      setIsLoading(false)
+      return
+    }
+
+    const fetchOrder = async () => {
+      try {
+        const res = await http.get<OrderResponse>(`${LINKS.order}/${orderId}`, { baseUrl: '/api' })
+        if (res && res.data) {
+          setPaymentMethod(res.data.paymentMethod)
+          setIsPaymentSubmitted(true)
+          setPaymentInfo({
+            description: `DOMINATE_${orderId}`,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...(res.data as any),
+          })
+        }
+      } catch (err) {
+        console.error('Không tìm thấy đơn hàng:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchOrder()
+  }, [orderId])
   return (
     <div className='bg-primary-foreground mx-auto mt-12 w-full max-w-4xl rounded-xl border-2 px-4 py-8 shadow-2xl md:px-8'>
       <h1 className='text-primary mb-6 text-center text-2xl font-semibold md:text-3xl'>Order Information</h1>
 
-      <div className='flex flex-col gap-6 md:flex-row'>
+      <div className='flex flex-col md:flex-row md:gap-6'>
         <div className='w-full'>
-          <h2 className='text-primary mb-4 text-xl font-semibold'>Product</h2>
           <p className='mb-3'>
-            <span className='font-semibold'>Name:</span> {data?.name}
+            <span className='font-semibold'>Customer name:</span> {user?.firstName} {user?.lastName}
           </p>
           <p className='mb-3'>
-            <span className='font-semibold'>Date created:</span> 22/02/2019
+            <span className='font-semibold'>Product:</span> {data?.name}
           </p>
           <p className='mb-3'>
             <span className='font-semibold'>Price:</span> {data?.price} đ
@@ -37,31 +71,21 @@ export default function OrderPage({ data, user }: Props) {
           <p className='mb-3'>
             <span className='font-semibold'>Cycle:</span> {data?.billingCycle}
           </p>
-          <p className='mb-4'>
-            <span className='font-semibold'>Profit:</span> {data?.options}
-          </p>
-          <Link href={`/${data?.id}`} className='text-primary font-semibold hover:underline'>
-            Link product {'>'}
-          </Link>
         </div>
 
         <div className='w-full'>
-          <h2 className='text-primary mb-4 text-xl font-semibold'>Personal</h2>
           <p className='mb-3'>
-            <span className='font-semibold'>Name:</span> {user?.firstName} {user?.lastName}
+            <span className='font-semibold'>Profit:</span> {data?.options}
           </p>
-          <p className='mb-3'>
-            <span className='font-semibold'>Phone number:</span> {user?.phoneNumber}
-          </p>
-          <p className='mb-3'>
-            <span className='font-semibold'>Email:</span> {user?.email}
-          </p>
-          <p className='mb-3'>
-            <span className='font-semibold'>Address:</span> Lorem, ipsum dolor sit amet consectetur
-          </p>
-
+          <Link href={`/${data?.id}`} className='text-primary mb-3 block font-semibold hover:underline'>
+            Link product {'>'}
+          </Link>
           <label className='mb-2 block font-semibold'>Choose payment method:</label>
-          <Select onValueChange={value => setPaymentMethod(value)} value={paymentMethod} disabled={isPaymentSubmitted}>
+          <Select
+            onValueChange={value => setPaymentMethod(value)}
+            value={paymentMethod}
+            disabled={isLoading || isPaymentSubmitted}
+          >
             <SelectTrigger className='w-full'>
               <SelectValue placeholder='Chọn phương thức' />
             </SelectTrigger>
@@ -75,14 +99,24 @@ export default function OrderPage({ data, user }: Props) {
 
       {paymentMethod === 'PAYOS' && (
         <PayosPayment
+          id={id}
           data={data}
           paymentInfo={paymentInfo}
           setPaymentInfo={setPaymentInfo}
           setIsPaymentSubmitted={setIsPaymentSubmitted}
+          paymentMethod={paymentMethod}
         />
       )}
 
-      {paymentMethod === 'BANK' && <BankTransferPayment amount={data.price as number} />}
+      {paymentMethod === 'BANK' && (
+        <BankTransferPayment
+          id={id}
+          amount={data.price as number}
+          data={data}
+          paymentMethod={paymentMethod}
+          setIsPaymentSubmitted={setIsPaymentSubmitted}
+        />
+      )}
 
       <div className='mt-6 flex justify-center'>
         <Link

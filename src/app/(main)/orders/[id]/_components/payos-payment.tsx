@@ -1,5 +1,5 @@
 'use client'
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'sonner'
 import { BIN_BANK_MAP } from '~/constants/bank-list'
@@ -12,20 +12,31 @@ import React from 'react'
 import CopyableText from '~/app/_components/copy-text'
 import ModalOrder from './modal-order'
 import { PackageResponse } from '#/package'
+import { useRouter } from 'next/navigation'
+import { env } from '~/configs/env'
 
 interface Props {
+  id: string
   data: PackageResponse
   paymentInfo?: PaymentResponse
+  paymentMethod: string
   setPaymentInfo: (info: PaymentResponse) => void
   setIsPaymentSubmitted: (state: boolean) => void
 }
 
-export default function PayosPayment({ data, paymentInfo, setPaymentInfo, setIsPaymentSubmitted }: Props) {
-  const [open, setOpen] = React.useState(false)
+export default function PayosPayment({
+  data,
+  paymentInfo,
+  setPaymentInfo,
+  setIsPaymentSubmitted,
+  id,
+  paymentMethod,
+}: Props) {
+  const router = useRouter()
+  const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const onOpenChange = (open: boolean) => setOpen(open)
-
   const orderHandler = async () => {
     const orderId = Math.floor(100_000_000 + Math.random() * 900_000_000)
     const amount = data.price
@@ -46,13 +57,13 @@ export default function PayosPayment({ data, paymentInfo, setPaymentInfo, setIsP
         const orderRes = await http.post<OrderResponse>(LINKS.order, {
           body: JSON.stringify({
             subscriptionId: data.id,
-            paymentMethod: 'PAYOS',
+            paymentMethod,
             orderId,
             bin: paymentRes.data.bin,
             accountName: paymentRes.data.accountName,
             accountNumber: paymentRes.data.accountNumber,
             qrCode: paymentRes.data.qrCode,
-            paymentLink: paymentRes.data.checkoutUrl,
+            paymentLink: `${env.APP_URL}${LINKS.order}/${id}?orderId=${orderId}`,
           }),
           baseUrl: '/api',
         })
@@ -64,6 +75,7 @@ export default function PayosPayment({ data, paymentInfo, setPaymentInfo, setIsP
 
         toast.success('Tạo đơn hàng thành công')
         setPaymentInfo(paymentRes.data)
+        router.push(`/orders/${id}?orderId=${orderRes.data.orderId}`)
         setIsPaymentSubmitted(true)
         setOpen(false)
       } catch (error) {
@@ -78,7 +90,7 @@ export default function PayosPayment({ data, paymentInfo, setPaymentInfo, setIsP
       <>
         <div className='mt-4 flex justify-end'>
           <button
-            className='bg-primary-system hover:bg-primary-hover rounded-md px-6 py-2 font-semibold text-white'
+            className='bg-primary-system hover:bg-primary-hover cursor-pointer rounded-md px-6 py-2 font-semibold text-white'
             disabled={isPending}
             onClick={() => onOpenChange(true)}
           >
