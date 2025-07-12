@@ -5,7 +5,7 @@ import { QRCodeSVG } from 'qrcode.react'
 export default function Payment() {
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')
-  const [orderId, setOrderId] = useState('')
+  const [orderCode, setOrderCode] = useState('')
   const [checkoutUrl, setCheckoutUrl] = useState('')
   const [qrCode, setQrCode] = useState('')
 
@@ -13,11 +13,11 @@ export default function Payment() {
     const response = await fetch('http://localhost:8081/api/v1/payment/create-payment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId, amount, description }),
+      body: JSON.stringify({ orderCode, amount, description }),
     })
-    const { checkoutUrl, qrCode } = await response.json()
+    const { data } = await response.json()
     setCheckoutUrl(checkoutUrl)
-    setQrCode(qrCode)
+    setQrCode(data.qrCode)
   }
 
   return (
@@ -27,8 +27,8 @@ export default function Payment() {
         <input
           type='text'
           placeholder='Mã đơn hàng'
-          value={orderId}
-          onChange={e => setOrderId(e.target.value)}
+          value={orderCode}
+          onChange={e => setOrderCode(e.target.value)}
           className='mr-2 border p-2'
         />
         <input

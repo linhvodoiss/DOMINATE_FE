@@ -13,5 +13,8 @@ export const LINKS = {
   listPackage: '/subscriptions/list',
   detailPackage: '/subscriptions',
   order: '/orders',
+  payment: '/payment',
+  payment_cancel: '/payment/cancel',
+  payment_create: '/payment/create-payment',
   order_user: '/orders/user',
 }

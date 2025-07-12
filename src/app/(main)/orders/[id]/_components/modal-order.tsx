@@ -20,9 +20,9 @@ export default function ModalOrder({ open, onOpenChange, onSubmitOrder }: Dialog
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='bg-primary-foreground'>
         <DialogHeader>
-          <DialogTitle className='text-xl'>Product Order</DialogTitle>
+          <DialogTitle className='text-xl'>PAY CONFIRM</DialogTitle>
         </DialogHeader>
-        <div className='py-4'>Are you sure to order this product?</div>
+        <div className='py-4'>Are you sure to confirm paid?</div>
         <DialogFooter>
           <Button onClick={onSubmitOrder}>OK</Button>
           <DialogClose asChild>
