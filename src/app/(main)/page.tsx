@@ -159,7 +159,7 @@ export default function Home() {
             </h1>
             <p className='text-secondary-gray mx-auto mb-8 max-w-3xl text-xl leading-relaxed'>
               DOMinate helps you automate any desktop task intelligently and efficiently. Save time, boost productivity
-              with the most advanced AI technology available.
+              with the most advanced AI technology available.css
             </p>
             <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
               <button className='bg-primary-system rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:bg-blue-700 hover:shadow-xl'>
