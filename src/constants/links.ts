@@ -12,9 +12,11 @@ export const LINKS = {
   change_password: '/users/profile/changePassword',
   listPackage: '/subscriptions/list',
   detailPackage: '/subscriptions',
+  order_user: '/orders/user',
   order: '/orders',
+  order_email: '/orders/email',
   payment: '/payment',
   payment_cancel: '/payment/cancel',
   payment_create: '/payment/create-payment',
-  order_user: '/orders/user',
+  licenses_create: '/licenses/create',
 }

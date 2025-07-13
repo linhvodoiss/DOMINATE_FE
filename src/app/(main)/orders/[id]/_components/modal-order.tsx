@@ -14,19 +14,28 @@ interface DialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSubmitOrder?: () => void
+  pending: boolean
 }
-export default function ModalOrder({ open, onOpenChange, onSubmitOrder }: DialogProps) {
+export default function ModalOrder({ open, onOpenChange, onSubmitOrder, pending }: DialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='bg-primary-foreground'>
+      <DialogContent
+        onInteractOutside={e => pending && e.preventDefault()}
+        onEscapeKeyDown={e => pending && e.preventDefault()}
+        className='bg-primary-foreground'
+      >
         <DialogHeader>
           <DialogTitle className='text-xl'>PAY CONFIRM</DialogTitle>
         </DialogHeader>
         <div className='py-4'>Are you sure to confirm paid?</div>
         <DialogFooter>
-          <Button onClick={onSubmitOrder}>OK</Button>
+          <Button onClick={onSubmitOrder} disabled={pending}>
+            OK
+          </Button>
           <DialogClose asChild>
-            <Button variant='outline'>Cancel</Button>
+            <Button variant='outline' disabled={pending}>
+              Cancel
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

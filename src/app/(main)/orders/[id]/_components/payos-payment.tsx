@@ -1,24 +1,26 @@
 'use client'
 import { useState, useTransition } from 'react'
-import { QRCodeSVG } from 'qrcode.react'
+
 import { toast } from 'sonner'
-import { BIN_BANK_MAP } from '~/constants/bank-list'
+
 import { PaymentResponse } from '#/payment'
 import { OrderResponse } from '#/order'
 import { CODE_SUCCESS } from '~/constants'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import React from 'react'
-import CopyableText from '~/app/_components/copy-text'
+// import CopyableText from '~/app/_components/copy-text'
 import ModalOrder from './modal-order'
 import { PackageResponse } from '#/package'
 import { useRouter } from 'next/navigation'
-import { env } from '~/configs/env'
+import Link from 'next/link'
+// import { env } from '~/configs/env'
 
 interface Props {
   id: string
+  isPaymentSubmitted: boolean
   data: PackageResponse
-  paymentInfo?: PaymentResponse
+  paymentInfo: PaymentResponse
   paymentMethod: string
   setPaymentInfo: (info: PaymentResponse) => void
   setIsPaymentSubmitted: (state: boolean) => void
@@ -29,19 +31,21 @@ export default function PayosPayment({
   paymentInfo,
   setPaymentInfo,
   setIsPaymentSubmitted,
+  isPaymentSubmitted,
   id,
   paymentMethod,
 }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [pending, setPending] = useState(false)
 
   const onOpenChange = (open: boolean) => setOpen(open)
   const orderHandler = async () => {
     const orderId = Math.floor(100_000_000 + Math.random() * 900_000_000)
     const amount = data.price
-    const description = `DOMINATE_${orderId}`
-
+    const description = `DOMINATE${orderId}`
+    setPending(true)
     startTransition(async () => {
       try {
         const paymentRes = await http.post<PaymentResponse>(LINKS.payment_create, {
@@ -50,7 +54,7 @@ export default function PayosPayment({
         })
 
         if (!paymentRes.data?.checkoutUrl) {
-          toast.error('Không tạo được link thanh toán')
+          toast.error('Cannot create link payment')
           return
         }
 
@@ -63,64 +67,59 @@ export default function PayosPayment({
             accountName: paymentRes.data.accountName,
             accountNumber: paymentRes.data.accountNumber,
             qrCode: paymentRes.data.qrCode,
-            paymentLink: `${env.APP_URL}${LINKS.order}/${id}?orderId=${orderId}`,
+            paymentLink: paymentRes.data.checkoutUrl,
           }),
           baseUrl: '/api',
         })
 
         if (!CODE_SUCCESS.includes(orderRes.code) || !orderRes.data) {
-          toast.error(orderRes.message || 'Tạo đơn hàng thất bại')
+          toast.error(orderRes.message || 'Create payment failed')
           return
         }
 
-        toast.success('Tạo đơn hàng thành công')
+        toast.success('Create payment successfully')
         setPaymentInfo(paymentRes.data)
+        window.open(paymentRes.data.checkoutUrl, '_blank')
         router.push(`/orders/${id}?orderId=${orderRes.data.orderId}`)
         setIsPaymentSubmitted(true)
         setOpen(false)
       } catch (error) {
         console.error(error)
-        toast.error('Đã xảy ra lỗi khi xử lý đơn hàng')
+        toast.error('Something wrong with payment')
+      } finally {
+        setPending(false)
       }
     })
   }
 
-  if (!paymentInfo) {
+  if (!isPaymentSubmitted || !paymentInfo) {
     return (
       <>
         <div className='mt-4 flex justify-end'>
           <button
             className='bg-primary-system hover:bg-primary-hover cursor-pointer rounded-md px-6 py-2 font-semibold text-white'
-            disabled={isPending}
+            disabled={isPending || isPaymentSubmitted}
             onClick={() => onOpenChange(true)}
           >
             Pay Now
           </button>
         </div>
-        <ModalOrder open={open} onOpenChange={onOpenChange} onSubmitOrder={orderHandler} />
+        <ModalOrder open={open} onOpenChange={onOpenChange} onSubmitOrder={orderHandler} pending={pending} />
       </>
     )
   }
 
   return (
-    <div className='mt-10 rounded-xl border p-4 shadow md:p-6'>
-      <h2 className='text-primary mb-4 text-center text-lg font-bold md:text-left md:text-xl'>
-        {BIN_BANK_MAP[paymentInfo.bin]}
-      </h2>
-      <div className='mb-6 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 md:text-base'>
-        <CopyableText label='Account name' value={paymentInfo.accountName} />
-        <CopyableText label='Account number' value={paymentInfo.accountNumber} />
-        <CopyableText label='Description' value={paymentInfo.description} />
-        <CopyableText label='Money' value={`${(paymentInfo?.amount ?? data.price).toLocaleString('vi-VN')} đ`} />
-      </div>
-      <p className='text-destructive my-4 text-center text-sm font-medium'>
-        * Note: Please make sure to enter the <span className='font-semibold'>correct payment description</span> and{' '}
-        <span className='font-semibold'>exact amount</span> to ensure automatic verification.
-      </p>
-      <div className='flex flex-col items-center'>
-        <QRCodeSVG value={paymentInfo.qrCode} size={192} />
-        <p className='text-muted-foreground mt-2 text-sm'>Scan QR for pay</p>
-      </div>
+    <div className='mt-10 rounded-xl border p-4 md:p-6'>
+      {paymentInfo?.paymentLink && (
+        <Link
+          href={paymentInfo.paymentLink}
+          target='_blank'
+          className='text-primary mb-4 text-center text-lg font-bold underline md:text-left md:text-xl'
+        >
+          Link PAYOS →
+        </Link>
+      )}
     </div>
   )
 }

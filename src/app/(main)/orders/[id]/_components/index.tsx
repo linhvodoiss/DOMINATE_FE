@@ -40,7 +40,7 @@ export default function OrderPage({ data, user, id }: Props) {
           setPaymentMethod(res.data.paymentMethod)
           setIsPaymentSubmitted(true)
           setPaymentInfo({
-            description: `DOMINATE_${orderId}`,
+            description: `DOMINATE${orderId}`,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ...(res.data as any),
           })
@@ -102,20 +102,23 @@ export default function OrderPage({ data, user, id }: Props) {
         <PayosPayment
           id={id}
           data={data}
-          paymentInfo={paymentInfo}
+          paymentInfo={paymentInfo as PaymentResponse}
           setPaymentInfo={setPaymentInfo}
           setIsPaymentSubmitted={setIsPaymentSubmitted}
           paymentMethod={paymentMethod}
+          isPaymentSubmitted={isPaymentSubmitted}
         />
       )}
 
       {paymentMethod === 'BANK' && (
         <BankTransferPayment
+          user={user}
           id={id}
           amount={data.price as number}
           paymentInfo={paymentInfo as PaymentResponse}
           data={data}
           paymentMethod={paymentMethod}
+          isPaymentSubmitted={isPaymentSubmitted}
           setIsPaymentSubmitted={setIsPaymentSubmitted}
           triggerUpdate={() => setUpdateTrigger(prev => !prev)}
         />
