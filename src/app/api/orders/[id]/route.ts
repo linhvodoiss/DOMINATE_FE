@@ -17,3 +17,23 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
   return response
 }
+
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  const token = request.cookies.get(AUTH.token)?.value
+  const { id } = await params
+  const { searchParams } = new URL(request.url)
+  const newStatus = searchParams.get('newStatus')
+
+  if (!newStatus) {
+    return NextResponse.json({ error: 'Missing parameter' }, { status: 400 })
+  }
+
+  const res = await http.patch(`${LINKS.order}/${id}`, {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : '',
+    },
+    params: { newStatus },
+  })
+
+  return NextResponse.json(res)
+}

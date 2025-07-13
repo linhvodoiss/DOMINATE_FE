@@ -24,6 +24,7 @@ export default function OrderPage({ data, user, id }: Props) {
   const [paymentInfo, setPaymentInfo] = useState<PaymentResponse>()
   const [isPaymentSubmitted, setIsPaymentSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [updateTrigger, setUpdateTrigger] = useState(false)
 
   const orderId = searchParams.get('orderId')
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function OrderPage({ data, user, id }: Props) {
     }
 
     fetchOrder()
-  }, [orderId])
+  }, [orderId, updateTrigger])
   return (
     <div className='bg-primary-foreground mx-auto mt-12 w-full max-w-4xl rounded-xl border-2 px-4 py-8 shadow-2xl md:px-8'>
       <h1 className='text-primary mb-6 text-center text-2xl font-semibold md:text-3xl'>Order Information</h1>
@@ -112,9 +113,11 @@ export default function OrderPage({ data, user, id }: Props) {
         <BankTransferPayment
           id={id}
           amount={data.price as number}
+          paymentInfo={paymentInfo as PaymentResponse}
           data={data}
           paymentMethod={paymentMethod}
           setIsPaymentSubmitted={setIsPaymentSubmitted}
+          triggerUpdate={() => setUpdateTrigger(prev => !prev)}
         />
       )}
 
@@ -123,7 +126,7 @@ export default function OrderPage({ data, user, id }: Props) {
           href='/'
           className='text-destructive hover:bg-primary-foreground-hover border-destructive w-40 rounded-lg border py-3 text-center font-semibold shadow-sm'
         >
-          Cancel
+          Back
         </Link>
       </div>
     </div>

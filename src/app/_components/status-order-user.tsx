@@ -7,6 +7,7 @@ import { OrderStatusEnum } from '#/tabs-order'
 const TABS = [
   { label: 'Tất cả', value: OrderStatusEnum.ALL, href: '?status=' },
   { label: 'Đang xử lý', value: OrderStatusEnum.PENDING, href: '?status=PENDING' },
+  { label: 'Chờ thanh toán', value: OrderStatusEnum.PROCESSING, href: '?status=PROCESSING' },
   { label: 'Đã thanh toán', value: OrderStatusEnum.SUCCESS, href: '?status=SUCCESS' },
   { label: 'Đã hủy', value: OrderStatusEnum.FAILED, href: '?status=FAILED' },
 ]

@@ -10,4 +10,5 @@ export type PaymentResponse = {
   status: string
   checkoutUrl: string
   qrCode: string
+  paymentStatus: string
 }
