@@ -26,7 +26,6 @@ interface Props {
   paymentInfo: PaymentResponse
   user: User
   setIsPaymentSubmitted: (state: boolean) => void
-  triggerUpdate: () => void
 }
 
 export default function BankTransferPayment({
@@ -37,7 +36,6 @@ export default function BankTransferPayment({
   setIsPaymentSubmitted,
   isPaymentSubmitted,
   paymentInfo,
-  triggerUpdate,
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -125,7 +123,6 @@ export default function BankTransferPayment({
         }
 
         toast.success('Update status successfully')
-        triggerUpdate()
         setIsPaymentSubmitted(true)
         router.refresh()
       } catch (err) {

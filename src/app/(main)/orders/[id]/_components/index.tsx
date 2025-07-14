@@ -2,7 +2,7 @@
 import { PackageResponse } from '#/package'
 import { User } from '#/user'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import BankTransferPayment from './bank-payment'
 import PayosPayment from './payos-payment'
@@ -11,6 +11,8 @@ import { useSearchParams } from 'next/navigation'
 import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { OrderResponse } from '#/order'
+import SockJS from 'sockjs-client'
+import { CompatClient, Stomp } from '@stomp/stompjs'
 
 interface Props {
   data: PackageResponse
@@ -24,50 +26,52 @@ export default function OrderPage({ data, user, id }: Props) {
   const [paymentInfo, setPaymentInfo] = useState<PaymentResponse>()
   const [isPaymentSubmitted, setIsPaymentSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [updateTrigger, setUpdateTrigger] = useState(false)
 
   const orderId = searchParams.get('orderId')
-  useEffect(() => {
-    if (!orderId) {
-      setIsLoading(false)
-      return
-    }
 
-    const fetchOrder = async () => {
-      try {
-        const res = await http.get<OrderResponse>(`${LINKS.order}/${orderId}`, { baseUrl: '/api' })
-        if (res && res.data) {
-          setPaymentMethod(res.data.paymentMethod)
-          setIsPaymentSubmitted(true)
-          setPaymentInfo({
-            description: `DOMINATE${orderId}`,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ...(res.data as any),
-          })
-        }
-      } catch (err) {
-        console.error('Không tìm thấy đơn hàng:', err)
-      } finally {
-        setIsLoading(false)
+  const fetchOrder = useCallback(async () => {
+    if (!orderId) return
+
+    setIsLoading(true)
+    try {
+      const res = await http.get<OrderResponse>(`${LINKS.order}/${orderId}`, { baseUrl: '/api' })
+      if (res && res.data) {
+        setPaymentMethod(res.data.paymentMethod)
+        setIsPaymentSubmitted(true)
+        setPaymentInfo({
+          description: `DOMINATE${orderId}`,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...(res.data as any),
+        })
       }
+    } catch (err) {
+      console.error('Không tìm thấy đơn hàng:', err)
+    } finally {
+      setIsLoading(false)
     }
+  }, [orderId])
 
-    fetchOrder()
-  }, [orderId, updateTrigger])
-
+  useEffect(() => {
+    if (orderId) {
+      fetchOrder()
+    } else {
+      setIsLoading(false)
+    }
+  }, [orderId, fetchOrder])
 
   useEffect(() => {
     if (!orderId) return
 
-    const socket = new SockJS(${process.env.NEXT_PUBLIC_WS_BASE_URL}/ws)
+    const socket = new SockJS(`${process.env.NEXT_PUBLIC_BASE_API_URL}/ws`)
     const stompClient: CompatClient = Stomp.over(socket)
 
+    // stompClient.debug = console.log
+
     stompClient.connect({}, () => {
-      stompClient.subscribe('/topic/order-status', message => {
-        const body = JSON.parse(message.body)
-        if (body.orderId === Number(orderId)) {
-          onStatusChange(body.status)
-        }
+      stompClient.subscribe(`/topic/payment/${orderId}`, message => {
+        const status = message.body
+        console.log('📩 WebSocket nhận trạng thái:', status)
+        fetchOrder() // update from socket
       })
     })
 
@@ -76,8 +80,8 @@ export default function OrderPage({ data, user, id }: Props) {
         stompClient.disconnect()
       }
     }
-  }, [orderId, onStatusChange])
-}
+  }, [orderId, fetchOrder])
+
   return (
     <div className='bg-primary-foreground mx-auto mt-12 w-full max-w-4xl rounded-xl border-2 px-4 py-8 shadow-2xl md:px-8'>
       <h1 className='text-primary mb-6 text-center text-2xl font-semibold md:text-3xl'>Order Information</h1>
@@ -144,7 +148,6 @@ export default function OrderPage({ data, user, id }: Props) {
           paymentMethod={paymentMethod}
           isPaymentSubmitted={isPaymentSubmitted}
           setIsPaymentSubmitted={setIsPaymentSubmitted}
-          triggerUpdate={() => setUpdateTrigger(prev => !prev)}
         />
       )}
 

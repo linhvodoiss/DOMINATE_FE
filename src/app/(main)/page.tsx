@@ -5,27 +5,26 @@ import { useState } from 'react'
 const features = [
   {
     icon: Bot,
-    title: 'Intelligent Automation',
+    title: 'Visual Scripting',
     description:
-      'AI-powered automation helps you automate any desktop task intelligently and accurately with advanced machine learning.',
+      'Create automation scripts using a simple, visual interface — no coding required. Define actions like click, input, scroll, wait, and more.',
   },
   {
     icon: Target,
-    title: 'Precise Recognition',
+    title: 'Smart Automation',
     description:
-      'Advanced computer vision technology recognizes screen elements with high accuracy and reliability for seamless automation.',
+      'Automate tasks such as auto-liking, auto-posting, form filling, and browsing — saving hours of manual work.',
   },
   {
     icon: Gauge,
-    title: 'Superior Performance',
-    description:
-      'Execute tasks quickly, save time and significantly boost productivity with lightning-fast processing capabilities.',
+    title: 'Fast & Reliable',
+    description: 'Run scripts smoothly with consistent performance and minimal errors, even on dynamic web pages.',
   },
   {
     icon: Shield,
-    title: 'Absolute Security',
+    title: 'Secure & Local',
     description:
-      'End-to-end encryption and zero personal data storage ensures complete information security and privacy protection.',
+      'All tasks are executed directly on your device. Your data stays private and secure — no cloud needed.',
   },
 ]
 
@@ -82,47 +81,46 @@ const pricingPlans = [
 const testimonials = [
   {
     name: 'Michael Chen',
-    role: 'CEO, TechFlow Solutions',
+    role: 'Product Manager, DevTools Inc.',
     content:
-      'DOMinate has helped our company save 40% of data processing time. This tool is absolutely incredible for automation!',
+      'DOMinate made it easy for our team to create scripts that automate tasks across different websites. No complex setup, just click and run.',
     rating: 5,
   },
   {
     name: 'Sarah Johnson',
-    role: 'Marketing Manager, GreenTech',
+    role: 'Digital Operations Lead, NexaCom',
     content:
-      'Automating repetitive marketing tasks has never been this easy. Highly recommended for any business workflow!',
+      'We use DOMinate to auto-post content and manage routine interactions. It saves us hours each week and works reliably across browsers.',
     rating: 5,
   },
   {
     name: 'David Rodriguez',
-    role: 'Data Analyst, FinanceHub',
+    role: 'QA Engineer, SoftCore Labs',
     content:
-      'Intuitive interface, quick setup. DOMinate has completely transformed how our entire team works and collaborates.',
+      'This tool streamlined our UI testing process. Creating automation scripts visually is a huge plus — no need to code from scratch.',
     rating: 5,
   },
 ]
-
 const faqs = [
   {
     question: 'Is DOMinate difficult to use?',
     answer:
-      'Not at all! DOMinate is designed with an intuitive drag-and-drop interface. You can create automated workflows in just minutes without any programming knowledge required.',
+      'Not at all! DOMinate uses a visual interface so you can build scripts with clicks instead of code. Most users create their first automation in just a few minutes.',
   },
   {
     question: 'Can I cancel my subscription anytime?',
     answer:
-      "Yes, you can cancel your subscription at any time without any fees. We don't bind you to long-term contracts and offer complete flexibility.",
+      'Yes, DOMinate is commitment-free. You can cancel your subscription anytime without penalties or hidden fees.',
   },
   {
-    question: 'Does DOMinate support multiple languages?',
+    question: 'Does DOMinate support different languages or keyboards?',
     answer:
-      'Yes, DOMinate supports multiple languages including English, Spanish, French, German, and many others with full localization support.',
+      'Yes. DOMinate works with most international keyboard layouts and system languages, so you can automate tasks in your local environment without issues.',
   },
   {
-    question: 'Is my data secure with DOMinate?',
+    question: 'Is my data safe when using DOMinate?',
     answer:
-      "Absolutely secure! We use AES-256 encryption, don't store personal data, and comply with international security standards including GDPR and SOC 2.",
+      'Yes. All scripts and actions run locally on your device. DOMinate does not upload or store any personal data — everything stays private and offline.',
   },
 ]
 
@@ -136,40 +134,40 @@ export default function Home() {
         <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
           <div className='text-center'>
             <h1 className='mb-6 text-4xl font-bold sm:text-5xl lg:text-6xl'>
-              Intelligent Desktop
-              <span className='from-primary-system bg-gradient-to-r to-indigo-500 bg-clip-text text-transparent'>
+              Simple Desktop
+              <span className='from-primary-system bg-gradient-to-r to-[#2dd4bf] bg-clip-text text-transparent'>
                 {' '}
                 Automation
               </span>
             </h1>
             <p className='text-secondary-gray mx-auto mb-8 max-w-3xl text-xl leading-relaxed'>
-              DOMinate helps you automate any desktop task intelligently and efficiently. Save time, boost productivity
-              with the most advanced AI technology available.css
+              Create and run automation scripts effortlessly with DOMinate. Automate interactions on websites and
+              desktop apps using simple, rule-based workflows.
             </p>
             <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
-              <button className='bg-primary-system rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:bg-blue-700 hover:shadow-xl'>
-                Start 14-Day Free Trial
+              <button className='bg-primary-system hover:bg-primary-hover rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:shadow-xl'>
+                Start 3-Day Free Trial
               </button>
               <button className='hover:bg-toggle-secondary rounded-xl border border-gray-300 px-8 py-4 text-lg font-semibold transition-colors'>
                 Watch Demo
               </button>
             </div>
-            <p className='mt-4 text-sm text-gray-500'>✨ No credit card required • 24/7 support • Cancel anytime</p>
+            <p className='mt-4 text-sm text-gray-500'>✨ No payment required • 24/7 support • Cancel anytime</p>
           </div>
 
           {/* Stats */}
           <div className='mt-20 grid grid-cols-1 gap-8 md:grid-cols-3'>
             <div className='text-center'>
-              <div className='mb-2 text-3xl font-bold text-blue-600'>10,000+</div>
-              <div className='text-secondary-gray'>Trusted users</div>
+              <div className='text-primary-system mb-2 text-3xl font-bold'>10+</div>
+              <div className='text-secondary-gray'>Test users</div>
             </div>
             <div className='text-center'>
-              <div className='mb-2 text-3xl font-bold text-blue-600'>2.5M+</div>
-              <div className='text-secondary-gray'>Tasks automated/month</div>
+              <div className='text-primary-system mb-2 text-3xl font-bold'>15+</div>
+              <div className='text-secondary-gray'>Automated tasks</div>
             </div>
             <div className='text-center'>
-              <div className='mb-2 text-3xl font-bold text-blue-600'>99.9%</div>
-              <div className='text-secondary-gray'>Uptime reliability</div>
+              <div className='text-primary-system mb-2 text-3xl font-bold'>90%</div>
+              <div className='text-secondary-gray'>User satisfaction (feedback)</div>
             </div>
           </div>
         </div>
@@ -181,8 +179,7 @@ export default function Home() {
           <div className='mb-16 text-center'>
             <h2 className='text-third-gray mb-4 text-3xl font-bold sm:text-4xl'>Why choose DOMinate?</h2>
             <p className='text-secondary-gray mx-auto max-w-2xl text-lg'>
-              Advanced AI technology combined with user-friendly interface, delivering the ultimate automation
-              experience.
+              Designed for speed, simplicity, and reliability — DOMinate helps you automate any desktop task with ease.
             </p>
           </div>
 
@@ -190,7 +187,7 @@ export default function Home() {
             {features.map((feature, index) => (
               <div key={index} className='group text-center'>
                 <div className='mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 transition-colors group-hover:bg-blue-100'>
-                  <feature.icon className='h-8 w-8 text-blue-600' />
+                  <feature.icon className='text-primary-system h-8 w-8' />
                 </div>
                 <h3 className='text-third-gray mb-3 text-xl font-semibold'>{feature.title}</h3>
                 <p className='text-secondary-gray leading-relaxed'>{feature.description}</p>
@@ -214,11 +211,11 @@ export default function Home() {
             {pricingPlans.map((plan, index) => (
               <div
                 key={index}
-                className={`relative rounded-2xl p-8 shadow-lg ${plan.popular ? 'scale-105 ring-2 ring-blue-600' : 'ring-1 ring-blue-600'}`}
+                className={`relative rounded-2xl p-8 shadow-lg ${plan.popular ? 'ring-primary-system scale-105 ring-2' : 'ring-primary-system ring-1'}`}
               >
                 {plan.popular && (
                   <div className='absolute -top-4 left-1/2 -translate-x-1/2 transform'>
-                    <div className='rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white'>
+                    <div className='bg-primary-system rounded-full px-4 py-2 text-sm font-semibold text-white'>
                       Most Popular
                     </div>
                   </div>
@@ -245,8 +242,8 @@ export default function Home() {
                 <button
                   className={`w-full rounded-xl px-6 py-3 font-semibold transition-colors ${
                     plan.popular
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'text-blue-600 ring-1 ring-blue-700 transition-colors hover:text-blue-700'
+                      ? 'bg-primary-system hover:bg-primary-hover text-white'
+                      : 'text-primary-system ring-primary-system hover:bg-muted ring-1 transition-colors'
                   }`}
                 >
                   Get Started
@@ -257,7 +254,7 @@ export default function Home() {
 
           <div className='mt-12 text-center'>
             <p className='text-secondary-gray mb-4'>Need a custom enterprise solution?</p>
-            <button className='font-semibold text-blue-600 transition-colors hover:text-blue-700'>
+            <button className='text-primary-system hover:text-primary-hover font-semibold transition-colors'>
               Contact our sales team <ArrowRight className='ml-1 inline h-4 w-4' />
             </button>
           </div>
@@ -327,13 +324,13 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className='bg-gradient-to-r from-blue-600 to-indigo-600 py-20'>
+      <section className='from-primary-system bg-gradient-to-r to-[#2dd4bf] py-20'>
         <div className='mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8'>
           <h2 className='mb-4 text-3xl font-bold text-white sm:text-4xl'>Ready to automate your workflow?</h2>
           <p className='mx-auto mb-8 max-w-2xl text-xl text-blue-100'>
             Join thousands of users who save hours every day with DOMinate's intelligent automation.
           </p>
-          <button className='rounded-xl bg-white px-8 py-4 text-lg font-semibold text-blue-600 shadow-lg transition-colors hover:bg-gray-100'>
+          <button className='text-primary-system rounded-xl bg-white px-8 py-4 text-lg font-semibold shadow-lg transition-colors hover:bg-gray-100'>
             Start Free Trial Today
           </button>
           <p className='mt-4 text-sm text-blue-100'>14-day free trial • No credit card required</p>
