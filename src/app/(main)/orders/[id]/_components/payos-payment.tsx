@@ -14,6 +14,7 @@ import ModalOrder from './modal-order'
 import { PackageResponse } from '#/package'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { OrderStatusEnum } from '#/tabs-order'
 // import { env } from '~/configs/env'
 
 interface Props {
@@ -111,7 +112,7 @@ export default function PayosPayment({
 
   return (
     <div className='mt-10 rounded-xl border p-4 md:p-6'>
-      {paymentInfo?.paymentLink && (
+      {paymentInfo?.paymentStatus === OrderStatusEnum.PENDING && paymentInfo?.paymentLink && (
         <Link
           href={paymentInfo.paymentLink}
           target='_blank'
@@ -120,6 +121,17 @@ export default function PayosPayment({
           Link PAYOS →
         </Link>
       )}
+      <div className='mt-2'>
+        {paymentInfo.paymentStatus === OrderStatusEnum.PENDING && (
+          <span className='font-bold text-blue-600'>Waiting for confirmation...</span>
+        )}
+        {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
+          <span className='font-bold text-[#198754]'>Payment successful!</span>
+        )}
+        {paymentInfo.paymentStatus === OrderStatusEnum.FAILED && (
+          <span className='font-bold text-[#dc3545]'>Your order has been cancelled.</span>
+        )}
+      </div>
     </div>
   )
 }
