@@ -36,10 +36,16 @@ export default async function Page({ params }: Props) {
             <span className='font-semibold'>Cycle: </span>
             {data?.billingCycle}
           </p>
-          <p className='py-2'>
+          <div className='py-2'>
             <span className='font-semibold'>Profit: </span>
-            {data?.options}
-          </p>
+            <ul className='text-base'>
+              {data?.options?.map(option => (
+                <li key={option.id} className='block'>
+                  {option.name}
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className='mt-4 flex w-full items-center justify-between gap-4 text-base text-white shadow-md'>
             <Link
               href={`/orders/${data?.id}`}

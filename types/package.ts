@@ -1,3 +1,5 @@
+import { OptionResponse } from './option'
+
 export type PackageResponse = {
   id?: number
   name?: string
@@ -5,7 +7,8 @@ export type PackageResponse = {
   discount?: number
   billingCycle?: string
   isActive?: boolean
-  options?: string
+  options?: OptionResponse[]
+
   simulatedCount?: number
   createdAt?: string
   updatedAt?: string

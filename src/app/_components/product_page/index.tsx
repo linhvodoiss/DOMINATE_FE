@@ -33,6 +33,7 @@ export default async function ProductPage() {
                 />
               </div>
               <p className='text-base'>Cycle {pkg.billingCycle}</p>
+
               <p className='text-base'>{pkg.price} $</p>
               <Link
                 href={`/product/${pkg.id}`}
