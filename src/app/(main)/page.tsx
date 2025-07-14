@@ -1,20 +1,5 @@
 'use client'
-import {
-  Zap,
-  Cpu,
-  Shield,
-  Clock,
-  CheckCircle,
-  Star,
-  ArrowRight,
-  Menu,
-  X,
-  Bot,
-  Target,
-  Gauge,
-  Users,
-  ChevronDown,
-} from 'lucide-react'
+import { Shield, CheckCircle, Star, ArrowRight, Bot, Target, Gauge, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 
 const features = [

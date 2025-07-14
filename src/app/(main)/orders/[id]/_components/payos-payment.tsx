@@ -113,13 +113,22 @@ export default function PayosPayment({
   return (
     <div className='mt-10 rounded-xl border p-4 md:p-6'>
       {paymentInfo?.paymentStatus === OrderStatusEnum.PENDING && paymentInfo?.paymentLink && (
-        <Link
-          href={paymentInfo.paymentLink}
-          target='_blank'
-          className='text-primary mb-4 text-center text-lg font-bold underline md:text-left md:text-xl'
-        >
-          Link PAYOS →
-        </Link>
+        <div className='mb-4 flex items-center gap-4'>
+          <Link
+            href={paymentInfo.paymentLink}
+            target='_blank'
+            className='text-primary text-center text-lg font-bold underline md:text-left md:text-xl'
+          >
+            Link PAYOS →
+          </Link>
+          <button
+            className='text-destructive border-destructive hover:bg-primary-foreground-hover cursor-pointer rounded-md border px-6 py-2 font-semibold'
+            disabled={isPending}
+            // onClick={() => cancelOrder(OrderStatusEnum.FAILED)}
+          >
+            Cancel
+          </button>
+        </div>
       )}
       <div className='mt-2'>
         {paymentInfo.paymentStatus === OrderStatusEnum.PENDING && (

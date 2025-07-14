@@ -54,6 +54,30 @@ export default function OrderPage({ data, user, id }: Props) {
 
     fetchOrder()
   }, [orderId, updateTrigger])
+
+
+  useEffect(() => {
+    if (!orderId) return
+
+    const socket = new SockJS(${process.env.NEXT_PUBLIC_WS_BASE_URL}/ws)
+    const stompClient: CompatClient = Stomp.over(socket)
+
+    stompClient.connect({}, () => {
+      stompClient.subscribe('/topic/order-status', message => {
+        const body = JSON.parse(message.body)
+        if (body.orderId === Number(orderId)) {
+          onStatusChange(body.status)
+        }
+      })
+    })
+
+    return () => {
+      if (stompClient && stompClient.connected) {
+        stompClient.disconnect()
+      }
+    }
+  }, [orderId, onStatusChange])
+}
   return (
     <div className='bg-primary-foreground mx-auto mt-12 w-full max-w-4xl rounded-xl border-2 px-4 py-8 shadow-2xl md:px-8'>
       <h1 className='text-primary mb-6 text-center text-2xl font-semibold md:text-3xl'>Order Information</h1>
