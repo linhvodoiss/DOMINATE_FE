@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className='bg-background-primary border-primary-system h-40 w-full border-t-2'>
       <div className='bg-background-primary py-16 text-white'>
-        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+        <div className='mx-auto max-w-7xl'>
           <div className='grid grid-cols-1 gap-8 md:grid-cols-4'>
             <div className='col-span-1 md:col-span-2'>
               <div className='mb-4 flex items-center'>
@@ -19,8 +19,8 @@ export default function Footer() {
                 />
               </div>
               <p className='mb-6 max-w-md text-gray-300'>
-                Intelligent desktop automation solution that helps you save time and boost productivity with advanced AI
-                technology.
+                Simple desktop automation tool that helps you save time and boost productivity by creating smart scripts
+                to automate repetitive web tasks.
               </p>
               <div className='flex space-x-4'>
                 <a href='#' className='text-gray-400 transition-colors hover:text-white'>
