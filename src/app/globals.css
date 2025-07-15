@@ -62,12 +62,14 @@ body {
 
 :root {
   /**************** change color you want here ***********/
-  --color-primary-base: rgba(0, 92, 118, 1);
+  --color-primary-rgb: 0, 92, 118;
+
+  --color-primary-base: rgba(var(--color-primary-rgb), 1);
+  --color-primary-base-hover: rgba(var(--color-primary-rgb), 0.85);
   --color-white-rgba: rgba(255, 255, 255, 1);
-  --color-primary-base-hover: rgba(0, 92, 118, 0.85);
   --color-secondary-gray: oklch(44.6% 0.03 256.802);
   --color-third-gray: oklch(21% 0.034 264.665);
-  --color-primary-mute: rgba(0, 92, 118, 0.2);
+  --color-primary-mute: rgba(var(--color-primary-rgb), 0.2);
   --color-light: color-mix(in srgb, var(--color-primary-base) 80%, white);
   --color-light-secondary: color-mix(in srgb, var(--color-white-rgba) 80%, black);
   /*******************************************************/

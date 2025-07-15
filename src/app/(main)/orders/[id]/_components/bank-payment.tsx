@@ -1,4 +1,5 @@
 'use client'
+
 import { QRCodeSVG } from 'qrcode.react'
 import CopyableText from '~/app/_components/copy-text'
 import ModalOrder from './modal-order'
@@ -16,6 +17,8 @@ import { PaymentResponse } from '#/payment'
 import { OrderStatusEnum } from '#/tabs-order'
 import Link from 'next/link'
 import { User } from '#/user'
+
+type ModalType = 'create' | 'confirm-paid' | 'cancel' | null
 
 interface Props {
   id: string
@@ -39,20 +42,22 @@ export default function BankTransferPayment({
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [open, setOpen] = useState(false)
+
+  const [modalType, setModalType] = useState<ModalType>(null)
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
-  const onOpenChange = (open: boolean) => setOpen(open)
+
   const existingOrderId = searchParams.get('orderId')
   const tempOrderId = useMemo(() => {
     return existingOrderId ? parseInt(existingOrderId) : Math.floor(10_000_000 + Math.random() * 90_000_000)
   }, [existingOrderId])
-  ////////////////////////////////////////PAID//////////////////////////////////
+
+  // -------------------- ORDER CREATION --------------------
   const orderHandler = async () => {
     const orderId = tempOrderId
     const description = `DOMINATE${orderId}BANK`
-
     setPending(true)
+
     startTransition(async () => {
       try {
         const orderRes = await http.post<OrderResponse>(LINKS.order, {
@@ -78,17 +83,17 @@ export default function BankTransferPayment({
         toast.success('Create payment successfully')
         router.push(`/orders/${data.id}?orderId=${orderRes.data.orderId}`)
         setIsPaymentSubmitted(true)
-        setOpen(false)
+        setModalType(null)
       } catch (error) {
         console.error(error)
-        toast.error('Something wrong')
+        toast.error('Something went wrong')
       } finally {
         setPending(false)
       }
     })
   }
-  //////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////UPDATE STATUS////////////////////////////
+
+  // -------------------- UPDATE STATUS --------------------
   const handleUpdateOrderStatus = (newStatus: OrderStatusEnum) => {
     const existingOrderId = searchParams.get('orderId')
     const userEmail = user.email
@@ -110,7 +115,6 @@ export default function BankTransferPayment({
           return
         }
 
-        // only send email if change processing
         if (newStatus === OrderStatusEnum.PROCESSING) {
           await http.post(LINKS.order_email, {
             params: {
@@ -124,15 +128,35 @@ export default function BankTransferPayment({
 
         toast.success('Update status successfully')
         setIsPaymentSubmitted(true)
+        setModalType(null)
         router.refresh()
       } catch (err) {
         console.error('Error update status:', err)
-        toast.error('Something wrong when update status')
+        toast.error('Something went wrong when updating status')
       }
     })
   }
 
-  ////////////////////////////////////////////////////////////////////////////////
+  // -------------------- MODAL CONFIG --------------------
+  const modalConfig = {
+    create: {
+      title: 'PAY CONFIRM',
+      content: 'Are you sure to confirm paid?',
+      onSubmit: orderHandler,
+    },
+    'confirm-paid': {
+      title: 'Have you paid?',
+      content: 'Press OK to confirm and notify admin',
+      onSubmit: () => handleUpdateOrderStatus(OrderStatusEnum.PROCESSING),
+    },
+    cancel: {
+      title: 'Are you sure to cancel this order?',
+      content: 'Press OK to confirm',
+      onSubmit: () => handleUpdateOrderStatus(OrderStatusEnum.FAILED),
+    },
+  } as const
+
+  // -------------------- RENDER --------------------
   if (!isPaymentSubmitted || !paymentInfo) {
     return (
       <>
@@ -140,12 +164,21 @@ export default function BankTransferPayment({
           <button
             className='bg-primary-system hover:bg-primary-hover cursor-pointer rounded-md px-6 py-2 font-semibold text-white'
             disabled={isPending || isPaymentSubmitted}
-            onClick={() => onOpenChange(true)}
+            onClick={() => setModalType('create')}
           >
             Pay Now
           </button>
         </div>
-        <ModalOrder open={open} onOpenChange={onOpenChange} onSubmitOrder={orderHandler} pending={pending} />
+        {modalType && (
+          <ModalOrder
+            open={!!modalType}
+            onOpenChange={open => !open && setModalType(null)}
+            title={modalConfig[modalType].title}
+            content={modalConfig[modalType].content}
+            onSubmitOrder={modalConfig[modalType].onSubmit}
+            pending={pending}
+          />
+        )}
       </>
     )
   }
@@ -167,20 +200,21 @@ export default function BankTransferPayment({
             <button
               className='bg-primary-system hover:bg-primary-hover cursor-pointer rounded-md px-6 py-2 font-semibold text-white'
               disabled={isPending}
-              onClick={() => handleUpdateOrderStatus(OrderStatusEnum.PROCESSING)}
+              onClick={() => setModalType('confirm-paid')}
             >
               Have paid?
             </button>
             <button
               className='text-destructive border-destructive hover:bg-primary-foreground-hover cursor-pointer rounded-md border px-6 py-2 font-semibold'
               disabled={isPending}
-              onClick={() => handleUpdateOrderStatus(OrderStatusEnum.FAILED)}
+              onClick={() => setModalType('cancel')}
             >
               Cancel
             </button>
           </div>
         )}
       </div>
+
       {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
         <Link
           href={`/licenses/hihi`}
@@ -197,20 +231,34 @@ export default function BankTransferPayment({
           Reorder →
         </Link>
       )}
+
       <div className='mb-6 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 md:text-base'>
         <CopyableText label='Account name' value={paymentInfo.accountName} />
         <CopyableText label='Account number' value={paymentInfo.accountNumber} />
         <CopyableText label='Description' value={`${paymentInfo.description}BANK`} />
         <CopyableText label='Money' value={`${(paymentInfo?.amount ?? data.price).toLocaleString('vi-VN')} đ`} />
       </div>
+
       <p className='text-destructive my-4 text-center text-sm font-medium'>
         * Note: Please make sure to enter the <span className='font-semibold'>correct payment description</span> and{' '}
         <span className='font-semibold'>exact amount</span>.
       </p>
+
       <div className='flex flex-col items-center'>
         <QRCodeSVG value={paymentInfo.qrCode} size={100} />
         <p className='text-muted-foreground mt-2 text-sm'>Scan QR for pay</p>
       </div>
+
+      {modalType && (
+        <ModalOrder
+          open={!!modalType}
+          onOpenChange={open => !open && setModalType(null)}
+          title={modalConfig[modalType].title}
+          content={modalConfig[modalType].content}
+          onSubmitOrder={modalConfig[modalType].onSubmit}
+          pending={pending}
+        />
+      )}
     </div>
   )
 }

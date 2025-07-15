@@ -1,21 +1,20 @@
 'use client'
-import { useState, useTransition } from 'react'
 
+import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 import { PaymentResponse } from '#/payment'
 import { OrderResponse } from '#/order'
+import { PackageResponse } from '#/package'
+import { OrderStatusEnum } from '#/tabs-order'
 import { CODE_SUCCESS } from '~/constants'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
-import React from 'react'
-// import CopyableText from '~/app/_components/copy-text'
 import ModalOrder from './modal-order'
-import { PackageResponse } from '#/package'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { OrderStatusEnum } from '#/tabs-order'
-// import { env } from '~/configs/env'
+
+type ModalType = 'create' | 'cancel' | null
 
 interface Props {
   id: string
@@ -37,15 +36,17 @@ export default function PayosPayment({
   paymentMethod,
 }: Props) {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const [modalType, setModalType] = useState<ModalType>(null)
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
 
-  const onOpenChange = (open: boolean) => setOpen(open)
+  // -------------------- CREATE ORDER --------------------
   const orderHandler = async () => {
     const orderId = Math.floor(100_000_000 + Math.random() * 900_000_000)
     const amount = data.price
     const description = `DOMINATE${orderId}`
+
     setPending(true)
     startTransition(async () => {
       try {
@@ -83,16 +84,57 @@ export default function PayosPayment({
         window.open(paymentRes.data.checkoutUrl, '_blank')
         router.push(`/orders/${id}?orderId=${orderRes.data.orderId}`)
         setIsPaymentSubmitted(true)
-        setOpen(false)
+        setModalType(null)
       } catch (error) {
         console.error(error)
-        toast.error('Something wrong with payment')
+        toast.error('Something went wrong with payment')
       } finally {
         setPending(false)
       }
     })
   }
 
+  // -------------------- CANCEL ORDER --------------------
+  const cancelOrderHandler = (newStatus: OrderStatusEnum) => {
+    const existingOrderId = searchParams.get('orderId')
+    startTransition(async () => {
+      try {
+        const res = await http.patch<OrderResponse>(`${LINKS.order}/${existingOrderId}`, {
+          params: { newStatus },
+          baseUrl: '/api',
+        })
+
+        if (!CODE_SUCCESS.includes(res.code)) {
+          toast.error(res.message || 'Cancel order failed')
+          return
+        }
+
+        toast.success('Cancel order successfully!')
+        setIsPaymentSubmitted(true)
+        setModalType(null)
+        router.refresh()
+      } catch (err) {
+        console.error('Error update status:', err)
+        toast.error('Something went wrong when cancel order')
+      }
+    })
+  }
+
+  // -------------------- MODAL CONFIG --------------------
+  const modalConfig = {
+    create: {
+      title: 'PAY CONFIRM',
+      content: 'Are you sure to confirm paid?',
+      onSubmit: orderHandler,
+    },
+    cancel: {
+      title: 'Cancel this order?',
+      content: 'Press OK to confirm cancellation.',
+      onSubmit: () => cancelOrderHandler(OrderStatusEnum.FAILED),
+    },
+  } as const
+
+  // -------------------- RENDER --------------------
   if (!isPaymentSubmitted || !paymentInfo) {
     return (
       <>
@@ -100,12 +142,21 @@ export default function PayosPayment({
           <button
             className='bg-primary-system hover:bg-primary-hover cursor-pointer rounded-md px-6 py-2 font-semibold text-white'
             disabled={isPending || isPaymentSubmitted}
-            onClick={() => onOpenChange(true)}
+            onClick={() => setModalType('create')}
           >
             Pay Now
           </button>
         </div>
-        <ModalOrder open={open} onOpenChange={onOpenChange} onSubmitOrder={orderHandler} pending={pending} />
+        {modalType && (
+          <ModalOrder
+            open={!!modalType}
+            onOpenChange={open => !open && setModalType(null)}
+            title={modalConfig[modalType].title}
+            content={modalConfig[modalType].content}
+            onSubmitOrder={modalConfig[modalType].onSubmit}
+            pending={pending}
+          />
+        )}
       </>
     )
   }
@@ -124,23 +175,51 @@ export default function PayosPayment({
           <button
             className='text-destructive border-destructive hover:bg-primary-foreground-hover cursor-pointer rounded-md border px-6 py-2 font-semibold'
             disabled={isPending}
-            // onClick={() => cancelOrder(OrderStatusEnum.FAILED)}
+            onClick={() => setModalType('cancel')}
           >
             Cancel
           </button>
         </div>
       )}
+
       <div className='mt-2'>
         {paymentInfo.paymentStatus === OrderStatusEnum.PENDING && (
           <span className='font-bold text-blue-600'>Waiting for confirmation...</span>
         )}
         {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
-          <span className='font-bold text-[#198754]'>Payment successful!</span>
+          <>
+            <span className='mb-3 block font-bold text-[#198754]'>Payment successful!</span>
+            <Link
+              href={`/licenses/hihi`}
+              className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'
+            >
+              View your license key →
+            </Link>
+          </>
         )}
         {paymentInfo.paymentStatus === OrderStatusEnum.FAILED && (
-          <span className='font-bold text-[#dc3545]'>Your order has been cancelled.</span>
+          <>
+            <span className='mb-3 block font-bold text-[#dc3545]'>Your order has been cancelled.</span>
+            <Link
+              href={`product/${data?.id}`}
+              className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'
+            >
+              Reorder →
+            </Link>
+          </>
         )}
       </div>
+
+      {modalType && (
+        <ModalOrder
+          open={!!modalType}
+          onOpenChange={open => !open && setModalType(null)}
+          title={modalConfig[modalType].title}
+          content={modalConfig[modalType].content}
+          onSubmitOrder={modalConfig[modalType].onSubmit}
+          pending={pending}
+        />
+      )}
     </div>
   )
 }

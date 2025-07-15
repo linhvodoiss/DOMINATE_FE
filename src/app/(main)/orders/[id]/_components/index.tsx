@@ -97,7 +97,12 @@ export default function OrderPage({ data, user, id }: Props) {
           <p className='mb-3'>
             <span className='font-semibold'>Price:</span> {data?.price} đ
           </p>
+          <p className='mb-3'>
+            <span className='font-semibold'>Cycle:</span> {data?.billingCycle}
+          </p>
+        </div>
 
+        <div className='w-full'>
           <div className='mb-3'>
             <span className='font-semibold'>Profit:</span>
             {data?.options?.map(option => (
@@ -106,30 +111,26 @@ export default function OrderPage({ data, user, id }: Props) {
               </li>
             ))}
           </div>
-        </div>
-
-        <div className='w-full'>
-          <p className='mb-3'>
-            <span className='font-semibold'>Cycle:</span> {data?.billingCycle}
-          </p>
           <Link href={`/${data?.id}`} className='text-primary mb-3 block font-semibold hover:underline'>
             Link product {'>'}
           </Link>
-          <label className='mb-2 block font-semibold'>Choose payment method:</label>
-          <Select
-            onValueChange={value => setPaymentMethod(value)}
-            value={paymentMethod}
-            disabled={isLoading || isPaymentSubmitted}
-          >
-            <SelectTrigger className='w-full'>
-              <SelectValue placeholder='Chọn phương thức' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='BANK'>Bank Transfer</SelectItem>
-              <SelectItem value='PAYOS'>PAYOS</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
+      </div>
+      <div className='w-full'>
+        <label className='mb-2 block font-semibold'>Choose payment method:</label>
+        <Select
+          onValueChange={value => setPaymentMethod(value)}
+          value={paymentMethod}
+          disabled={isLoading || isPaymentSubmitted}
+        >
+          <SelectTrigger className='w-full'>
+            <SelectValue placeholder='Chọn phương thức' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='BANK'>Bank Transfer</SelectItem>
+            <SelectItem value='PAYOS'>PAYOS</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {paymentMethod === 'PAYOS' && (

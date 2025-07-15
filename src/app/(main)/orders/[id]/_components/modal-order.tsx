@@ -1,22 +1,24 @@
 import { Button } from '~/components/ui/button'
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  // DialogTrigger,
-} from '~/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 
 interface DialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSubmitOrder?: () => void
   pending: boolean
+  title?: string
+  content?: string
 }
-export default function ModalOrder({ open, onOpenChange, onSubmitOrder, pending }: DialogProps) {
+
+export default function ModalOrder({
+  open,
+  onOpenChange,
+  onSubmitOrder,
+  pending,
+  title = 'PAY CONFIRM',
+  content = 'Are you sure to confirm paid?',
+}: DialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -25,9 +27,9 @@ export default function ModalOrder({ open, onOpenChange, onSubmitOrder, pending 
         className='bg-primary-foreground'
       >
         <DialogHeader>
-          <DialogTitle className='text-xl'>PAY CONFIRM</DialogTitle>
+          <DialogTitle className='text-xl'>{title}</DialogTitle>
         </DialogHeader>
-        <div className='py-4'>Are you sure to confirm paid?</div>
+        <div className='py-4'>{content}</div>
         <DialogFooter>
           <Button onClick={onSubmitOrder} disabled={pending}>
             OK
