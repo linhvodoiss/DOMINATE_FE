@@ -1,6 +1,7 @@
 import { A_SECOND } from '~/constants'
 
 export const env = {
+  ADMIN_MAIL: process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@gmail.com',
   APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001',
   BASE_API_URL: `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1` || '',
   DEBUG_LOG: +(process.env.NEXT_PUBLIC_DEBUG_LOG || '0'),

@@ -3,7 +3,7 @@
 import { QRCodeSVG } from 'qrcode.react'
 import CopyableText from '~/app/_components/copy-text'
 import ModalOrder from './modal-order'
-import { useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { PackageResponse } from '#/package'
 import { OrderResponse } from '#/order'
 import http from '~/utils/http'
@@ -17,6 +17,7 @@ import { PaymentResponse } from '#/payment'
 import { OrderStatusEnum } from '#/tabs-order'
 import Link from 'next/link'
 import { User } from '#/user'
+import { LicenseResponse } from '#/licenses'
 
 type ModalType = 'create' | 'confirm-paid' | 'cancel' | null
 
@@ -46,11 +47,50 @@ export default function BankTransferPayment({
   const [modalType, setModalType] = useState<ModalType>(null)
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
+  const [licenseKey, setLicenseKey] = useState('')
 
   const existingOrderId = searchParams.get('orderId')
   const tempOrderId = useMemo(() => {
     return existingOrderId ? parseInt(existingOrderId) : Math.floor(10_000_000 + Math.random() * 90_000_000)
   }, [existingOrderId])
+
+  const hasCalledLicense = useRef(false)
+
+  useEffect(() => {
+    const createLicense = async () => {
+      const fixedIp = '192.168.1.100'
+      const fixedHardwareId = 'ABCDEF123456'
+
+      if (!existingOrderId || hasCalledLicense.current) return
+
+      try {
+        const resLis = await http.post<LicenseResponse>(LINKS.licenses_create, {
+          body: JSON.stringify({
+            orderId: existingOrderId,
+            ip: fixedIp,
+            hardwareId: fixedHardwareId,
+          }),
+          baseUrl: '/api',
+        })
+
+        if (!CODE_SUCCESS.includes(resLis.code)) {
+          toast.error(resLis.message || 'Failed to create license')
+          return
+        }
+
+        setLicenseKey(resLis?.data?.licenseKey as string)
+        toast.success(resLis.message || 'License created successfully.')
+        hasCalledLicense.current = true
+      } catch (error) {
+        console.error('License creation failed:', error)
+        toast.error('Something went wrong when creating license')
+      }
+    }
+
+    if (paymentInfo?.paymentStatus === OrderStatusEnum.SUCCESS) {
+      createLicense()
+    }
+  }, [existingOrderId, paymentInfo?.paymentStatus])
 
   // -------------------- ORDER CREATION --------------------
   const orderHandler = async () => {
@@ -102,6 +142,7 @@ export default function BankTransferPayment({
       toast.error('Missing order information or email')
       return
     }
+
     setPending(true)
     startTransition(async () => {
       try {
@@ -115,21 +156,40 @@ export default function BankTransferPayment({
           return
         }
 
-        let resEmail: { message?: string } | null = null
+        let resEmailUser: { message?: string; code?: number } | null = null
 
         if (newStatus === OrderStatusEnum.PROCESSING) {
-          resEmail = await http.post<{ message?: string }>(LINKS.order_email, {
-            params: {
-              email: userEmail,
-              packageId: data.id,
-              orderId: parseInt(existingOrderId),
-            },
-            baseUrl: '/api',
-          })
+          const [userRes, adminRes] = await Promise.all([
+            http.post(LINKS.order_email, {
+              params: {
+                email: user.email,
+                packageId: data.id,
+                orderId: parseInt(existingOrderId),
+              },
+              baseUrl: '/api',
+            }),
+            http.post(LINKS.order_email_admin, {
+              params: {
+                email: env.ADMIN_MAIL,
+                packageId: data.id,
+                orderId: parseInt(existingOrderId),
+              },
+              baseUrl: '/api',
+            }),
+          ])
+
+          resEmailUser = userRes
+
+          if (!CODE_SUCCESS.includes(userRes.code || 0) || !CODE_SUCCESS.includes(adminRes.code || 0)) {
+            toast.error('Send email failed')
+            return
+          }
         }
 
         const messSuccess =
-          newStatus === OrderStatusEnum.PROCESSING ? resEmail?.message || 'Marked as paid' : 'Order has been cancelled'
+          newStatus === OrderStatusEnum.PROCESSING
+            ? resEmailUser?.message || 'Marked as paid'
+            : 'Order has been cancelled'
 
         toast.success(messSuccess)
         setIsPaymentSubmitted(true)
@@ -223,12 +283,9 @@ export default function BankTransferPayment({
       </div>
 
       {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
-        <Link
-          href={`/licenses/hihi`}
-          className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'
-        >
-          View your license key →
-        </Link>
+        <span className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'>
+          Your license key: {licenseKey}
+        </span>
       )}
       {paymentInfo.paymentStatus === OrderStatusEnum.FAILED && (
         <Link
