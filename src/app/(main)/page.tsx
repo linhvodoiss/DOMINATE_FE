@@ -274,11 +274,7 @@ export default function Home() {
           <div className='grid grid-cols-1 gap-8 md:grid-cols-3'>
             {testimonials.map((testimonial, index) => (
               <div key={index} className='bg-primary-foreground rounded-2xl p-8'>
-                <div className='mb-4 flex'>
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className='h-5 w-5 fill-current text-yellow-400' />
-                  ))}
-                </div>
+                <div className='mb-4 flex'></div>
                 <p className='text-secondary-gray mb-6 italic'>"{testimonial.content}"</p>
                 <div>
                   <div className='text-third-gray font-semibold'>{testimonial.name}</div>

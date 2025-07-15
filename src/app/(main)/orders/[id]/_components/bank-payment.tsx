@@ -47,7 +47,7 @@ export default function BankTransferPayment({
   const [modalType, setModalType] = useState<ModalType>(null)
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
-  const [licenseKey, setLicenseKey] = useState('')
+  const [licenseKey, setLicenseKey] = useState(paymentInfo?.license?.licenseKey || '')
 
   const existingOrderId = searchParams.get('orderId')
   const tempOrderId = useMemo(() => {
@@ -55,13 +55,13 @@ export default function BankTransferPayment({
   }, [existingOrderId])
 
   const hasCalledLicense = useRef(false)
-
+  // -------------------- CREATE KEY --------------------
   useEffect(() => {
     const createLicense = async () => {
       const fixedIp = '192.168.1.100'
       const fixedHardwareId = 'ABCDEF123456'
 
-      if (!existingOrderId || hasCalledLicense.current) return
+      if (!existingOrderId || hasCalledLicense.current || licenseKey) return
 
       try {
         const resLis = await http.post<LicenseResponse>(LINKS.licenses_create, {
@@ -90,7 +90,7 @@ export default function BankTransferPayment({
     if (paymentInfo?.paymentStatus === OrderStatusEnum.SUCCESS) {
       createLicense()
     }
-  }, [existingOrderId, paymentInfo?.paymentStatus])
+  }, [existingOrderId, licenseKey, paymentInfo?.paymentStatus])
 
   // -------------------- ORDER CREATION --------------------
   const orderHandler = async () => {
@@ -283,8 +283,9 @@ export default function BankTransferPayment({
       </div>
 
       {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
-        <span className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'>
-          Your license key: {licenseKey}
+        <span className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium'>
+          Your license key: {licenseKey} <br />
+          Type: {paymentInfo?.subscription?.typePackage}
         </span>
       )}
       {paymentInfo.paymentStatus === OrderStatusEnum.FAILED && (

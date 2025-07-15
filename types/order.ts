@@ -1,3 +1,4 @@
+import { LicenseResponse } from './licenses'
 import { PackageResponse } from './package'
 
 export type OrderResponse = {
@@ -15,4 +16,5 @@ export type OrderResponse = {
   createdAt?: string
   updatedAt?: string
   subscription: PackageResponse
+  license: LicenseResponse
 }

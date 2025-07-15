@@ -1,4 +1,9 @@
+import { LicenseResponse } from './licenses'
+import { PackageResponse } from './package'
+
 export type PaymentResponse = {
+  subscription?: PackageResponse
+  license?: LicenseResponse
   bin: string
   accountNumber: string
   accountName: string

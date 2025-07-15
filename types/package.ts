@@ -8,7 +8,7 @@ export type PackageResponse = {
   billingCycle?: string
   isActive?: boolean
   options?: OptionResponse[]
-
+  typePackage?: string
   simulatedCount?: number
   createdAt?: string
   updatedAt?: string

@@ -213,7 +213,7 @@ export default function PayosPayment({
               href={`/licenses/hihi`}
               className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'
             >
-              View your license key →
+              Your license key: {paymentInfo?.license?.licenseKey}
             </Link>
           </>
         )}
