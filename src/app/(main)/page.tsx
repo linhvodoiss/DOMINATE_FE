@@ -134,7 +134,7 @@ export default function Home() {
         <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
           <div className='text-center'>
             <h1 className='mb-6 text-4xl font-bold sm:text-5xl lg:text-6xl'>
-              Simple Desktop
+              Simple Web Browser
               <span className='from-primary-system bg-gradient-to-r to-[#2dd4bf] bg-clip-text text-transparent'>
                 {' '}
                 Automation
@@ -146,7 +146,7 @@ export default function Home() {
             </p>
             <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
               <button className='bg-primary-system hover:bg-primary-hover rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:shadow-xl'>
-                Start 3-Day Free Trial
+                Try now
               </button>
               <button className='hover:bg-toggle-secondary rounded-xl border border-gray-300 px-8 py-4 text-lg font-semibold transition-colors'>
                 Watch Demo
@@ -179,7 +179,7 @@ export default function Home() {
           <div className='mb-16 text-center'>
             <h2 className='text-third-gray mb-4 text-3xl font-bold sm:text-4xl'>Why choose DOMinate?</h2>
             <p className='text-secondary-gray mx-auto max-w-2xl text-lg'>
-              Designed for speed, simplicity, and reliability — DOMinate helps you automate any desktop task with ease.
+              Designed for speed, simplicity, and reliability — DOMinate helps you automate any website task with ease.
             </p>
           </div>
 

@@ -97,14 +97,20 @@ export default function OrderPage({ data, user, id }: Props) {
           <p className='mb-3'>
             <span className='font-semibold'>Price:</span> {data?.price} đ
           </p>
-          <p className='mb-3'>
-            <span className='font-semibold'>Cycle:</span> {data?.billingCycle}
-          </p>
+
+          <div className='mb-3'>
+            <span className='font-semibold'>Profit:</span>
+            {data?.options?.map(option => (
+              <li key={option.id} className='block'>
+                - {option.name}
+              </li>
+            ))}
+          </div>
         </div>
 
         <div className='w-full'>
           <p className='mb-3'>
-            <span className='font-semibold'>Profit:</span> {data?.options}
+            <span className='font-semibold'>Cycle:</span> {data?.billingCycle}
           </p>
           <Link href={`/${data?.id}`} className='text-primary mb-3 block font-semibold hover:underline'>
             Link product {'>'}
