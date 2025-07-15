@@ -83,7 +83,7 @@ export default function OrderPage({ data, user, id }: Props) {
   }, [orderId, fetchOrder])
 
   return (
-    <div className='bg-primary-foreground mx-auto mt-12 w-full max-w-4xl rounded-xl border-2 px-4 py-8 shadow-2xl md:px-8'>
+    <div className='bg-primary-foreground mx-auto mt-12 w-full max-w-4xl rounded-xl border-2 px-4 py-8 shadow-md md:px-8'>
       <h1 className='text-primary mb-6 text-center text-2xl font-semibold md:text-3xl'>Order Information</h1>
 
       <div className='flex flex-col md:flex-row md:gap-6'>

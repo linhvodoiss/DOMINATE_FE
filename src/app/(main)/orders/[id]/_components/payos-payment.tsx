@@ -97,8 +97,26 @@ export default function PayosPayment({
   // -------------------- CANCEL ORDER --------------------
   const cancelOrderHandler = (newStatus: OrderStatusEnum) => {
     const existingOrderId = searchParams.get('orderId')
+    const reason = 'hihi'
+    if (!existingOrderId) {
+      toast.error('Missing order ID')
+      return
+    }
+    setPending(true)
     startTransition(async () => {
       try {
+        // API cancel POS
+        const resPayOS = await http.post(`${LINKS.payment_cancel}/${existingOrderId}`, {
+          params: {
+            reason,
+          },
+          baseUrl: '/api',
+        })
+        if (!CODE_SUCCESS.includes(resPayOS.code)) {
+          toast.error(resPayOS.message || 'Cancel order failed')
+          return
+        }
+        // API cancel system
         const res = await http.patch<OrderResponse>(`${LINKS.order}/${existingOrderId}`, {
           params: { newStatus },
           baseUrl: '/api',
@@ -109,13 +127,15 @@ export default function PayosPayment({
           return
         }
 
-        toast.success('Cancel order successfully!')
+        toast.success(resPayOS.message)
         setIsPaymentSubmitted(true)
         setModalType(null)
         router.refresh()
       } catch (err) {
         console.error('Error update status:', err)
-        toast.error('Something went wrong when cancel order')
+        toast.error('Something went wrong when canceling order')
+      } finally {
+        setPending(false)
       }
     })
   }
