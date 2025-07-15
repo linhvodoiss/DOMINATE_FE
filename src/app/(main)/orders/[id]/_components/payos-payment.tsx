@@ -113,7 +113,7 @@ export default function PayosPayment({
           baseUrl: '/api',
         })
         if (!CODE_SUCCESS.includes(resPayOS.code)) {
-          toast.error(resPayOS.message || 'Cancel order failed')
+          toast.error(resPayOS.message || 'Order cancel failed')
           return
         }
         // API cancel system
@@ -123,7 +123,7 @@ export default function PayosPayment({
         })
 
         if (!CODE_SUCCESS.includes(res.code)) {
-          toast.error(res.message || 'Cancel order failed')
+          toast.error(res.message || 'Order cancel failed')
           return
         }
 

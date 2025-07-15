@@ -102,7 +102,7 @@ export default function BankTransferPayment({
       toast.error('Missing order information or email')
       return
     }
-
+    setPending(true)
     startTransition(async () => {
       try {
         const res = await http.patch<OrderResponse>(`${LINKS.order}/${existingOrderId}`, {
@@ -111,12 +111,14 @@ export default function BankTransferPayment({
         })
 
         if (!CODE_SUCCESS.includes(res.code)) {
-          toast.error(res.message || 'Update status failed')
+          toast.error(res.message || 'Action failed')
           return
         }
 
+        let resEmail: { message?: string } | null = null
+
         if (newStatus === OrderStatusEnum.PROCESSING) {
-          await http.post(LINKS.order_email, {
+          resEmail = await http.post<{ message?: string }>(LINKS.order_email, {
             params: {
               email: userEmail,
               packageId: data.id,
@@ -126,13 +128,18 @@ export default function BankTransferPayment({
           })
         }
 
-        toast.success('Update status successfully')
+        const messSuccess =
+          newStatus === OrderStatusEnum.PROCESSING ? resEmail?.message || 'Marked as paid' : 'Order has been cancelled'
+
+        toast.success(messSuccess)
         setIsPaymentSubmitted(true)
         setModalType(null)
         router.refresh()
       } catch (err) {
         console.error('Error update status:', err)
         toast.error('Something went wrong when updating status')
+      } finally {
+        setPending(false)
       }
     })
   }
