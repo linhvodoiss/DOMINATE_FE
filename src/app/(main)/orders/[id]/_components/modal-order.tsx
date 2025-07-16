@@ -1,14 +1,19 @@
-import { Button } from '~/components/ui/button'
-
+import { Input } from '~/components/ui/input'
+import { FormField, FormItem, FormControl, FormMessage, Form } from '~/components/ui/form'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
+import { Button } from '~/components/ui/button'
+import { UseFormReturn } from 'react-hook-form'
 
 interface DialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSubmitOrder?: () => void
+  onSubmitOrder: () => void
   pending: boolean
   title?: string
   content?: string
+  isReminder?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form?: UseFormReturn<any>
 }
 
 export default function ModalOrder({
@@ -16,8 +21,10 @@ export default function ModalOrder({
   onOpenChange,
   onSubmitOrder,
   pending,
+  isReminder,
   title = 'PAY CONFIRM',
-  content = 'Are you sure to confirm paid?',
+  content = 'Please enter a message to remind admin.',
+  form,
 }: DialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -29,7 +36,25 @@ export default function ModalOrder({
         <DialogHeader>
           <DialogTitle className='text-xl'>{title}</DialogTitle>
         </DialogHeader>
-        <div className='py-4'>{content}</div>
+        <div className='py-2'>{content}</div>
+
+        {isReminder && form && (
+          <Form {...form}>
+            <FormField
+              control={form.control}
+              name='reminder'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder='Max 100 character' disabled={pending} {...field} />
+                  </FormControl>
+                  <FormMessage className='data-[error=true]:text-destructive' />
+                </FormItem>
+              )}
+            />
+          </Form>
+        )}
+
         <DialogFooter>
           <Button onClick={onSubmitOrder} disabled={pending}>
             OK

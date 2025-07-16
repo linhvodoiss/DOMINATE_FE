@@ -90,7 +90,6 @@ export default function OrderPage({ data, user, id }: Props) {
       }
     }
   }, [orderId, fetchOrder])
-  console.log(paymentInfo)
 
   return (
     <div className='bg-primary-foreground mx-auto mt-12 w-full max-w-4xl rounded-xl border-2 px-4 py-8 shadow-md md:px-8'>

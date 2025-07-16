@@ -10,6 +10,9 @@ import http from '~/utils/http'
 import { PackageResponse } from '#/package'
 import { User } from '#/user'
 import { ResponseGlobal } from '#/payment'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import z from 'zod'
 
 interface Props {
   orderId: string | null
@@ -24,7 +27,18 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
   const [isLocked, setIsLocked] = useState(false)
   const [countdown, setCountdown] = useState<number>(0)
   const [open, setOpen] = useState(false)
+  const ReminderSchema = z.object({
+    reminder: z.string().min(1, 'No empty').max(100, 'Max 100 character'),
+  })
 
+  type ReminderData = z.infer<typeof ReminderSchema>
+
+  const form = useForm<ReminderData>({
+    resolver: zodResolver(ReminderSchema),
+    defaultValues: {
+      reminder: '',
+    },
+  })
   const onOpenChange = (open: boolean) => setOpen(open)
   useEffect(() => {
     if (!orderId) return
@@ -58,7 +72,7 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
     }
   }, [orderId])
 
-  const reportHaldler = () => {
+  const reminderHandler = form.handleSubmit(async values => {
     setPending(true)
     startTransition(async () => {
       try {
@@ -67,7 +81,7 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
             email: env.ADMIN_MAIL,
             packageId: data.id,
             orderId,
-            content: 'xin chào',
+            content: values.reminder, // ✅ Lấy từ input form
           },
           baseUrl: '/api',
         })
@@ -80,6 +94,7 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
         setOpen(false)
         toast.success(res.message)
 
+        // Lock 60s
         const expiredAt = Date.now() + 60 * 1000
         localStorage.setItem(`reminder_lock_${orderId}`, JSON.stringify({ expiredAt }))
         setIsLocked(true)
@@ -98,12 +113,12 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
         }, 1000)
       } catch (error) {
         console.error('Error:', error)
-        toast.error('Error when sending report.')
+        toast.error('Gửi thất bại.')
       } finally {
         setPending(false)
       }
     })
-  }
+  })
 
   return (
     <div className='mt-6 flex justify-center gap-4'>
@@ -128,11 +143,13 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
       </Link>
       <ModalOrder
         open={open}
-        onOpenChange={onOpenChange}
-        title={'Reminder payment'}
-        content='Press OK to reminder'
-        onSubmitOrder={reportHaldler}
+        onOpenChange={setOpen}
+        onSubmitOrder={reminderHandler}
         pending={pending}
+        isReminder
+        title='Reminder payment'
+        content='Vui lòng nhập nội dung lời nhắc'
+        form={form}
       />
     </div>
   )
