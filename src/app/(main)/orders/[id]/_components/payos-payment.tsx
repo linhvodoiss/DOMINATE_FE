@@ -97,7 +97,7 @@ export default function PayosPayment({
   // -------------------- CANCEL ORDER --------------------
   const cancelOrderHandler = (newStatus: OrderStatusEnum) => {
     const existingOrderId = searchParams.get('orderId')
-    const reason = 'hihi'
+    const reason = 'Customer cancel order'
     if (!existingOrderId) {
       toast.error('Missing order ID')
       return
@@ -209,12 +209,10 @@ export default function PayosPayment({
         {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
           <>
             <span className='mb-3 block font-bold text-[#198754]'>Payment successful!</span>
-            <Link
-              href={`/licenses/hihi`}
-              className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'
-            >
-              Your license key: {paymentInfo?.license?.licenseKey}
-            </Link>
+            <span className='hover:text-primary-system relative inline-block -translate-y-2 font-medium'>
+              Your license key: {paymentInfo?.license?.licenseKey} <br />
+              Type: {paymentInfo?.subscription?.typePackage}
+            </span>
           </>
         )}
         {paymentInfo.paymentStatus === OrderStatusEnum.FAILED && (

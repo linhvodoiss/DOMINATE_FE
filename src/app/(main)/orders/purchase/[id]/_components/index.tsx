@@ -107,7 +107,7 @@ export default function PurchasePage({ data, id }: Props) {
         <Input
           type='text'
           className='my-4 w-full py-6 text-base'
-          placeholder='Bạn có thể tìm kiếm theo mã đơn, tên sản phẩm '
+          placeholder='You can search by order code or package name...'
           onKeyDown={handleKeyDown}
         />
       )}
@@ -125,7 +125,7 @@ export default function PurchasePage({ data, id }: Props) {
             <div key={order.id} className='border-primary bg-primary-foreground mb-4 rounded-xl border-2 p-8 shadow-md'>
               <div className='flex items-center justify-between border-b-2 py-2 text-base'>
                 <Link href='' className='hover:bg-primary-foreground-hover p-2 font-semibold'>
-                  View product {order.id}
+                  View product
                 </Link>
                 <span className='text-lg font-bold'>{getPaymentStatusText(order.paymentStatus)}</span>
               </div>
@@ -147,25 +147,30 @@ export default function PurchasePage({ data, id }: Props) {
                   </p>
                 </div>
                 <div className='ml-auto flex items-center gap-2 self-center'>
-                  <span className='line-through'>{order.subscription.price} $</span>{' '}
-                  <span className='text-2xl font-bold'>{order.subscription.discount} $</span>
+                  <span className='line-through'>{order.subscription.price} đ</span>{' '}
+                  <span className='text-2xl font-bold'>{order.subscription.discount} đ</span>
                 </div>
               </div>
               <div className='mt-4 flex w-full items-center justify-end gap-4 text-base text-white'>
-                <button
-                  className='hover:bg-primary-hover bg-primary-system w-40 cursor-pointer items-center justify-center rounded-2xl py-4 shadow-md'
+                <Link
+                  href={`/orders/${order.subscriptionId}?orderId=${order.orderId}`}
+                  className='hover:bg-primary-hover bg-primary-system block w-40 cursor-pointer items-center justify-center rounded-2xl py-4 text-center shadow-md'
                   type='submit'
                   // disabled={isPending}
                 >
-                  Pay
-                </button>
-                <Link
-                  href='/'
-                  className='hover:bg-primary-foreground-hover outline-destructive text-destructive block w-40 cursor-pointer items-center justify-center rounded-2xl py-4 text-center shadow-md outline-2'
-                  type='submit'
-                >
-                  Cancel order
+                  View detail
                 </Link>
+                {order.paymentStatus === OrderStatusEnum.SUCCESS && (
+                  <>
+                    {/* <Link
+                      href='/'
+                      className='hover:bg-primary-foreground-hover outline-destructive text-destructive block w-40 cursor-pointer items-center justify-center rounded-2xl py-4 text-center shadow-md outline-2'
+                      type='submit'
+                    >
+                      Cancel order
+                    </Link> */}
+                  </>
+                )}
               </div>
             </div>
           ))

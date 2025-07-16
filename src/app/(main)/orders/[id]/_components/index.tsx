@@ -84,7 +84,9 @@ export default function OrderPage({ data, user, id }: Props) {
 
   return (
     <div className='bg-primary-foreground mx-auto mt-12 w-full max-w-4xl rounded-xl border-2 px-4 py-8 shadow-md md:px-8'>
-      <h1 className='text-primary mb-6 text-center text-2xl font-semibold md:text-3xl'>Order Information</h1>
+      <h1 className='text-primary mb-6 text-center text-2xl font-semibold md:text-3xl'>
+        Order {orderId ? `${orderId}` : 'Information'}
+      </h1>
 
       <div className='flex flex-col md:flex-row md:gap-6'>
         <div className='w-full'>
@@ -149,7 +151,6 @@ export default function OrderPage({ data, user, id }: Props) {
         <BankTransferPayment
           user={user}
           id={id}
-          amount={data.price as number}
           paymentInfo={paymentInfo as PaymentResponse}
           data={data}
           paymentMethod={paymentMethod}
@@ -160,7 +161,7 @@ export default function OrderPage({ data, user, id }: Props) {
 
       <div className='mt-6 flex justify-center'>
         <Link
-          href='/'
+          href={`/orders/purchase/${user.id}${paymentInfo?.paymentStatus ? `?status=${paymentInfo.paymentStatus}` : ''}`}
           className='text-destructive hover:bg-primary-foreground-hover border-destructive w-40 rounded-lg border py-3 text-center font-semibold shadow-sm'
         >
           Back

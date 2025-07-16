@@ -34,7 +34,7 @@ export default function SuccessPage() {
     const createLicense = async () => {
       try {
         // 1. UPDATE STATUS ORDER
-        const resOrder = await http.patch<OrderResponse>(`${LINKS.order}/${orderId}`, {
+        const resOrder = await http.patch<OrderResponse>(`${LINKS.order_silent}/${orderId}`, {
           params: { newStatus },
           baseUrl: '/api',
         })
@@ -54,7 +54,10 @@ export default function SuccessPage() {
           setErrorMessage(resLis.message || 'Create license failed')
           return
         }
-
+        await http.patch<OrderResponse>(`${LINKS.order}/${orderId}`, {
+          params: { newStatus },
+          baseUrl: '/api',
+        })
         setLicenseKey(resLis?.data?.licenseKey as string)
         toast.success(resLis.message || 'License created successfully.')
       } catch (err) {

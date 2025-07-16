@@ -24,7 +24,6 @@ type ModalType = 'create' | 'confirm-paid' | 'cancel' | null
 interface Props {
   id: string
   isPaymentSubmitted: boolean
-  amount: number
   data: PackageResponse
   paymentMethod: string
   paymentInfo: PaymentResponse
@@ -283,7 +282,7 @@ export default function BankTransferPayment({
       </div>
 
       {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
-        <span className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium'>
+        <span className='hover:text-primary-system relative inline-block -translate-y-2 font-medium'>
           Your license key: {licenseKey} <br />
           Type: {paymentInfo?.subscription?.typePackage}
         </span>
@@ -301,7 +300,7 @@ export default function BankTransferPayment({
         <CopyableText label='Account name' value={paymentInfo.accountName} />
         <CopyableText label='Account number' value={paymentInfo.accountNumber} />
         <CopyableText label='Description' value={`${paymentInfo.description}BANK`} />
-        <CopyableText label='Money' value={`${(paymentInfo?.amount ?? data.price).toLocaleString('vi-VN')} đ`} />
+        {/* <CopyableText label='Money' value={`${(paymentInfo?.amount ?? data.price).toLocaleString('vi-VN')} đ`} /> */}
       </div>
 
       <p className='text-destructive my-4 text-center text-sm font-medium'>
