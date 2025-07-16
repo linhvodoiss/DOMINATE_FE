@@ -25,11 +25,10 @@ export default function SuccessPage() {
     hasRun.current = true
 
     const orderId = searchParams.get('orderCode')
-    const ip = 'huhu'
     const hardwareId = 'hihi'
     const newStatus = OrderStatusEnum.SUCCESS
 
-    if (!orderId || !ip || !hardwareId) return
+    if (!orderId || !hardwareId) return
 
     const createLicense = async () => {
       try {
@@ -46,7 +45,7 @@ export default function SuccessPage() {
 
         // 2. CALL API MAKE LICENSE
         const resLis = await http.post<LicenseResponse>(LINKS.licenses_create, {
-          body: JSON.stringify({ orderId: Number(orderId), ip, hardwareId }),
+          body: JSON.stringify({ orderId: Number(orderId), hardwareId }),
           baseUrl: '/api',
         })
 

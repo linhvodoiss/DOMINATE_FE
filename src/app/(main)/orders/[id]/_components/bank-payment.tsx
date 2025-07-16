@@ -57,16 +57,13 @@ export default function BankTransferPayment({
   // -------------------- CREATE KEY --------------------
   useEffect(() => {
     const createLicense = async () => {
-      const fixedIp = '192.168.1.100'
       const fixedHardwareId = 'ABCDEF123456'
-
       if (!existingOrderId || hasCalledLicense.current || licenseKey) return
 
       try {
         const resLis = await http.post<LicenseResponse>(LINKS.licenses_create, {
           body: JSON.stringify({
             orderId: existingOrderId,
-            ip: fixedIp,
             hardwareId: fixedHardwareId,
           }),
           baseUrl: '/api',
