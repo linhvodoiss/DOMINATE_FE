@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -93,6 +93,11 @@ export default function PayosPayment({
       }
     })
   }
+
+  // -------------------- CLOSE MODAL FROM WEBSOCKET --------------------
+  useEffect(() => {
+    setModalType(null)
+  }, [paymentInfo])
 
   // -------------------- CANCEL ORDER --------------------
   const cancelOrderHandler = (newStatus: OrderStatusEnum) => {

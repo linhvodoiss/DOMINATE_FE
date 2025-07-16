@@ -1,8 +1,8 @@
-import { Input } from '~/components/ui/input'
 import { FormField, FormItem, FormControl, FormMessage, Form } from '~/components/ui/form'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { Button } from '~/components/ui/button'
 import { UseFormReturn } from 'react-hook-form'
+import { Textarea } from '~/components/ui/textarea'
 
 interface DialogProps {
   open: boolean
@@ -46,7 +46,7 @@ export default function ModalOrder({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder='Max 100 character' disabled={pending} {...field} />
+                    <Textarea placeholder='Content reminder admin...' disabled={pending} {...field} />
                   </FormControl>
                   <FormMessage className='data-[error=true]:text-destructive' />
                 </FormItem>

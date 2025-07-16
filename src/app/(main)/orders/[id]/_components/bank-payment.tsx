@@ -91,6 +91,11 @@ export default function BankTransferPayment({
     }
   }, [existingOrderId, licenseKey, paymentInfo?.paymentStatus])
 
+  // -------------------- CLOSE MODAL FROM WEBSOCKET --------------------
+  useEffect(() => {
+    setModalType(null)
+  }, [paymentInfo])
+
   // -------------------- ORDER CREATION --------------------
   const orderHandler = async () => {
     const orderId = tempOrderId

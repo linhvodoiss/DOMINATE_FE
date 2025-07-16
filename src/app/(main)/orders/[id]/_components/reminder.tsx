@@ -19,9 +19,10 @@ interface Props {
   data: PackageResponse
   user: User
   paymentInfo?: ResponseGlobal
+  modal: boolean
 }
 
-export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
+export default function Reminder({ orderId, data, user, paymentInfo, modal }: Props) {
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
@@ -119,6 +120,9 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
       }
     })
   })
+  useEffect(() => {
+    setOpen(false)
+  }, [paymentInfo])
 
   return (
     <div className='mt-6 flex justify-center gap-4'>
