@@ -17,6 +17,7 @@ export const LINKS = {
   order_silent: '/orders/silent',
   order_email: '/orders/email',
   order_email_admin: '/orders/emailAdmin',
+  order_email_report: '/orders/emailReport',
   payment: '/payment',
   payment_cancel: '/payment/cancel',
   payment_create: '/payment/create-payment',

@@ -13,6 +13,8 @@ export type OrderResponse = {
   paymentMethod?: string
   userId?: number
   subscriptionId?: number
+  canReport?: boolean
+  licenseCreated?: boolean
   createdAt?: string
   updatedAt?: string
   subscription: PackageResponse

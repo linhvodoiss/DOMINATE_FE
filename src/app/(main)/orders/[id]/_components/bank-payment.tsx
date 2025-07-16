@@ -300,7 +300,7 @@ export default function BankTransferPayment({
         <CopyableText label='Account name' value={paymentInfo.accountName} />
         <CopyableText label='Account number' value={paymentInfo.accountNumber} />
         <CopyableText label='Description' value={`${paymentInfo.description}BANK`} />
-        {/* <CopyableText label='Money' value={`${(paymentInfo?.amount ?? data.price).toLocaleString('vi-VN')} đ`} /> */}
+        <CopyableText label='Money' value={`${(paymentInfo?.amount ?? data.price).toLocaleString('vi-VN')} đ`} />
       </div>
 
       <p className='text-destructive my-4 text-center text-sm font-medium'>
