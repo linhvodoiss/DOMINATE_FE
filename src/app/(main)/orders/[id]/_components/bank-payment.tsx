@@ -18,6 +18,7 @@ import { OrderStatusEnum } from '#/tabs-order'
 import Link from 'next/link'
 import { User } from '#/user'
 import { LicenseResponse } from '#/licenses'
+import { getHardwareId } from '~/utils/hardware'
 
 type ModalType = 'create' | 'confirm-paid' | 'cancel' | null
 
@@ -57,7 +58,7 @@ export default function BankTransferPayment({
   // -------------------- CREATE KEY --------------------
   useEffect(() => {
     const createLicense = async () => {
-      const fixedHardwareId = 'ABCDEF123456'
+      const fixedHardwareId = getHardwareId()
       if (!existingOrderId || hasCalledLicense.current || licenseKey) return
 
       try {
