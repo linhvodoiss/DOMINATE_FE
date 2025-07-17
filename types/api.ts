@@ -5,6 +5,10 @@ export type BaseResponse<T> = {
   data?: T
   content?: T | [T]
   user?: T
+  pageNumber?: number
+  pageSize?: number
+  totalElements?: number
+  totalPages?: number
 }
 
 export type GiftReceived = { id: number; milestone: number }

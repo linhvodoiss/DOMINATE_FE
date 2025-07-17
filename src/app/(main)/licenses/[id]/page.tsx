@@ -11,22 +11,36 @@ import LicensePage from './_components/license-page'
 
 interface Props {
   params: { id: string }
+  searchParams: { page?: string }
   user: User
 }
 
-export default async function page({ params }: Props) {
-  const { id } = await params
+export default async function page({ params, searchParams }: Props) {
+  const { id } = params
+  const page = Number(searchParams.page || 1)
   const cookieStore = await cookies()
   const user = (
     cookieStore.get(AUTH.userInfo)?.value ? JSON.parse(cookieStore.get(AUTH.userInfo)!.value) : undefined
   ) as User | undefined
   const token = cookieStore.get(AUTH.token)?.value
-  const { content = [] } = await http.get<LicenseResponse>(`${LINKS.licenses_user}/${id}`, {
+  const {
+    content = [],
+    pageNumber,
+    totalPages,
+  } = await http.get<LicenseResponse>(`${LINKS.licenses_user}/${id}`, {
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
     },
-    params: { page: 1, size: PAGE_COMMON_SIZE },
+    params: { page, size: 2 },
   })
   const listLicenses = content
-  return <LicensePage data={listLicenses as LicenseResponse[]} id={id} user={user as User} />
+  return (
+    <LicensePage
+      data={listLicenses as LicenseResponse[]}
+      id={id}
+      user={user as User}
+      totalPages={totalPages as number}
+      pageNumber={pageNumber as number}
+    />
+  )
 }

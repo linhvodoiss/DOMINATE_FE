@@ -5,8 +5,9 @@ import { User } from '#/user'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import { OrderResponse } from '#/order'
-import PurchasePage from './_components'
+
 import { PAGE_SIZE } from '~/constants/paginate'
+import PurchasePage from './_components/purchase-page'
 
 interface Props {
   params: { id: string }
