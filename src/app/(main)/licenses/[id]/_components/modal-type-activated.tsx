@@ -1,10 +1,7 @@
-import { FormField, FormItem, FormControl, FormMessage, Form } from '~/components/ui/form'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { Button } from '~/components/ui/button'
 import { UseFormReturn } from 'react-hook-form'
-import { Textarea } from '~/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
-
 interface DialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -12,9 +9,9 @@ interface DialogProps {
   pending?: boolean
   title?: string
   content?: string
-  isReminder?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form?: UseFormReturn<any>
+  selectedType: string | undefined
+  onTypeChange: (type: string) => void
 }
 
 export default function ModalTypeActivated({
@@ -22,6 +19,8 @@ export default function ModalTypeActivated({
   onOpenChange,
   onSubmitOrder,
   pending,
+  selectedType,
+  onTypeChange,
   title = 'CHOOSE TYPE LICENSE TO ACTIVATED',
 }: DialogProps) {
   return (
@@ -34,7 +33,7 @@ export default function ModalTypeActivated({
         <DialogHeader>
           <DialogTitle className='text-xl'>{title}</DialogTitle>
         </DialogHeader>
-        <Select>
+        <Select value={selectedType} onValueChange={onTypeChange}>
           <SelectTrigger className='w-full'>
             <SelectValue placeholder='Choose type to active' />
           </SelectTrigger>

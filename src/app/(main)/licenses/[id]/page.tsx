@@ -6,8 +6,8 @@ import { User } from '#/user'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import { LicenseResponse } from '#/licenses'
-import { PAGE_COMMON_SIZE, PAGE_SIZE } from '~/constants/paginate'
-import LicensePage from './_components/license-page'
+import { PAGE_SIZE } from '~/constants/paginate'
+import LicensePage from './_components'
 
 interface Props {
   params: Promise<{ id: string }>

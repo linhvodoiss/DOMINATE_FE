@@ -1,11 +1,11 @@
-import { Clock, Shield, Users, Zap } from 'lucide-react'
+import { Clock, Shield, Users } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
 export default function Footer() {
   return (
     <footer className='bg-background-primary border-primary-system h-40 w-full border-t-2'>
-      <div className='bg-background-primary py-16 text-white'>
+      <div className='bg-background-primary px-8 py-16 text-white'>
         <div className='mx-auto max-w-7xl'>
           <div className='grid grid-cols-1 gap-8 md:grid-cols-4'>
             <div className='col-span-1 md:col-span-2'>
