@@ -23,4 +23,6 @@ export const LINKS = {
   payment_create: '/payment/create-payment',
   licenses_create: '/licenses/create',
   licenses_user: '/licenses/user',
+  licenses_can_used: '/licenses/canUsed',
+  licenses_activate_next: '/licenses/activate-next',
 }

@@ -48,8 +48,8 @@ export default function CustomPagination({
             <PaginationPrevious
               onClick={() => currentPage > 1 && goToPage(currentPage - 1)}
               className={clsx(
-                'hover:bg-transparent',
-                currentPage === 1 && 'pointer-events-none !cursor-not-allowed opacity-70'
+                'hover:bg-toggle-secondary cursor-pointer',
+                currentPage === 1 && 'cursor-not-allowed opacity-70 hover:bg-transparent'
               )}
             />
           </PaginationItem>
@@ -80,8 +80,8 @@ export default function CustomPagination({
             <PaginationNext
               onClick={() => currentPage < totalPages && goToPage(currentPage + 1)}
               className={clsx(
-                'hover:bg-transparent',
-                currentPage === totalPages && 'pointer-events-none !cursor-not-allowed opacity-70'
+                'hover:bg-toggle-secondary cursor-pointer',
+                currentPage === totalPages && 'cursor-not-allowed opacity-70 hover:bg-transparent'
               )}
             />
           </PaginationItem>

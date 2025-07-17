@@ -19,10 +19,9 @@ interface Props {
   data: PackageResponse
   user: User
   paymentInfo?: ResponseGlobal
-  modal: boolean
 }
 
-export default function Reminder({ orderId, data, user, paymentInfo, modal }: Props) {
+export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
