@@ -64,8 +64,8 @@ export default function LicensePage({ data, id, user, totalPages, pageNumber, da
     <div className='bg-primary-foreground mt-12items-center mt-12 gap-4 rounded-2xl border-[1px] px-32 pt-8 pb-12 shadow-md'>
       <h2 className='text-primary text-start text-3xl font-semibold'>Your licenses key</h2>
       <hr className='mt-3 mb-3' />
-      <Button className='mb-6 w-[160px] py-4' disabled={isPending} onClick={() => onOpenChange(true)}>
-        Get new license!
+      <Button className='mb-6 w-[140px] py-4' disabled={isPending} onClick={() => onOpenChange(true)}>
+        Get new key!
       </Button>
       <div className='mb-6'>
         <h2 className='mb-1 text-lg font-semibold'>Key are using</h2>
