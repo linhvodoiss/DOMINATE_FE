@@ -136,7 +136,7 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
       )}
 
       <Link
-        href={`/orders/purchase/${user.id}${paymentInfo?.paymentStatus ? `?status=${paymentInfo.paymentStatus}` : ''}`}
+        href={`/my-order/${user.id}${paymentInfo?.paymentStatus ? `?status=${paymentInfo.paymentStatus}` : ''}`}
         className={clsx(
           'text-destructive hover:bg-primary-foreground-hover border-destructive w-40 rounded-lg border py-3 text-center font-semibold shadow-sm',
           isPending && 'pointer-events-none opacity-50'

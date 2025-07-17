@@ -7,7 +7,7 @@ import http from '~/utils/http'
 import { OrderResponse } from '#/order'
 
 import { PAGE_SIZE } from '~/constants/paginate'
-import PurchasePage from './_components/purchase-page'
+import MyOrderPage from './_components/my-order-page'
 
 interface Props {
   params: { id: string }
@@ -29,5 +29,5 @@ export default async function page({ params }: Props) {
   })
   const listOrder = content
 
-  return <PurchasePage user={user as User} data={listOrder as OrderResponse[]} id={id} />
+  return <MyOrderPage user={user as User} data={listOrder as OrderResponse[]} id={id} />
 }

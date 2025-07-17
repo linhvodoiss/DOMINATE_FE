@@ -17,34 +17,66 @@ interface CustomPaginationProps {
   currentPage: number
   totalPages: number
   containerClass?: string
-  maxPagesToShow?: number
 }
 
-export default function CustomPagination({
-  currentPage,
-  totalPages,
-  containerClass,
-  maxPagesToShow = 5,
-}: CustomPaginationProps) {
+export default function CustomPagination({ currentPage, totalPages, containerClass }: CustomPaginationProps) {
   const router = useRouter()
 
   if (totalPages <= 1) return null
 
-  const startPage = Math.max(1, Math.min(currentPage - Math.floor(maxPagesToShow / 2), totalPages - maxPagesToShow + 1))
-  const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages)
-
+  // Navigate to selected page, keeping other query params
   const goToPage = (page: number) => {
     const params = new URLSearchParams(window.location.search)
     params.set('page', String(page))
     router.push(`?${params.toString()}`)
   }
 
+  // Generate pagination list: numbers + 'ellipsis' based on logic
+  const createPagination = (): (number | 'ellipsis')[] => {
+    const pages: (number | 'ellipsis')[] = []
+
+    // Show all pages if totalPages <= 5
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i)
+      }
+      return pages
+    }
+
+    // Always show the first page
+    pages.push(1)
+
+    // Show left ellipsis if currentPage is beyond page 3
+    if (currentPage > 3) {
+      pages.push('ellipsis')
+    }
+
+    // Show currentPage -1, currentPage, currentPage +1 (within range)
+    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+      if (i > 1 && i < totalPages) {
+        pages.push(i)
+      }
+    }
+
+    // Show right ellipsis if currentPage is far from the end
+    if (currentPage < totalPages - 2) {
+      pages.push('ellipsis')
+    }
+
+    // Always show the last page
+    pages.push(totalPages)
+
+    return pages
+  }
+
+  const paginationPages = createPagination()
+
   return (
     <CustomPaginationStyled>
       <Pagination className={`mt-12 mb-8 items-center justify-center ${containerClass}`}>
         <PaginationContent className='gap-6'>
-          {/* Previous */}
-          <PaginationItem className=''>
+          {/* Previous button */}
+          <PaginationItem>
             <PaginationPrevious
               onClick={() => currentPage > 1 && goToPage(currentPage - 1)}
               className={clsx(
@@ -54,28 +86,27 @@ export default function CustomPagination({
             />
           </PaginationItem>
 
-          {/* Page Numbers */}
-          {Array.from({ length: endPage - startPage + 1 }).map((_, idx) => {
-            const page = startPage + idx
-            const isCurrent = page === currentPage
-
-            return (
-              <PaginationItem key={page}>
+          {/* Dynamic page numbers and ellipsis */}
+          {paginationPages.map((item, idx) => (
+            <PaginationItem key={idx}>
+              {item === 'ellipsis' ? (
+                <span className='text-muted-foreground px-3 select-none'>...</span>
+              ) : (
                 <PaginationLink
-                  isActive={isCurrent}
-                  onClick={() => goToPage(page)}
+                  isActive={item === currentPage}
+                  onClick={() => goToPage(item)}
                   className={clsx(
                     'hover:bg-toggle-secondary cursor-pointer rounded-none font-bold',
-                    isCurrent ? '!bg-primary-system border-none !text-white' : ''
+                    item === currentPage ? '!bg-primary-system border-none !text-white' : ''
                   )}
                 >
-                  {page}
+                  {item}
                 </PaginationLink>
-              </PaginationItem>
-            )
-          })}
+              )}
+            </PaginationItem>
+          ))}
 
-          {/* Next */}
+          {/* Next button */}
           <PaginationItem>
             <PaginationNext
               onClick={() => currentPage < totalPages && goToPage(currentPage + 1)}

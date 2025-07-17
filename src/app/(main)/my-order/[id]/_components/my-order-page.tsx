@@ -20,7 +20,7 @@ interface Props {
   id: string
 }
 
-export default function PurchasePage({ data, id }: Props) {
+export default function MyOrderPage({ data, id }: Props) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [orders, setOrders] = useState<OrderResponse[]>(data)

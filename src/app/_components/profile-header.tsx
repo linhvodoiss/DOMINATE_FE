@@ -12,7 +12,7 @@ export default function ProfileHeader() {
 
   if (!user) {
     return (
-      <Link href='/login' className='header__link font-bold'>
+      <Link href='/login' className='font-bold'>
         Đăng nhập
       </Link>
     )
@@ -21,7 +21,7 @@ export default function ProfileHeader() {
   return (
     <Popover>
       <PopoverTrigger>
-        <div className='header__link font-bold'>{user.userName}</div>
+        <div className='cursor-pointer font-bold'>{user.userName}</div>
       </PopoverTrigger>
       <PopoverContent className='border-primary-system flex flex-col rounded-2xl border-[1px] px-0 text-lg font-bold shadow-2xl'>
         <Link
@@ -37,7 +37,7 @@ export default function ProfileHeader() {
           My Licenses
         </Link>
         <Link
-          href={`/orders/purchase/${user.id}`}
+          href={`/my-order/${user.id}`}
           className='border-primary-system text-primary hover:bg-primary-mute mx-auto block w-full cursor-pointer py-2 text-center'
         >
           My Orders

@@ -27,7 +27,6 @@ export default function OrderPage({ data, user, id }: Props) {
   const [paymentInfo, setPaymentInfo] = useState<ResponseGlobal>()
   const [isPaymentSubmitted, setIsPaymentSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [modal, setModal] = useState(true)
 
   const orderId = searchParams.get('orderId')
 
@@ -82,7 +81,6 @@ export default function OrderPage({ data, user, id }: Props) {
         const status = message.body
         console.log('📩 WebSocket nhận trạng thái:', status)
         fetchOrder() // update from socket
-        setModal(false)
       })
     })
 
@@ -139,7 +137,7 @@ export default function OrderPage({ data, user, id }: Props) {
           setIsPaymentSubmitted={setIsPaymentSubmitted}
         />
       )}
-      <Reminder data={data} user={user} paymentInfo={paymentInfo} orderId={orderId} modal={modal} />
+      <Reminder data={data} user={user} paymentInfo={paymentInfo} orderId={orderId} />
     </div>
   )
 }
