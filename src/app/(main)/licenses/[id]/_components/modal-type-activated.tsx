@@ -1,6 +1,5 @@
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog'
 import { Button } from '~/components/ui/button'
-import { UseFormReturn } from 'react-hook-form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 interface DialogProps {
   open: boolean
@@ -9,7 +8,6 @@ interface DialogProps {
   pending?: boolean
   title?: string
   content?: string
-  form?: UseFormReturn<any>
   selectedType: string | undefined
   onTypeChange: (type: string) => void
 }

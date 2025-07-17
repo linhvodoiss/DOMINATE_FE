@@ -1,13 +1,12 @@
+// ./_components/theme-provider.tsx
 'use client'
-import dynamic from 'next/dynamic'
-import type { ThemeProviderProps } from 'next-themes'
-import { LoadingFallback } from './page-content'
 
-const NextThemesProvider = dynamic(() => import('next-themes').then(mod => mod.ThemeProvider), {
-  ssr: false,
-  loading: () => <LoadingFallback />,
-})
+import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from 'next-themes'
 
-export function ThemeProvider(props: ThemeProviderProps) {
-  return <NextThemesProvider {...props} />
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return (
+    <NextThemesProvider defaultTheme='system' attribute='class' enableSystem disableTransitionOnChange {...props}>
+      {children}
+    </NextThemesProvider>
+  )
 }

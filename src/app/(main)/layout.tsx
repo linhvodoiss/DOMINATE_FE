@@ -4,6 +4,8 @@ import { User } from '#/user'
 import { AuthProvider } from '../_components/auth-context'
 import Header from '../_components/header'
 import Footer from '../_components/footer'
+import { Suspense } from 'react'
+import { LoadingFallback } from '../_components/page-content'
 
 export default async function MainLayout({
   children,
@@ -17,10 +19,12 @@ export default async function MainLayout({
   ) as User | undefined
 
   return (
-    <AuthProvider token={token} user={user}>
-      <Header />
-      <div className='mx-auto min-h-[100vh] w-full max-w-[1440px] px-8 pb-24'>{children}</div>
-      <Footer />
-    </AuthProvider>
+    <Suspense fallback={<LoadingFallback />}>
+      <AuthProvider token={token} user={user}>
+        <Header />
+        <div className='mx-auto min-h-[100vh] w-full max-w-[1440px] px-8 pb-24'>{children}</div>
+        <Footer />
+      </AuthProvider>
+    </Suspense>
   )
 }
