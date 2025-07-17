@@ -19,7 +19,7 @@ export type LicenseResponse = {
   paymentMethod?: string
   userId?: number
   subscriptionId?: number
-  createdAt?: string
+  createdAt: string
   updatedAt?: string
   subscription: PackageResponse
 }

@@ -17,7 +17,7 @@ export default function LockBtn() {
         className='border-primary-system text-primary hover:bg-primary-mute relative w-full cursor-pointer py-2'
         onClick={() => onOpenChange(true)}
       >
-        Change pass <Lock className='absolute top-1/2 right-[48px] -translate-y-1/2' />
+        Change Password <Lock className='absolute top-1/2 right-[32px] -translate-y-1/2' />
       </button>
       <ModalPassword open={open} onOpenChange={onOpenChange} />
     </>

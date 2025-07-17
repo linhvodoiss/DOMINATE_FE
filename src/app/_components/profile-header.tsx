@@ -31,10 +31,16 @@ export default function ProfileHeader() {
           Profile
         </Link>
         <Link
+          href={`/licenses/${user.id}`}
+          className='border-primary-system text-primary hover:bg-primary-mute mx-auto block w-full cursor-pointer py-2 text-center'
+        >
+          My Licenses
+        </Link>
+        <Link
           href={`/orders/purchase/${user.id}`}
           className='border-primary-system text-primary hover:bg-primary-mute mx-auto block w-full cursor-pointer py-2 text-center'
         >
-          Orders
+          My Orders
         </Link>
         <LockBtn />
         <LogoutBtn />
