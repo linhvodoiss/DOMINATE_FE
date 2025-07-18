@@ -18,7 +18,7 @@ export default function LogoutBtn() {
   return (
     <button
       disabled={isPending}
-      className='text-primary hover:bg-primary-mute w-full cursor-pointer border-b border-white/20 pt-4 pb-2 text-start'
+      className='hover:bg-primary-mute w-full cursor-pointer border-b border-white/20 px-4 pt-4 pb-2 text-start'
       onClick={logoutHandler}
     >
       Logout

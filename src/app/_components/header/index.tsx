@@ -1,12 +1,9 @@
-'use client'
-
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { WebHeaderStyled } from './styled'
 import ThemeChange from '../theme-change'
-import ProfileHeader from '../profile-header'
-import { MenuIcon } from 'lucide-react'
+import ProfileHeader from './profile-header'
+import MenuMobile from './menu-mb'
 
 const menuItems = [
   { label: 'Home', href: '/' },
@@ -16,30 +13,9 @@ const menuItems = [
 ]
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false)
-      }
-    }
-
-    if (menuOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [menuOpen])
-
   return (
     <WebHeaderStyled className='bg-background-primary border-primary-system relative z-10 border-b-2'>
-      <div className='header__container relative mx-auto flex max-w-[1920px] items-center justify-between px-4 py-2 pl-0 text-xl text-[#e5e5e5] md:pl-4'>
+      <div className='header__container relative mx-auto flex max-w-[1920px] items-center justify-between py-2 pr-4 pl-0 text-xl text-[#e5e5e5] md:pr-8 md:pl-4'>
         {/* Left side: logo + menu */}
         <div className='relative flex items-center gap-4'>
           <Image
@@ -66,32 +42,10 @@ export default function Header() {
               <ThemeChange />
             </li>
           </ul>
-          <button
-            className='hover:!bg-toggle absolute top-1/2 right-0 flex translate-x-10 -translate-y-1/2 cursor-pointer flex-col gap-1 rounded-md p-2 focus:outline-none md:hidden'
-            onClick={() => setMenuOpen(prev => !prev)}
-          >
-            <MenuIcon size={32} />
-          </button>
+          <MenuMobile menuItems={menuItems} />
         </div>
         <ThemeChange className='ml-auto -translate-x-8 md:hidden' />
         <ProfileHeader />
-        {menuOpen && (
-          <div
-            ref={menuRef}
-            className='bg-background-primary absolute top-20 right-0 left-0 flex flex-col gap-2 rounded-md border-1 border-solid border-white px-4 pb-4 md:hidden'
-          >
-            {menuItems.map(item => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className='border-b border-white/20 py-2'
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Mobile Dropdown Menu */}

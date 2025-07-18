@@ -42,7 +42,7 @@ export default function FilterForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className='mx-auto mb-8 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start xl:mx-8'
+      className='mx-auto mb-8 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start 2xl:mx-8'
     >
       <div className='flex gap-2'>
         <Input

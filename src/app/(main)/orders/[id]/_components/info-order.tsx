@@ -1,13 +1,23 @@
+'use client'
+
 import { PackageResponse } from '#/package'
 import { User } from '#/user'
+import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import calPriceDiscount from '~/utils/price-discount-calculate'
+
 interface Props {
   data: PackageResponse
   user: User
 }
+
 export default function OrderInfo({ data, user }: Props) {
+  const [showAll, setShowAll] = useState(false)
+
+  const visibleOptions = showAll ? data?.options : data?.options?.slice(0, 3)
+  const hasMore = (data?.options?.length || 0) > 3
+
   return (
     <div className='flex flex-col md:flex-row md:gap-6'>
       <div className='w-full'>
@@ -38,13 +48,24 @@ export default function OrderInfo({ data, user }: Props) {
 
       <div className='w-full'>
         <div className='mb-3'>
-          <span className='font-semibold'>Profit:</span>
-          {data?.options?.map(option => (
-            <li key={option.id} className='block'>
-              - {option.name}
-            </li>
-          ))}
+          <span className='block font-semibold'>Profit:</span>
+          <ul className='max-h-40 overflow-y-auto'>
+            {visibleOptions?.map(option => (
+              <li key={option.id} className='flex items-center gap-2'>
+                <CheckCircle className='h-4 w-4 flex-shrink-0 text-[#198754]' /> {option.name}
+              </li>
+            ))}
+          </ul>
+          {hasMore && (
+            <button
+              onClick={() => setShowAll(prev => !prev)}
+              className='text-primary mt-1 font-semibold hover:underline'
+            >
+              {showAll ? 'Show less' : 'Show more'}
+            </button>
+          )}
         </div>
+
         <Link href={`/${data?.id}`} className='text-primary mb-3 block font-semibold hover:underline'>
           Link product {'>'}
         </Link>

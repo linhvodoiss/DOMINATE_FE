@@ -5,6 +5,7 @@ import React from 'react'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import calPriceDiscount from '~/utils/price-discount-calculate'
+import OptionList from './_components/list-option'
 
 interface Props {
   params: { id: string }
@@ -17,7 +18,7 @@ export default async function Page({ params }: Props) {
   return (
     <div className='mt-12 px-4 md:px-8'>
       <h1 className='text-primary mb-2 text-2xl font-semibold md:text-3xl'>{data?.name}</h1>
-      <span className='mb-6 block text-sm text-gray-600 md:text-base'>Updated at: {data?.updatedAt}</span>
+      <span className='mb-6 block text-sm md:text-base'>Updated at: {data?.updatedAt}</span>
 
       <div className='flex w-full flex-col items-start justify-start gap-6 py-6 lg:flex-row'>
         {/* Image */}
@@ -54,17 +55,7 @@ export default async function Page({ params }: Props) {
           </p>
 
           {/* Options */}
-          <div className='py-2'>
-            <span className='font-semibold'>Profit: </span>
-            <ul className='list-inside list-disc text-base'>
-              {data?.options?.map(option => (
-                <li key={option.id} className='mt-1'>
-                  {option.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-
+          <OptionList options={data?.options || []} />
           {/* Order button */}
           <div className='mt-6 w-full'>
             <Link
@@ -80,7 +71,7 @@ export default async function Page({ params }: Props) {
       {/* Description */}
       <div className='mt-8 w-full text-sm leading-relaxed md:text-base'>
         <h2 className='text-primary mb-4 text-xl font-semibold md:text-2xl'>Product description:</h2>
-        <p className='text-gray-700'>
+        <p className=''>
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, voluptatibus reprehenderit itaque dicta
           impedit tempore aliquam eaque magnam quod labore eius, nemo ipsa voluptas commodi? Illum doloribus voluptatem
           a excepturi!
