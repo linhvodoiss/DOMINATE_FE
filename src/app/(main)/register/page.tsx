@@ -46,9 +46,9 @@ export default function LoginForm() {
       ])
 
       if (checkEmailRes.check || checkUserNameRes.check || checkPhoneNumberRes.check) {
-        if (checkEmailRes.check) toast.error('Email đã tồn tại')
-        if (checkUserNameRes.check) toast.error('Tài khoản đã tồn tại')
-        if (checkPhoneNumberRes.check) toast.error('Số điện thoại đã tồn tại')
+        if (checkEmailRes.check) toast.error('Email have already exists')
+        if (checkUserNameRes.check) toast.error('Username have already exist')
+        if (checkPhoneNumberRes.check) toast.error('Phone number have already exist')
         return
       }
 
@@ -77,7 +77,7 @@ export default function LoginForm() {
           autoComplete='off'
           noValidate
         >
-          <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Đăng ký</h2>
+          <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Register</h2>
           <FormField
             control={form.control}
             name='userName'
@@ -85,7 +85,7 @@ export default function LoginForm() {
               <FormItem>
                 <FormControl>
                   <Input
-                    placeholder='Tên tài khoản'
+                    placeholder='Username'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                     {...field}
                   />
@@ -102,7 +102,7 @@ export default function LoginForm() {
                 <FormItem className='w-full'>
                   <FormControl>
                     <Input
-                      placeholder='Họ của bạn'
+                      placeholder='First Name'
                       className='w-full rounded-xl border-2 px-4 py-6 !text-base'
                       {...field}
                     />
@@ -118,7 +118,7 @@ export default function LoginForm() {
                 <FormItem className='w-full'>
                   <FormControl>
                     <Input
-                      placeholder='Tên của bạn'
+                      placeholder='Last name'
                       className='w-full rounded-xl border-2 px-4 py-6 !text-base'
                       {...field}
                     />
@@ -136,7 +136,7 @@ export default function LoginForm() {
                 <FormControl>
                   <Input
                     type='email'
-                    placeholder='Email của bạn'
+                    placeholder='Your email'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                     {...field}
                   />
@@ -153,7 +153,7 @@ export default function LoginForm() {
                 <FormControl>
                   <Input
                     type='number'
-                    placeholder='Số điện thoại'
+                    placeholder='Phone number'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                     {...field}
                   />
@@ -170,7 +170,7 @@ export default function LoginForm() {
                 <FormControl>
                   <Input
                     type='password'
-                    placeholder='Mật khẩu'
+                    placeholder='Password'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                     {...field}
                   />
@@ -183,12 +183,12 @@ export default function LoginForm() {
             className='hover:bg-primary-hover bg-primary-system mx-auto mt-4 block w-full cursor-pointer items-center justify-center rounded-2xl px-12 py-4 font-semibold text-white'
             disabled={isPending}
           >
-            TIẾP TỤC
+            CONTINUE
           </button>
           <p className='text-md mt-4 text-center'>
-            Bạn có tài khoản?
+            Have account?
             <Link href='/login' className='text-primary font-semibold'>
-              Đăng nhập
+              Login
             </Link>
           </p>
         </form>

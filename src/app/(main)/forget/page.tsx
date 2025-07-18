@@ -33,7 +33,7 @@ export default function ForgetForm() {
       ])
 
       if (!checkEmailRes.check) {
-        toast.error('Không tìm thấy email')
+        toast.error('Email not found!')
         return
       }
       const res = await http.get(LINKS.forget_pass, {
@@ -59,7 +59,7 @@ export default function ForgetForm() {
           autoComplete='off'
           noValidate
         >
-          <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Quên mật khẩu</h2>
+          <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Forget password</h2>
           <FormField
             control={form.control}
             name='email'
@@ -68,7 +68,7 @@ export default function ForgetForm() {
                 <FormControl>
                   <Input
                     type='email'
-                    placeholder='Email của bạn'
+                    placeholder='Your email'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-8 !text-base'
                     {...field}
                   />
@@ -81,12 +81,12 @@ export default function ForgetForm() {
             className='bg-primary-system hover:bg-primary-hover mx-auto mt-4 block w-full cursor-pointer items-center justify-center rounded-2xl px-12 py-4 font-semibold text-white'
             disabled={isPending}
           >
-            Quên mật khẩu
+            Send email
           </button>
           <p className='text-md mt-4 text-center'>
-            Quay lại đăng nhập?
+            Comeback login?
             <Link href='/login' className='text-primary font-semibold'>
-              Đăng nhập
+              Login
             </Link>
           </p>
         </form>

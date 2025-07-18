@@ -46,7 +46,7 @@ export default function LoginForm() {
           className='form border-primary-system bg-primary-foreground mx-auto mt-12 w-[600px] rounded-2xl border-2 px-8 pt-8 pb-12 shadow-md'
           autoComplete='off'
         >
-          <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Đăng nhập</h2>
+          <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Login</h2>
           <FormField
             control={form.control}
             name='userName'
@@ -54,7 +54,7 @@ export default function LoginForm() {
               <FormItem>
                 <FormControl>
                   <Input
-                    placeholder='Tên tài khoản'
+                    placeholder='Username'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                     {...field}
                   />
@@ -71,7 +71,7 @@ export default function LoginForm() {
                 <FormControl>
                   <Input
                     type='password'
-                    placeholder='Mật khẩu'
+                    placeholder='Password'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                     {...field}
                   />
@@ -83,7 +83,7 @@ export default function LoginForm() {
           <div>
             <div className='text-primary text-end'>
               <Link href='/forget' className='mt-2 mb-2 block w-full !text-end text-sm font-semibold'>
-                Quên mật khẩu?
+                Forget?
               </Link>
             </div>
             <div className='flex w-full items-center justify-between gap-4 text-base font-semibold text-white'>
@@ -92,13 +92,13 @@ export default function LoginForm() {
                 type='submit'
                 disabled={isPending}
               >
-                ĐĂNG NHẬP
+                LOGIN
               </button>
               <Link
                 href='/register'
                 className='text-primary border-primary-system hover:bg-primary-foreground-hover flex w-full cursor-pointer items-center justify-center rounded-2xl border-2 py-4'
               >
-                ĐĂNG KÝ
+                REGISTER
               </Link>
             </div>
           </div>

@@ -46,7 +46,7 @@ export default function ProfilePage({ user }: { user: User }) {
       ])
 
       if (checkPhoneNumberRes.check) {
-        if (checkPhoneNumberRes.check) toast.error('Phone number is exist')
+        if (checkPhoneNumberRes.check) toast.error('Phone number have already exist')
         return
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
