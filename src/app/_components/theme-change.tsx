@@ -5,7 +5,7 @@ import { Button } from '~/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
-export default function ThemeChange() {
+export default function ThemeChange({ className }: { className?: string }) {
   const { theme, setTheme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -29,7 +29,7 @@ export default function ThemeChange() {
 
   return (
     <Button
-      className='hover:!bg-toggle scale-150 !border-none !bg-transparent !text-white'
+      className={`hover:!bg-toggle scale-150 !border-none !bg-transparent !text-white ${className}`}
       variant='outline'
       size='icon'
       aria-label='Toggle theme'

@@ -80,10 +80,8 @@ export default function LicensePage({ data, id, totalPages, pageNumber, dataLice
         <StoredTable data={data} isPending={isPending} />
       </div>
 
-      {totalPages > 1 && (
-        <div className='mt-6'>
-          <CustomPagination currentPage={pageNumber} totalPages={totalPages} containerClass='' />
-        </div>
+      {(totalPages ?? 0) > 1 && (
+        <CustomPagination currentPage={pageNumber ?? 1} totalPages={totalPages ?? 1} containerClass='mt-6' />
       )}
 
       <ModalTypeActivated

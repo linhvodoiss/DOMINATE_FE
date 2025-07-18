@@ -42,7 +42,7 @@ export default function FilterForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className='mb-8 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center'
+      className='mx-auto mb-8 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start xl:mx-8'
     >
       <div className='flex gap-2'>
         <Input
@@ -50,7 +50,7 @@ export default function FilterForm() {
           placeholder='Search packages...'
           value={search}
           onChange={e => setSearch(e.target.value)}
-          classNameWrap='w-2/3 sm:w-[200px]'
+          classNameWrap='w-2/3 sm:w-full'
         />
 
         <Select value={type} onValueChange={setType}>
@@ -86,7 +86,7 @@ export default function FilterForm() {
         <Button
           type='submit'
           disabled={isPending}
-          className='bg-primary-system flex h-10 w-10 items-center justify-center gap-1 text-white sm:w-[110px]'
+          className='bg-primary-system hover:bg-primary-hover flex h-10 w-10 items-center justify-center gap-1 text-white sm:w-[110px]'
         >
           <Filter className='h-4 w-4' />
           <span className='hidden sm:inline'>{isPending ? 'Filtering...' : 'Filter'}</span>
