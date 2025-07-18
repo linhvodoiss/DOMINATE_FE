@@ -3,14 +3,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
+import calPriceDiscount from '~/utils/price-discount-calculate'
 
 export default async function ProductPage() {
-  const { content = [] } = await http.get<PackageResponse>(LINKS.listPackage)
+  const { content = [] } = await http.get<PackageResponse>(LINKS.list_package_customer)
   const listPackage = content as PackageResponse[]
 
   return (
     <div className='mt-12 px-4'>
-      <h1 className='text-primary mb-8 text-center text-3xl font-semibold'>Các gói automate cơ bản</h1>
+      <h1 className='text-primary mb-8 text-center text-3xl font-semibold'>Packages DOMINATE</h1>
 
       {listPackage.length === 0 ? (
         <p className='mt-6 text-center text-2xl text-red-500'>No package.</p>
@@ -21,17 +22,26 @@ export default async function ProductPage() {
               key={pkg.id}
               className='bg-background-primary flex flex-col items-center rounded-xl p-6 text-[#e5e5e5] shadow-md transition-shadow hover:shadow-lg'
             >
-              <h2 className='mb-2 text-center text-lg font-semibold'>{pkg.name}</h2>
-
-              <div className='relative mb-4 h-24 w-24'>
+              <div className='relative mb-2 h-24 w-24'>
                 <Image
                   src='https://cdn.pixabay.com/photo/2020/03/31/02/32/package-4986026_640.png'
-                  alt='ảnh sản phẩm'
+                  alt='image package'
                   fill
                   className='object-contain'
                 />
               </div>
-              <p className='mt-1 text-base font-bold'>{pkg.price} $</p>
+
+              <h2 className='mt-1 text-center text-lg font-semibold'>
+                [{pkg.billingCycle}] {pkg.name}
+              </h2>
+              {pkg.discount ? (
+                <p className='mt-1 flex items-center gap-2 text-base font-bold'>
+                  <span className='text-sm font-medium line-through'>{pkg.price} đ</span>
+                  <span className='text-base font-bold'>{calPriceDiscount(pkg.price as number, pkg.discount)} đ</span>
+                </p>
+              ) : (
+                <p className='mt-1 text-base font-bold'>{pkg.price} đ</p>
+              )}
 
               <Link
                 href={`/product/${pkg.id}`}

@@ -19,6 +19,7 @@ import Link from 'next/link'
 import { User } from '#/user'
 import { LicenseResponse } from '#/licenses'
 import { getHardwareId } from '~/utils/hardware'
+import calPriceDiscount from '~/utils/price-discount-calculate'
 
 type ModalType = 'create' | 'confirm-paid' | 'cancel' | null
 
@@ -303,7 +304,10 @@ export default function BankTransferPayment({
         <CopyableText label='Account name' value={paymentInfo.accountName} />
         <CopyableText label='Account number' value={paymentInfo.accountNumber} />
         <CopyableText label='Description' value={`${paymentInfo.description}BANK`} />
-        <CopyableText label='Money' value={`${(paymentInfo?.amount ?? data.price).toLocaleString('vi-VN')} đ`} />
+        <CopyableText
+          label='Money'
+          value={`${calPriceDiscount(data.price as number, data.discount as number).toLocaleString('vi-VN')} đ`}
+        />
       </div>
 
       <p className='text-destructive my-4 text-center text-sm font-medium'>

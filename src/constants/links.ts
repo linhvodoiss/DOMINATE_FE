@@ -11,6 +11,7 @@ export const LINKS = {
   profile: '/users/profile',
   change_password: '/users/profile/changePassword',
   listPackage: '/subscriptions/list',
+  list_package_customer: '/subscriptions/customer/list',
   detailPackage: '/subscriptions',
   order_user: '/orders/user',
   order: '/orders',

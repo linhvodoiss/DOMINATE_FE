@@ -2,6 +2,7 @@ import { PackageResponse } from '#/package'
 import { User } from '#/user'
 import Link from 'next/link'
 import React from 'react'
+import calPriceDiscount from '~/utils/price-discount-calculate'
 interface Props {
   data: PackageResponse
   user: User
@@ -17,8 +18,19 @@ export default function OrderInfo({ data, user }: Props) {
           <span className='font-semibold'>Product:</span> {data?.name}
         </p>
         <p className='mb-3'>
-          <span className='font-semibold'>Price:</span> {data?.price} đ
+          <span className='flex items-center gap-2 font-semibold'>
+            Price:
+            {data?.discount ? (
+              <>
+                <span className='line-through'>{data?.price} đ</span>
+                <span className='font-bold'>{calPriceDiscount(data?.price as number, data?.discount as number)} đ</span>
+              </>
+            ) : (
+              <span className='font-bold'>{data?.price} đ</span>
+            )}
+          </span>
         </p>
+
         <p className='mb-3'>
           <span className='font-semibold'>Cycle:</span> {data?.billingCycle}
         </p>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React from 'react'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
+import calPriceDiscount from '~/utils/price-discount-calculate'
 
 interface Props {
   params: { id: string }
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
   return (
     <div className='mt-12'>
       <h1 className='text-primary mb-4 text-3xl font-semibold'>{data?.name}</h1>
-      <span className='mb-4 block text-base'>Cập nhật: {data?.updatedAt}</span>
+      <span className='mb-4 block text-base'>Updated at: {data?.updatedAt}</span>
       <div className='flex w-full items-start justify-start gap-4 py-6'>
         <div className='bg-primary-foreground aspect-video w-2/3 rounded-xl border-2 p-4 shadow-md'>
           <Image
@@ -29,9 +30,18 @@ export default async function Page({ params }: Props) {
         </div>
         <div className='bg-primary-foreground h-full w-1/3 flex-1 rounded-xl border-2 px-8 pt-8 pb-12 text-lg shadow-md'>
           <p className='flex items-center justify-start gap-4 py-2'>
-            <span className='line-through'>{data?.price} $</span>
-            <span className='text-2xl font-bold'>{data?.discount} $</span>
+            {data?.discount ? (
+              <>
+                <span className='line-through'>{data?.price} đ</span>
+                <span className='text-2xl font-bold'>
+                  {calPriceDiscount(data?.price as number, data?.discount as number)} đ
+                </span>
+              </>
+            ) : (
+              <span className='text-2xl font-bold'>{data?.price} đ</span>
+            )}
           </p>
+
           <p className='py-2'>
             <span className='font-semibold'>Cycle: </span>
             {data?.billingCycle}

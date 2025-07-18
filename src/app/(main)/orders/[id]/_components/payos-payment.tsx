@@ -13,6 +13,7 @@ import { CODE_SUCCESS } from '~/constants'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import ModalOrder from './modal-order'
+import calPriceDiscount from '~/utils/price-discount-calculate'
 
 type ModalType = 'create' | 'cancel' | null
 
@@ -44,7 +45,7 @@ export default function PayosPayment({
   // -------------------- CREATE ORDER --------------------
   const orderHandler = async () => {
     const orderId = Math.floor(100_000_000 + Math.random() * 900_000_000)
-    const amount = data.price
+    const amount = calPriceDiscount(data.price as number, data.discount as number)
     const description = `DOMINATE${orderId}`
 
     setPending(true)
