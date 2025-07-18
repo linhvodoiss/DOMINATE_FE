@@ -1,5 +1,4 @@
 'use client'
-import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useTransition } from 'react'
@@ -13,20 +12,20 @@ import { Input } from '~/components/ui/input'
 import Link from 'next/link'
 import { LoginStyled } from './styled'
 import { LoginResponse } from '#/user'
-import { LoginSchema } from '#/zodType'
+import { LoginFormValues, LoginSchema } from '#/zodType'
 
 export default function LoginForm() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
-  const form = useForm<z.infer<typeof LoginSchema>>({
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       userName: '',
       password: '',
     },
   })
-  async function onSubmit(data: z.infer<typeof LoginSchema>) {
+  async function onSubmit(data: LoginFormValues) {
     startTransition(async () => {
       const res = await http.post<LoginResponse>(LINKS.login_api, { body: JSON.stringify(data), baseUrl: 'api/auth' })
       if (!CODE_SUCCESS.includes(res.code)) {

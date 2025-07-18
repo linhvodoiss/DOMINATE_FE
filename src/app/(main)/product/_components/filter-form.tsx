@@ -86,7 +86,7 @@ export default function FilterForm() {
         <Button
           type='submit'
           disabled={isPending}
-          className='flex h-10 w-10 items-center justify-center gap-1 sm:w-[110px]'
+          className='bg-primary-system flex h-10 w-10 items-center justify-center gap-1 text-white sm:w-[110px]'
         >
           <Filter className='h-4 w-4' />
           <span className='hidden sm:inline'>{isPending ? 'Filtering...' : 'Filter'}</span>

@@ -3,7 +3,7 @@ import { OrderResponse } from '#/order'
 import { User } from '#/user'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -14,6 +14,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { OrderStatusEnum } from '#/tabs-order'
 import { Input } from '~/components/ui/input'
 import OrderStatusTabs from './status-order-user'
+import { Search } from 'lucide-react'
 
 interface Props {
   data: OrderResponse[]
@@ -24,6 +25,7 @@ interface Props {
 export default function MyOrderPage({ data, id }: Props) {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const inputRef = useRef<HTMLInputElement>(null)
   const [orders, setOrders] = useState<OrderResponse[]>(data)
   const [page, setPage] = useState(2)
   const [hasMore, setHasMore] = useState(true)
@@ -76,7 +78,7 @@ export default function MyOrderPage({ data, id }: Props) {
     setTimeout(() => {
       fetchOrders(page)
       setPage(prev => prev + 1)
-    }, 2500)
+    }, 500)
   }
 
   // param url search
@@ -101,17 +103,33 @@ export default function MyOrderPage({ data, id }: Props) {
     }
   }
 
+  const handleClick = () => {
+    const value = inputRef.current?.value.trim() || ''
+    setSearchTerm(value)
+    handleSearch(value)
+  }
+
   return (
-    <div className='mx-auto mt-12'>
+    <div className='mx-auto mt-12 max-w-screen-lg px-4'>
       <OrderStatusTabs setSearchTerm={setSearchTerm} />
       {status === OrderStatusEnum.ALL && (
-        <Input
-          type='text'
-          className='my-4 w-full py-6 text-base'
-          placeholder='You can search by order code or package name...'
-          onKeyDown={handleKeyDown}
-        />
+        <div className='relative'>
+          <Input
+            ref={inputRef}
+            type='text'
+            className='my-4 w-full py-6 pr-14 text-sm md:py-3 md:text-base'
+            placeholder='You can search by order code or package name...'
+            onKeyDown={handleKeyDown}
+          />
+          <button
+            className='text-muted-foreground hover:text-ring absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer p-2'
+            onClick={handleClick}
+          >
+            <Search size={20} />
+          </button>
+        </div>
       )}
+
       <InfiniteScroll
         dataLength={orders.length}
         next={fetchNext}
@@ -119,59 +137,56 @@ export default function MyOrderPage({ data, id }: Props) {
         loader={<p className='mt-4 text-center text-xl'>Loading order ...</p>}
         endMessage={orders.length > 0 ? <p className='mt-4 text-center text-xl'>No more orders.</p> : undefined}
       >
-        {orders?.length === 0 ? (
+        {orders.length === 0 ? (
           <p className='mt-6 text-center text-2xl text-red-500'>You have no order.</p>
         ) : (
-          orders?.map(order => (
-            <div key={order.id} className='border-primary bg-primary-foreground mb-4 rounded-xl border-2 p-8 shadow-md'>
-              <div className='flex items-center justify-between border-b-2 py-2 text-base'>
-                <Link href='' className='hover:bg-primary-foreground-hover p-2 font-semibold'>
+          orders.map(order => (
+            <div key={order.id} className='border-border mb-6 rounded-xl border shadow-sm transition hover:shadow-md'>
+              {/* Header */}
+              <div className='text-muted-foreground flex items-center justify-between border-b px-4 py-3 text-sm font-semibold'>
+                <Link href='' className='hover:text-primary'>
                   View product
                 </Link>
-                <span className='text-lg font-bold'>{getPaymentStatusText(order.paymentStatus)}</span>
+                <span className='text-yellow-600'>{getPaymentStatusText(order.paymentStatus)}</span>
               </div>
-              <div className='flex w-full items-start justify-start border-b-2 py-4'>
-                <div className='aspect-square w-20 rounded-md border-2'>
+
+              {/* Content */}
+              <div className='flex flex-col items-start gap-4 px-4 py-5 md:flex-row md:items-center'>
+                {/* Image */}
+                <div className='h-20 w-20 shrink-0 overflow-hidden rounded-md border'>
                   <Image
                     src='https://cdn.pixabay.com/photo/2020/03/31/02/32/package-4986026_640.png'
                     alt='ảnh sản phẩm'
-                    width={100}
-                    height={100}
-                    className='size-full object-contain'
+                    width={80}
+                    height={80}
+                    className='h-full w-full object-contain'
                   />
                 </div>
-                <div className='ml-4'>
-                  <h2 className='text-xl font-semibold'>{order.subscription.name}</h2>
-                  <p className='text-base'>{order.subscription.billingCycle}</p>
-                  <p className='text-base'>
-                    <span className='font-semibold'>Code:</span> {order.orderId}
+
+                {/* Info */}
+                <div className='flex-1'>
+                  <h2 className='text-foreground text-base font-semibold md:text-lg'>{order.subscription.name}</h2>
+                  <p className='text-muted-foreground text-sm'>{order.subscription.billingCycle}</p>
+                  <p className='text-muted-foreground text-sm'>
+                    <span className='text-foreground font-medium'>Code:</span> {order.orderId}
                   </p>
                 </div>
-                <div className='ml-auto flex items-center gap-2 self-center'>
-                  <span className='line-through'>{order.subscription.price} đ</span>{' '}
-                  <span className='text-2xl font-bold'>{order.subscription.discount} đ</span>
+
+                {/* Price */}
+                <div className='text-right whitespace-nowrap'>
+                  <p className='text-muted-foreground text-sm line-through'>{order.subscription.price} đ</p>
+                  <p className='text-primary text-lg font-bold md:text-xl'>{order.subscription.discount} đ</p>
                 </div>
               </div>
-              <div className='mt-4 flex w-full items-center justify-end gap-4 text-base text-white'>
+
+              {/* Footer */}
+              <div className='flex justify-end border-t px-4 py-4'>
                 <Link
                   href={`/orders/${order.subscriptionId}?orderId=${order.orderId}`}
-                  className='hover:bg-primary-hover bg-primary-system block w-40 cursor-pointer items-center justify-center rounded-2xl py-4 text-center shadow-md'
-                  type='submit'
-                  // disabled={isPending}
+                  className='bg-primary-system hover:bg-primary-hover inline-flex h-10 items-center justify-center rounded-lg px-6 text-sm font-medium text-white transition'
                 >
                   View detail
                 </Link>
-                {order.paymentStatus === OrderStatusEnum.SUCCESS && (
-                  <>
-                    {/* <Link
-                      href='/'
-                      className='hover:bg-primary-foreground-hover outline-destructive text-destructive block w-40 cursor-pointer items-center justify-center rounded-2xl py-4 text-center shadow-md outline-2'
-                      type='submit'
-                    >
-                      Cancel order
-                    </Link> */}
-                  </>
-                )}
               </div>
             </div>
           ))

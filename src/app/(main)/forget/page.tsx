@@ -1,5 +1,4 @@
 'use client'
-import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useTransition } from 'react'
@@ -12,19 +11,19 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '~/component
 import { Input } from '~/components/ui/input'
 import Link from 'next/link'
 import { ForgetStyled } from './styled'
-import { ForgetSchema } from '#/zodType'
+import { ForgetFormValues, ForgetSchema } from '#/zodType'
 
 export default function ForgetForm() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
-  const form = useForm<z.infer<typeof ForgetSchema>>({
+  const form = useForm<ForgetFormValues>({
     resolver: zodResolver(ForgetSchema),
     defaultValues: {
       email: '',
     },
   })
-  async function onSubmit(data: z.infer<typeof ForgetSchema>) {
+  async function onSubmit(data: ForgetFormValues) {
     startTransition(async () => {
       const [checkEmailRes] = await Promise.all([
         http.get<{ check: boolean }>(LINKS.check_email_exist, {

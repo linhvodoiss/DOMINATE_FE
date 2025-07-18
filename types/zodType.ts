@@ -79,9 +79,16 @@ export const ChangeSchema = baseSchema
     message: 'Mật khẩu nhập lại không khớp',
   })
 
-// 👉 Đặt hàng: yêu cầu mô tả
 export const OrderSchema = z.object({
   description: z.string().min(1, 'Description is required').max(25, 'Description must be at most 25 characters'),
+})
+
+export const ProfileSchema = baseSchema.pick({
+  userName: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  phoneNumber: true,
 })
 
 export type LoginFormValues = z.infer<typeof LoginSchema>
@@ -90,3 +97,4 @@ export type ForgetFormValues = z.infer<typeof ForgetSchema>
 export type ResetFormValues = z.infer<typeof ResetSchema>
 export type ChangeFormValues = z.infer<typeof ChangeSchema>
 export type OrderFormValues = z.infer<typeof OrderSchema>
+export type ProfileFormValues = z.infer<typeof ProfileSchema>

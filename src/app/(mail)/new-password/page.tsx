@@ -1,5 +1,4 @@
 'use client'
-import { z } from 'zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useTransition } from 'react'
@@ -11,7 +10,7 @@ import { toast } from 'sonner'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { ResetPasswordStyled } from './styled'
-import { ResetSchema } from '#/zodType'
+import { ResetFormValues, ResetSchema } from '#/zodType'
 
 export default function ResetPasswordForm() {
   const router = useRouter()
@@ -19,14 +18,14 @@ export default function ResetPasswordForm() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
 
-  const form = useForm<z.infer<typeof ResetSchema>>({
+  const form = useForm<ResetFormValues>({
     resolver: zodResolver(ResetSchema),
     defaultValues: {
       password: '',
       rePassword: '',
     },
   })
-  async function onSubmit(data: z.infer<typeof ResetSchema>) {
+  async function onSubmit(data: ResetFormValues) {
     startTransition(async () => {
       const res = await http.get(LINKS.reset_password, {
         params: {

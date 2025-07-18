@@ -1,5 +1,4 @@
 'use client'
-import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useTransition } from 'react'
@@ -12,13 +11,13 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '~/component
 import { Input } from '~/components/ui/input'
 import { RegisterStyled } from './styled'
 import Link from 'next/link'
-import { RegisterSchema } from '#/zodType'
+import { RegisterFormValues, RegisterSchema } from '#/zodType'
 
 export default function LoginForm() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
-  const form = useForm<z.infer<typeof RegisterSchema>>({
+  const form = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       userName: '',
@@ -29,7 +28,7 @@ export default function LoginForm() {
       phoneNumber: '',
     },
   })
-  async function onSubmit(data: z.infer<typeof RegisterSchema>) {
+  async function onSubmit(data: RegisterFormValues) {
     startTransition(async () => {
       const [checkEmailRes, checkUserNameRes, checkPhoneNumberRes] = await Promise.all([
         http.get<{ check: boolean }>(LINKS.check_email_exist, {

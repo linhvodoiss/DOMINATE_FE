@@ -42,7 +42,6 @@ export default async function page({ params, searchParams }: Props) {
     },
   })
   const listLicensesUsed = data
-  console.log(listLicensesUsed)
 
   return (
     <LicensePage

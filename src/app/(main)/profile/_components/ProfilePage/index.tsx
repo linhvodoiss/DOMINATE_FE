@@ -1,5 +1,4 @@
 'use client'
-import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useState, useTransition } from 'react'
@@ -13,17 +12,7 @@ import { Input } from '~/components/ui/input'
 import { ProfileStyled } from './styled'
 import { User } from '#/user'
 import { useEffect } from 'react'
-const RegisterFormSchema = z.object({
-  userName: z.string({ message: 'Tên tài khoản là bắt buộc' }).min(1, { message: 'Tên tài khoản là bắt buộc' }),
-  firstName: z.string({ message: 'Họ của bạn là bắt buộc' }).min(1, { message: 'Họ của bạn là bắt buộc' }),
-  lastName: z.string({ message: 'Tên của bạn là bắt buộc' }).min(1, { message: 'Tên của bạn là bắt buộc' }),
-  email: z.string().min(1, { message: 'Email là bắt buộc' }).email({ message: 'Email không hợp lệ' }),
-  phoneNumber: z
-    .string()
-    .min(10, { message: 'Số điện thoại phải đủ 10–12 chữ số' })
-    .max(12, { message: 'Số điện thoại phải đủ 10–12 chữ số' })
-    .regex(/^[0-9]+$/, { message: 'Số điện thoại chỉ chứa chữ số' }),
-})
+import { ProfileFormValues, ProfileSchema } from '#/zodType'
 
 export default function ProfilePage({ user }: { user: User }) {
   const router = useRouter()
@@ -38,8 +27,8 @@ export default function ProfilePage({ user }: { user: User }) {
   }
   const [data] = useState(mockData)
 
-  const form = useForm<z.infer<typeof RegisterFormSchema>>({
-    resolver: zodResolver(RegisterFormSchema),
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(ProfileSchema),
     defaultValues: {
       userName: data.userName,
       firstName: data.firstName,
@@ -48,7 +37,7 @@ export default function ProfilePage({ user }: { user: User }) {
       phoneNumber: data.phoneNumber,
     },
   })
-  async function onSubmit(data: z.infer<typeof RegisterFormSchema>) {
+  async function onSubmit(data: ProfileFormValues) {
     startTransition(async () => {
       const [checkPhoneNumberRes] = await Promise.all([
         http.get<{ check: boolean }>(LINKS.check_phone_number__exist, {
@@ -57,7 +46,7 @@ export default function ProfilePage({ user }: { user: User }) {
       ])
 
       if (checkPhoneNumberRes.check) {
-        if (checkPhoneNumberRes.check) toast.error('Số điện thoại đã tồn tại')
+        if (checkPhoneNumberRes.check) toast.error('Phone number is exist')
         return
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -69,7 +58,7 @@ export default function ProfilePage({ user }: { user: User }) {
       console.log(res)
 
       if (!CODE_SUCCESS.includes(res.code)) {
-        toast.error('Cập nhật thông tin thất bại')
+        toast.error('Update information failed')
         return
       }
 
