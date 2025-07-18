@@ -15,11 +15,13 @@ export default async function Page({ params }: Props) {
   const { data } = await http.get<PackageResponse>(`${LINKS.detailPackage}/${id}`)
 
   return (
-    <div className='mt-12'>
-      <h1 className='text-primary mb-4 text-3xl font-semibold'>{data?.name}</h1>
-      <span className='mb-4 block text-base'>Updated at: {data?.updatedAt}</span>
-      <div className='flex w-full items-start justify-start gap-4 py-6'>
-        <div className='bg-primary-foreground aspect-video w-2/3 rounded-xl border-2 p-4 shadow-md'>
+    <div className='mt-8 px-4 md:px-8'>
+      <h1 className='text-primary mb-2 text-2xl font-semibold md:text-3xl'>{data?.name}</h1>
+      <span className='mb-6 block text-sm text-gray-600 md:text-base'>Updated at: {data?.updatedAt}</span>
+
+      <div className='flex w-full flex-col items-start justify-start gap-6 py-6 lg:flex-row'>
+        {/* Image */}
+        <div className='bg-primary-foreground aspect-video w-full rounded-xl border p-4 shadow-md sm:w-2/3 lg:w-2/3'>
           <Image
             src='https://cdn.pixabay.com/photo/2020/03/31/02/32/package-4986026_640.png'
             alt='ảnh sản phẩm'
@@ -28,62 +30,65 @@ export default async function Page({ params }: Props) {
             className='size-full object-contain'
           />
         </div>
-        <div className='bg-primary-foreground h-full w-1/3 flex-1 rounded-xl border-2 px-8 pt-8 pb-12 text-lg shadow-md'>
-          <p className='flex items-center justify-start gap-4 py-2'>
+
+        {/* Info */}
+        <div className='bg-primary-foreground w-full flex-1 rounded-xl border px-6 py-8 text-base shadow-md md:text-lg lg:w-1/3'>
+          {/* Price */}
+          <p className='flex items-center gap-4 py-2'>
             {data?.discount ? (
               <>
-                <span className='line-through'>{data?.price} đ</span>
-                <span className='text-2xl font-bold'>
+                <span className='text-gray-500 line-through'>{data?.price} đ</span>
+                <span className='text-primary text-2xl font-bold'>
                   {calPriceDiscount(data?.price as number, data?.discount as number)} đ
                 </span>
               </>
             ) : (
-              <span className='text-2xl font-bold'>{data?.price} đ</span>
+              <span className='text-primary text-2xl font-bold'>{data?.price} đ</span>
             )}
           </p>
 
+          {/* Cycle */}
           <p className='py-2'>
             <span className='font-semibold'>Cycle: </span>
             {data?.billingCycle}
           </p>
+
+          {/* Options */}
           <div className='py-2'>
             <span className='font-semibold'>Profit: </span>
-            <ul className='text-base'>
+            <ul className='list-inside list-disc text-base'>
               {data?.options?.map(option => (
-                <li key={option.id} className='block'>
+                <li key={option.id} className='mt-1'>
                   {option.name}
                 </li>
               ))}
             </ul>
           </div>
-          <div className='mt-4 flex w-full items-center justify-between gap-4 text-base text-white shadow-md'>
+
+          {/* Order button */}
+          <div className='mt-6 w-full'>
             <Link
               href={`/orders/${data?.id}`}
-              className='hover:bg-primary-hover bg-primary-system w-full cursor-pointer items-center justify-center rounded-2xl py-4 text-center font-semibold'
-              type='submit'
+              className='bg-primary-system hover:bg-primary-hover block w-full rounded-2xl py-3 text-center font-semibold text-white transition'
             >
               Order
             </Link>
           </div>
-          {/* <p className='py-2'>
-            Mô tả: {data?.options} Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias libero quos accusamus
-            omnis vel debitis, vitae autem voluptatum corporis, nulla, fugiat mollitia officiis fugit! Facilis modi
-            possimus at quia accusantium!
-          </p> */}
         </div>
       </div>
-      <div className='mt-4 w-full text-base'>
-        <h2 className='text-primary mb-4 text-2xl font-semibold'>Product description:</h2>
-        <p>
+
+      {/* Description */}
+      <div className='mt-8 w-full text-sm leading-relaxed md:text-base'>
+        <h2 className='text-primary mb-4 text-xl font-semibold md:text-2xl'>Product description:</h2>
+        <p className='text-gray-700'>
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, voluptatibus reprehenderit itaque dicta
           impedit tempore aliquam eaque magnam quod labore eius, nemo ipsa voluptas commodi? Illum doloribus voluptatem
-          a excepturi! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, voluptatibus reprehenderit
-          itaque dicta impedit tempore aliquam eaque magnam quod labore eius, nemo ipsa voluptas commodi? Illum
-          doloribus voluptatem a excepturi! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum,
-          voluptatibus reprehenderit itaque dicta impedit tempore aliquam eaque magnam quod labore eius, nemo ipsa
-          voluptas commodi? Illum doloribus voluptatem a excepturi! Lorem ipsum dolor, sit amet consectetur adipisicing
-          elit. Voluptatum, voluptatibus reprehenderit itaque dicta impedit tempore aliquam eaque magnam quod labore
-          eius, nemo ipsa voluptas commodi? Illum doloribus voluptatem a excepturi!
+          a excepturi!
+          <br />
+          <br />
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, voluptatibus reprehenderit itaque dicta
+          impedit tempore aliquam eaque magnam quod labore eius, nemo ipsa voluptas commodi? Illum doloribus voluptatem
+          a excepturi!
         </p>
       </div>
     </div>

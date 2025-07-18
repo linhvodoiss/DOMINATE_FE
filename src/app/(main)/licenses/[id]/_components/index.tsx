@@ -1,4 +1,5 @@
 'use client'
+
 import { LicenseResponse } from '#/licenses'
 import { User } from '#/user'
 import { useRouter } from 'next/navigation'
@@ -55,11 +56,12 @@ export default function LicensePage({ data, id, totalPages, pageNumber, dataLice
   }
 
   return (
-    <div className='bg-primary-foreground mt-12items-center mt-12 gap-4 rounded-2xl border-[1px] px-32 pt-8 pb-12 shadow-md'>
-      <h2 className='text-primary text-start text-3xl font-semibold'>Your licenses key</h2>
-      <hr className='mt-3 mb-3' />
+    <div className='bg-primary-foreground mt-12 rounded-2xl border px-4 pt-8 pb-12 shadow-md sm:px-8 md:px-16 lg:px-32'>
+      <h2 className='text-primary mb-2 text-2xl font-semibold sm:text-3xl'>Your licenses key</h2>
+      <hr className='my-3' />
+
       {data.length > 0 ? (
-        <Button className='mb-6 w-[140px] py-4' disabled={isPending} onClick={() => onOpenChange(true)}>
+        <Button className='mb-6 w-[140px]' disabled={isPending} onClick={() => onOpenChange(true)}>
           Get new key!
         </Button>
       ) : (
@@ -70,17 +72,26 @@ export default function LicensePage({ data, id, totalPages, pageNumber, dataLice
           Don&apos;t have key, buy now!
         </Link>
       )}
-      <ActiveTable dataLicenseUsed={dataLicenseUsed} />
-      <StoredTable data={data} isPending={isPending} />
 
-      {totalPages > 1 && <CustomPagination currentPage={pageNumber} totalPages={totalPages} containerClass='' />}
+      <div className='overflow-x-auto'>
+        <ActiveTable dataLicenseUsed={dataLicenseUsed} />
+      </div>
+      <div className='overflow-x-auto'>
+        <StoredTable data={data} isPending={isPending} />
+      </div>
+
+      {totalPages > 1 && (
+        <div className='mt-6'>
+          <CustomPagination currentPage={pageNumber} totalPages={totalPages} containerClass='' />
+        </div>
+      )}
+
       <ModalTypeActivated
         open={open}
         onOpenChange={setOpen}
         onSubmitOrder={activeNext}
         selectedType={selectedTypeInModal}
         onTypeChange={setSelectedTypeInModal}
-        // pending={pending}
         pending={isPending}
       />
     </div>
