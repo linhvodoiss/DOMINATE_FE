@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { WebHeaderStyled } from './styled'
 import ThemeChange from '../theme-change'
@@ -17,6 +17,25 @@ const menuItems = [
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [menuOpen])
 
   return (
     <WebHeaderStyled className='bg-background-primary border-primary-system relative z-10 border-b-2'>
@@ -57,7 +76,10 @@ export default function Header() {
         <ThemeChange className='ml-auto -translate-x-8 md:hidden' />
         <ProfileHeader />
         {menuOpen && (
-          <div className='bg-background-primary absolute top-20 right-0 left-0 flex flex-col gap-2 rounded-md border-1 border-solid border-white px-4 pb-4 md:hidden'>
+          <div
+            ref={menuRef}
+            className='bg-background-primary absolute top-20 right-0 left-0 flex flex-col gap-2 rounded-md border-1 border-solid border-white px-4 pb-4 md:hidden'
+          >
             {menuItems.map(item => (
               <Link
                 key={item.label}

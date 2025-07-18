@@ -13,7 +13,7 @@ export default function ProfileHeader() {
   if (!user) {
     return (
       <Link href='/login' className='font-bold'>
-        Đăng nhập
+        Login
       </Link>
     )
   }
@@ -23,22 +23,22 @@ export default function ProfileHeader() {
       <PopoverTrigger>
         <div className='cursor-pointer font-bold'>{user.userName}</div>
       </PopoverTrigger>
-      <PopoverContent className='border-primary-system flex flex-col rounded-2xl border-[1px] px-0 text-lg font-bold shadow-2xl'>
+      <PopoverContent className='bg-background-primary flex flex-col rounded-2xl border-1 border-solid border-white px-4 text-lg shadow-md'>
         <Link
           href='/profile'
-          className='border-primary-system text-primary hover:bg-primary-mute mx-auto block w-full cursor-pointer py-2 text-center'
+          className='text-primary hover:bg-primary-mute block w-full cursor-pointer border-b border-white/20 pb-2'
         >
           Profile
         </Link>
         <Link
           href={`/licenses/${user.id}`}
-          className='border-primary-system text-primary hover:bg-primary-mute mx-auto block w-full cursor-pointer py-2 text-center'
+          className='text-primary hover:bg-primary-mute mx-auto block w-full cursor-pointer border-b border-white/20 pt-4 pb-2'
         >
           My Licenses
         </Link>
         <Link
           href={`/my-order/${user.id}`}
-          className='border-primary-system text-primary hover:bg-primary-mute mx-auto block w-full cursor-pointer py-2 text-center'
+          className='text-primary hover:bg-primary-mute mx-auto block w-full cursor-pointer border-b border-white/20 pt-4 pb-2'
         >
           My Orders
         </Link>

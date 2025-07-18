@@ -232,7 +232,7 @@ export default function ProfilePage({ user }: { user: User }) {
             {/* Buttons */}
             <div className='mt-4 grid grid-cols-12'>
               {update ? (
-                <div className='col-span-10 col-start-3'>
+                <div className='col-span-10 col-start-1 md:col-start-3'>
                   <button
                     type='button'
                     className='hover-header-button bg-primary-system inline-block w-40 cursor-pointer items-center justify-center rounded-2xl py-4 font-semibold text-white'
@@ -242,7 +242,7 @@ export default function ProfilePage({ user }: { user: User }) {
                   </button>
                 </div>
               ) : (
-                <div className='col-span-10 col-start-3 font-semibold'>
+                <div className='col-span-10 col-start-1 flex font-semibold md:col-start-3 md:block'>
                   <button
                     type='button'
                     className='hover-header-button bg-primary-system mr-4 inline-block w-40 cursor-pointer items-center justify-center rounded-2xl py-4 text-white'
