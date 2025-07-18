@@ -1,47 +1,47 @@
 import { z } from 'zod'
 
 const baseSchema = z.object({
-  email: z.string().min(1, { message: 'Email là bắt buộc' }).email({ message: 'Email không hợp lệ' }),
+  email: z.string().min(1, { message: 'Email is required' }).email({ message: 'Email is not valid' }),
 
-  userName: z.string({ message: 'Tên tài khoản là bắt buộc' }).min(1, { message: 'Tên tài khoản là bắt buộc' }),
+  userName: z.string({ message: 'Username is required' }).min(1, { message: 'Username is required' }),
 
-  firstName: z.string({ message: 'Họ của bạn là bắt buộc' }).min(1, { message: 'Họ của bạn là bắt buộc' }),
+  firstName: z.string({ message: 'First name is required' }).min(1, { message: 'First name is required' }),
 
-  lastName: z.string({ message: 'Tên của bạn là bắt buộc' }).min(1, { message: 'Tên của bạn là bắt buộc' }),
+  lastName: z.string({ message: 'Last name is required' }).min(1, { message: 'Last name is required' }),
 
   phoneNumber: z
     .string()
-    .min(10, { message: 'Số điện thoại phải đủ 10–12 chữ số' })
-    .max(12, { message: 'Số điện thoại phải đủ 10–12 chữ số' })
-    .regex(/^[0-9]+$/, { message: 'Số điện thoại chỉ chứa chữ số' }),
+    .min(10, { message: 'Phone number must have 10-12 digits' })
+    .max(12, { message: 'Phone number must have 10-12 digits' })
+    .regex(/^[0-9]+$/, { message: 'Phone number must be digits' }),
 
-  oldPassword: z.string({ message: 'Mật khẩu là bắt buộc' }).min(1, { message: 'Mật khẩu là bắt buộc' }),
+  oldPassword: z.string({ message: 'Password is required' }).min(1, { message: 'Password is required' }),
 
-  password: z.string({ message: 'Mật khẩu là bắt buộc' }).min(1, { message: 'Mật khẩu là bắt buộc' }),
+  password: z.string({ message: 'Password is required' }).min(1, { message: 'Password is required' }),
 
-  rePassword: z.string({ message: 'Mật khẩu là bắt buộc' }).min(1, { message: 'Mật khẩu là bắt buộc' }),
+  rePassword: z.string({ message: 'Password is required' }).min(1, { message: 'Password is required' }),
 
-  newPassword: z.string({ message: 'Mật khẩu là bắt buộc' }).min(1, { message: 'Mật khẩu là bắt buộc' }),
+  newPassword: z.string({ message: 'Password is required' }).min(1, { message: 'Password is required' }),
 })
 
-// 👉 Form tổng hợp, dùng cho trang thay đổi mật khẩu
+// use for change password
 export const FormSchema = baseSchema
   .refine(data => data.newPassword === data.rePassword, {
     path: ['rePassword'],
-    message: 'Mật khẩu nhập lại không khớp',
+    message: 'Password does not match',
   })
   .refine(data => data.password === data.rePassword, {
     path: ['rePassword'],
-    message: 'Mật khẩu nhập lại không khớp',
+    message: 'Password does not match',
   })
 
-// 👉 Đăng nhập
+// Login
 export const LoginSchema = baseSchema.pick({
   userName: true,
   password: true,
 })
 
-// 👉 Đăng ký
+// Register
 export const RegisterSchema = baseSchema.pick({
   userName: true,
   firstName: true,
@@ -51,12 +51,12 @@ export const RegisterSchema = baseSchema.pick({
   phoneNumber: true,
 })
 
-// 👉 Quên mật khẩu
+// Forget password
 export const ForgetSchema = baseSchema.pick({
   email: true,
 })
 
-// 👉 Đặt lại mật khẩu
+// Reset password
 export const ResetSchema = baseSchema
   .pick({
     password: true,
@@ -64,10 +64,10 @@ export const ResetSchema = baseSchema
   })
   .refine(data => data.password === data.rePassword, {
     path: ['rePassword'],
-    message: 'Mật khẩu nhập lại không khớp',
+    message: 'Password does not match',
   })
 
-// 👉 Đổi mật khẩu
+//  Đổi mật khẩu
 export const ChangeSchema = baseSchema
   .pick({
     oldPassword: true,
@@ -91,6 +91,7 @@ export const ProfileSchema = baseSchema.pick({
   phoneNumber: true,
 })
 
+// Set type for schema
 export type LoginFormValues = z.infer<typeof LoginSchema>
 export type RegisterFormValues = z.infer<typeof RegisterSchema>
 export type ForgetFormValues = z.infer<typeof ForgetSchema>

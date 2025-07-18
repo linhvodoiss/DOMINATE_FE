@@ -1,5 +1,5 @@
 'use client'
-import { Shield, CheckCircle, Star, ArrowRight, Bot, Target, Gauge, ChevronDown } from 'lucide-react'
+import { Shield, CheckCircle, ArrowRight, Bot, Target, Gauge, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 
 const features = [
@@ -125,7 +125,6 @@ const faqs = [
 ]
 
 export default function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [expandedFaq, setExpandedFaq] = useState(null)
   return (
     <div className='min-h-screen'>

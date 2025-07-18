@@ -15,7 +15,7 @@ export default async function Page({ params }: Props) {
   const { data } = await http.get<PackageResponse>(`${LINKS.detailPackage}/${id}`)
 
   return (
-    <div className='mt-8 px-4 md:px-8'>
+    <div className='mt-12 px-4 md:px-8'>
       <h1 className='text-primary mb-2 text-2xl font-semibold md:text-3xl'>{data?.name}</h1>
       <span className='mb-6 block text-sm text-gray-600 md:text-base'>Updated at: {data?.updatedAt}</span>
 

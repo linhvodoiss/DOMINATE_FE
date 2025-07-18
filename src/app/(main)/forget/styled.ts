@@ -8,10 +8,6 @@ export const ForgetStyled = styled.div<{ $mobileWidth?: number }>`
     scaleMediaStyles($mobileWidth, {
       base: css``,
       landscape: css``,
-      portrait: css`
-        .form {
-          width: 100%;
-        }
-      `,
+      portrait: css``,
     })}
 `

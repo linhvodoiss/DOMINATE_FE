@@ -81,7 +81,7 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
             email: env.ADMIN_MAIL,
             packageId: data.id,
             orderId,
-            content: values.reminder, // ✅ Lấy từ input form
+            content: values.reminder,
           },
           baseUrl: '/api',
         })
@@ -113,7 +113,7 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
         }, 1000)
       } catch (error) {
         console.error('Error:', error)
-        toast.error('Gửi thất bại.')
+        toast.error('Send failed.')
       } finally {
         setPending(false)
       }
@@ -151,7 +151,7 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
         pending={pending}
         isReminder
         title='Reminder payment'
-        content='Vui lòng nhập nội dung lời nhắc'
+        content='Please enter content reminder'
         form={form}
       />
     </div>

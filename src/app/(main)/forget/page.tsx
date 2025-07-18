@@ -55,7 +55,7 @@ export default function ForgetForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className='form border-primary-system bg-primary-foreground mx-auto mt-12 w-[600px] rounded-2xl border-2 px-8 pt-8 pb-12 shadow-md'
+          className='border-primary-system bg-primary-foreground mx-auto mt-12 w-full rounded-2xl border-2 px-4 pt-8 pb-12 shadow-md md:w-[600px] md:px-8'
           autoComplete='off'
           noValidate
         >
@@ -78,13 +78,13 @@ export default function ForgetForm() {
             )}
           />
           <button
-            className='bg-primary-system hover:bg-primary-hover mx-auto mt-4 block w-full cursor-pointer items-center justify-center rounded-2xl px-12 py-4 font-semibold text-white'
+            className='bg-primary-system hover:bg-primary-hover mx-auto mt-4 block w-1/2 cursor-pointer items-center justify-center rounded-2xl px-12 py-4 font-semibold text-white'
             disabled={isPending}
           >
             Send email
           </button>
           <p className='text-md mt-4 text-center'>
-            Comeback login?
+            Comeback login?{' '}
             <Link href='/login' className='text-primary font-semibold'>
               Login
             </Link>

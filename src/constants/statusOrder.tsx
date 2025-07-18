@@ -11,6 +11,6 @@ export const getPaymentStatusText = (status?: string) => {
     case OrderStatusEnum.FAILED:
       return <span className='text-[#dc3545]'>Cancel</span>
     default:
-      return <span>Không xác định</span>
+      return <span>Undefined</span>
   }
 }

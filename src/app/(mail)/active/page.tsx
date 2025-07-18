@@ -25,8 +25,8 @@ export default function ActiveRegister() {
           baseUrl: '/api',
         })
       } catch (error) {
-        console.error('Kích hoạt thất bại:', error)
-        toast.error('Kích hoạt thất bại')
+        console.error('Active failed:', error)
+        toast.error('Active failed')
       }
     }
 
@@ -51,7 +51,7 @@ export default function ActiveRegister() {
 
   return (
     <p className='mt-8 flex items-center justify-center gap-4 text-center text-4xl font-semibold'>
-      Bạn đã kích hoạt tài khoản thành công, trở lại trang chủ sau {countdown} s{' '}
+      Your account active successfully, redirecting home page {countdown} s{' '}
       <CircleCheck className='h-8 w-8 text-green-600' />
     </p>
   )

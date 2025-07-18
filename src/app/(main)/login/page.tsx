@@ -43,7 +43,7 @@ export default function LoginForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className='form border-primary-system bg-primary-foreground mx-auto mt-12 w-[600px] rounded-2xl border-2 px-8 pt-8 pb-12 shadow-md'
+          className='border-primary-system bg-primary-foreground mx-auto mt-12 w-full rounded-2xl border-2 px-4 pt-8 pb-12 shadow-md md:w-[600px] md:px-8'
           autoComplete='off'
         >
           <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Login</h2>
@@ -83,7 +83,7 @@ export default function LoginForm() {
           <div>
             <div className='text-primary text-end'>
               <Link href='/forget' className='mt-2 mb-2 block w-full !text-end text-sm font-semibold'>
-                Forget?
+                Forget password?
               </Link>
             </div>
             <div className='flex w-full items-center justify-between gap-4 text-base font-semibold text-white'>

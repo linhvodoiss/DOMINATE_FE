@@ -49,10 +49,10 @@ export default function ResetPasswordForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className='form border-primary-system bg-primary-foreground mx-auto mt-12 w-[600px] rounded-2xl border-2 px-8 pt-8 pb-12 shadow-2xl'
+          className='border-primary-system bg-primary-foreground mx-auto mt-12 w-full rounded-2xl border-2 px-8 pt-8 pb-12 shadow-2xl md:w-[600px]'
           autoComplete='off'
         >
-          <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Đổi mật khẩu</h2>
+          <h2 className='text-primary pb-4 text-center text-3xl font-semibold'>Reset password</h2>
           <FormField
             control={form.control}
             name='password'
@@ -61,7 +61,7 @@ export default function ResetPasswordForm() {
                 <FormControl>
                   <Input
                     type='password'
-                    placeholder='Mật khẩu'
+                    placeholder='Password'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                     {...field}
                   />
@@ -78,7 +78,7 @@ export default function ResetPasswordForm() {
                 <FormControl>
                   <Input
                     type='password'
-                    placeholder='Xác nhận mật khẩu'
+                    placeholder='Confirm password'
                     className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                     {...field}
                   />
@@ -92,7 +92,7 @@ export default function ResetPasswordForm() {
               className='hover:bg-primary-hover bg-primary-system mx-auto mt-4 block w-full cursor-pointer items-center justify-center rounded-2xl px-12 py-4 text-white'
               disabled={isPending}
             >
-              Đổi mật khẩu
+              Reset
             </button>
           </div>
         </form>
