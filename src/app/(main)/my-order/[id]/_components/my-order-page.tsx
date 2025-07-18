@@ -10,9 +10,10 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { PAGE_SIZE } from '~/constants/paginate'
 import { getPaymentStatusText } from '~/constants/statusOrder'
 import { useRouter, useSearchParams } from 'next/navigation'
-import OrderStatusTabs from '~/app/_components/status-order-user'
+
 import { OrderStatusEnum } from '#/tabs-order'
 import { Input } from '~/components/ui/input'
+import OrderStatusTabs from './status-order-user'
 
 interface Props {
   data: OrderResponse[]
