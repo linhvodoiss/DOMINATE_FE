@@ -66,7 +66,7 @@ export default function OrderInfo({ data, user }: Props) {
           )}
         </div>
 
-        <Link href={`/${data?.id}`} className='text-primary mb-3 block font-semibold hover:underline'>
+        <Link href={`/product/${data?.id}`} className='text-primary mb-3 block font-semibold hover:underline'>
           Link product {'>'}
         </Link>
       </div>
