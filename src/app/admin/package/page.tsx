@@ -1,11 +1,10 @@
 'use client'
 
-import { Table, Input, Button, Space } from 'antd'
-import { SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import type { ColumnsType, ColumnType } from 'antd/es/table'
-import type { FilterConfirmProps } from 'antd/es/table/interface'
-import { useRef, useState } from 'react'
-import type { InputRef } from 'antd'
+import { Table, Input, Button, Select, Space, Pagination, PaginationProps } from 'antd'
+import { EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons'
+import { useState } from 'react'
+
+const { Option } = Select
 
 interface Package {
   key: string
@@ -14,9 +13,7 @@ interface Package {
   duration: string
 }
 
-type DataIndex = keyof Package
-
-const data: Package[] = [
+const originalData: Package[] = [
   {
     key: '1',
     name: 'Gói cơ bản',
@@ -35,86 +32,127 @@ const data: Package[] = [
     price: '500.000đ',
     duration: '12 tháng',
   },
+  {
+    key: '4',
+    name: 'Gói cơ bản',
+    price: '100.000đ',
+    duration: '1 tháng',
+  },
+  {
+    key: '5',
+    name: 'Gói nâng cao',
+    price: '250.000đ',
+    duration: '3 tháng',
+  },
+  {
+    key: '6',
+    name: 'Gói VIP',
+    price: '500.000đ',
+    duration: '12 tháng',
+  },
+  {
+    key: '7',
+    name: 'Gói cơ bản',
+    price: '100.000đ',
+    duration: '1 tháng',
+  },
+  {
+    key: '8',
+    name: 'Gói nâng cao',
+    price: '250.000đ',
+    duration: '3 tháng',
+  },
+  {
+    key: '9',
+    name: 'Gói VIP',
+    price: '500.000đ',
+    duration: '12 tháng',
+  },
+  {
+    key: '10',
+    name: 'Gói cơ bản',
+    price: '100.000đ',
+    duration: '1 tháng',
+  },
+  {
+    key: '11',
+    name: 'Gói nâng cao',
+    price: '250.000đ',
+    duration: '3 tháng',
+  },
+  {
+    key: '12',
+    name: 'Gói VIP',
+    price: '500.000đ',
+    duration: '12 tháng',
+  },
+  {
+    key: '13',
+    name: 'Gói cơ bản',
+    price: '100.000đ',
+    duration: '1 tháng',
+  },
+  {
+    key: '14',
+    name: 'Gói nâng cao',
+    price: '250.000đ',
+    duration: '3 tháng',
+  },
+  {
+    key: '15',
+    name: 'Gói VIP',
+    price: '500.000đ',
+    duration: '12 tháng',
+  },
+  {
+    key: '16',
+    name: 'Gói cơ bản',
+    price: '100.000đ',
+    duration: '1 tháng',
+  },
+  {
+    key: '17',
+    name: 'Gói nâng cao',
+    price: '250.000đ',
+    duration: '3 tháng',
+  },
+  {
+    key: '18',
+    name: 'Gói VIP',
+    price: '500.000đ',
+    duration: '12 tháng',
+  },
 ]
 
 export default function PackagePage() {
-  const [searchText, setSearchText] = useState('')
-  const [searchedColumn, setSearchedColumn] = useState('')
-  const searchInput = useRef<InputRef>(null)
+  const [searchName, setSearchName] = useState('')
+  const [selectedDuration, setSelectedDuration] = useState<string | undefined>(undefined)
 
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: (param?: FilterConfirmProps) => void,
-    dataIndex: DataIndex
-  ) => {
-    confirm()
-    setSearchText(selectedKeys[0])
-    setSearchedColumn(dataIndex)
+  const handleSearch = () => {
+    // lọc lại dữ liệu nếu cần, nhưng ở đây ta lọc trực tiếp trong render
   }
 
-  const handleReset = (clearFilters: () => void) => {
-    clearFilters()
-    setSearchText('')
-  }
-
-  const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<Package> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={searchInput}
-          placeholder={`Tìm ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
-          className='mb-2 block w-60'
-        />
-        <Space>
-          <Button
-            type='primary'
-            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size='small'
-            className='w-20'
-          >
-            Tìm
-          </Button>
-          <Button onClick={() => clearFilters && handleReset(clearFilters)} size='small' className='w-20'>
-            Xóa
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: filtered => <SearchOutlined className={filtered ? 'text-blue-500' : undefined} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
+  const filteredData = originalData.filter(pkg => {
+    const matchName = pkg.name.toLowerCase().includes(searchName.toLowerCase())
+    const matchDuration = selectedDuration ? pkg.duration === selectedDuration : true
+    return matchName && matchDuration
   })
 
-  const columns: ColumnsType<Package> = [
+  const columns = [
     {
       title: 'Tên gói',
       dataIndex: 'name',
       key: 'name',
-      ...getColumnSearchProps('name'),
     },
     {
       title: 'Giá',
       dataIndex: 'price',
       key: 'price',
-      ...getColumnSearchProps('price'),
     },
     {
       title: 'Thời gian',
       dataIndex: 'duration',
       key: 'duration',
-      filters: [
-        { text: '1 tháng', value: '1 tháng' },
-        { text: '3 tháng', value: '3 tháng' },
-        { text: '12 tháng', value: '12 tháng' },
-      ],
-      onFilter: (value, record) => record.duration.indexOf(value as string) === 0,
     },
     {
       title: 'Hành động',
@@ -133,13 +171,49 @@ export default function PackagePage() {
   ]
 
   return (
-    <div className='min-h-[500px] rounded p-6 shadow'>
+    <div className='min-h-[500px] rounded shadow'>
       <h2 className='mb-4 text-xl font-semibold'>Danh sách gói</h2>
+
+      {/* Bộ lọc riêng ngoài bảng */}
+      <div className='mb-4 flex flex-wrap items-center gap-4'>
+        <Input
+          placeholder='Tìm tên gói...'
+          value={searchName}
+          onChange={e => setSearchName(e.target.value)}
+          className='w-60'
+          allowClear
+        />
+        <Select
+          placeholder='Chọn thời gian'
+          value={selectedDuration}
+          onChange={value => setSelectedDuration(value)}
+          className='w-48'
+          allowClear
+        >
+          <Option value='1 tháng'>1 tháng</Option>
+          <Option value='3 tháng'>3 tháng</Option>
+          <Option value='12 tháng'>12 tháng</Option>
+        </Select>
+        <Button icon={<SearchOutlined />} onClick={handleSearch} className='filter-table' variant='outlined'>
+          Tìm kiếm
+        </Button>
+      </div>
+
       <Table
         columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 5 }}
-        className='bg-background [&_.ant-table]:!bg-background [&_.ant-table-thead>tr>th]:!bg-primary-system [&_.ant-table-tbody>tr>.ant-table-cell-row-hover]:!bg-primary-foreground-hover [&_.ant-table-thead>tr>th]:!text-[#FBFBFB]'
+        dataSource={filteredData}
+        className=''
+        pagination={{
+          pageSize: 5,
+          showSizeChanger: true,
+          pageSizeOptions: ['5', '10', '20', '50'],
+          onChange: (page, pageSize) => {
+            console.log('Page:', page, 'PageSize:', pageSize)
+          },
+          onShowSizeChange: (current, size) => {
+            console.log('PageSize changed to:', size)
+          },
+        }}
       />
     </div>
   )

@@ -17,7 +17,12 @@ export default function ThemeChange({ className = '' }: { className?: string }) 
 
   if (!mounted) {
     return (
-      <Switch className={className} checkedChildren={<SunOutlined />} unCheckedChildren={<MoonOutlined />} disabled />
+      <Switch
+        className={className}
+        checkedChildren={<SunOutlined />}
+        unCheckedChildren={<MoonOutlined className='!text-black' />}
+        disabled
+      />
     )
   }
 
@@ -30,7 +35,7 @@ export default function ThemeChange({ className = '' }: { className?: string }) 
       checked={isDark}
       onChange={() => setTheme(isDark ? 'light' : 'dark')}
       checkedChildren={<SunOutlined />}
-      unCheckedChildren={<MoonOutlined />}
+      unCheckedChildren={<MoonOutlined className='!text-black' />}
       style={{ backgroundColor: isDark ? '#555' : '#ccc' }}
     />
   )

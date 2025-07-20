@@ -1,0 +1,51 @@
+@import './../globals.css'; /* Đảm bảo đường dẫn đúng */
+
+/* select and option */
+.ant-select-dropdown {
+  background-color: var(--primary-foreground-hover ) !important;
+}
+
+.ant-select-dropdown .ant-select-item-option-selected {
+  background-color: var(--primary-system) !important;
+  color: oklch(0.985 0 0) !important;
+}
+.ant-select .ant-select-selector {
+  background-color: var(--primary-foreground-hover) !important;
+  border-color: var(--primary-system) !important;
+}
+.ant-input-affix-wrapper{
+    background-color: var(--primary-foreground-hover) !important;
+  border-color: var(--primary-system) !important;
+}
+/* table */
+.ant-table {
+  background-color: var(--background) !important;
+}
+
+
+.ant-table thead > tr > th {
+  background-color: var(--primary-system) !important;
+  color: #FBFBFB !important;
+}
+
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background-color: var(--primary-foreground-hover) !important;
+}
+/* button */
+.filter-table.ant-btn{
+  background-color: var(--primary-foreground-hover) !important;
+      border-color: var(--primary-system) !important;
+      color: var(--primary)!important;
+}
+
+/* pagination */
+.ant-pagination-item{
+    background-color: var(--primary-foreground-hover) !important;
+}
+.ant-pagination-item-active{
+   border-color: var(--primary-system) !important;
+}
+.ant-pagination-item-active a{
+   color: var(--primary-system) !important;
+}

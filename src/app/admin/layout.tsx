@@ -1,3 +1,4 @@
+import './admin.css'
 import AntdThemeProvider from './_components/antd-theme-provider'
 
 import SideBarAdmin from './_components/sidebar-admin'
