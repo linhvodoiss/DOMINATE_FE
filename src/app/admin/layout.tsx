@@ -1,15 +1,11 @@
-import { Suspense } from 'react'
-import { LoadingFallback } from '../_components/page-content'
+import AntdThemeProvider from './_components/antd-theme-provider'
 
-export default async function Layout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+import SideBarAdmin from './_components/sidebar-admin'
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <header>Đây là header</header>
-      <div className='mx-auto max-w-[1536px]'>{children}</div>
-    </Suspense>
+    <AntdThemeProvider>
+      <SideBarAdmin>{children}</SideBarAdmin>
+    </AntdThemeProvider>
   )
 }

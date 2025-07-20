@@ -1,49 +1,37 @@
 'use client'
 
-import { Layout, Menu, Avatar, Dropdown, Space } from 'antd'
-import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons'
 import React from 'react'
+import { BellOutlined, UserOutlined } from '@ant-design/icons'
+import { Avatar, Badge, Button, Dropdown, Layout, Space } from 'antd'
+import ThemeChange from './theme-change'
 
 const { Header } = Layout
 
-const items = [
-  { key: '1', label: 'Trang chủ' },
-  { key: '2', label: 'Sản phẩm' },
-  { key: '3', label: 'Liên hệ' },
-]
-
-const userMenu = [
-  {
-    key: 'profile',
-    icon: <SettingOutlined />,
-    label: 'Tài khoản',
-  },
-  {
-    key: 'logout',
-    icon: <LogoutOutlined />,
-    label: 'Đăng xuất',
-  },
-]
-
-export default function AppHeader() {
-  const onMenuClick = ({ key }: { key: string }) => {
-    if (key === 'logout') {
-      // TODO: Xử lý đăng xuất
-      console.log('Đăng xuất')
-    }
-  }
+export default function AdminHeader() {
+  const items = [
+    {
+      key: 'profile',
+      label: 'Profile',
+    },
+    {
+      key: 'logout',
+      label: 'Logout',
+    },
+  ]
 
   return (
-    <Header className='flex items-center justify-between bg-white px-6 shadow-md'>
-      <div className='text-xl font-bold text-blue-600'>MyApp</div>
+    <Header className='!bg-background flex h-16 items-center justify-end pl-3'>
+      <Space size='middle'>
+        <ThemeChange />
 
-      <Menu mode='horizontal' items={items} className='flex-1 justify-center border-b-0' />
+        <Badge count={5} size='small'>
+          <Button type='text' icon={<BellOutlined />} />
+        </Badge>
 
-      <Dropdown menu={{ items: userMenu, onClick: onMenuClick }}>
-        <Space className='cursor-pointer'>
-          <Avatar icon={<UserOutlined />} />
-        </Space>
-      </Dropdown>
+        <Dropdown menu={{ items }} trigger={['click']}>
+          <Avatar size='default' icon={<UserOutlined />} className='cursor-pointer' />
+        </Dropdown>
+      </Space>
     </Header>
   )
 }
