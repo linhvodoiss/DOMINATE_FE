@@ -1,12 +1,6 @@
 'use client'
 import { Layout, Menu } from 'antd'
-import {
-  DashboardOutlined,
-  UserOutlined,
-  AppstoreAddOutlined,
-  IdcardOutlined,
-  EllipsisOutlined,
-} from '@ant-design/icons'
+import { DashboardOutlined, UserOutlined, EllipsisOutlined, ProfileOutlined, DropboxOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 
 import Image from 'next/image'
@@ -39,14 +33,14 @@ export default function SideBarAdmin({ children }: { children: ReactNode }) {
               className: '!text-secondary-gray',
             },
             {
-              key: 'license',
-              icon: <IdcardOutlined />,
-              label: <Link href='/admin/license'>License</Link>,
+              key: 'order',
+              icon: <ProfileOutlined />,
+              label: <Link href='/admin/order'>Order</Link>,
               className: '!text-secondary-gray',
             },
             {
               key: 'package',
-              icon: <AppstoreAddOutlined />,
+              icon: <DropboxOutlined />,
               label: <Link href='/admin/package'>Package</Link>,
               className: '!text-secondary-gray',
             },
@@ -63,7 +57,7 @@ export default function SideBarAdmin({ children }: { children: ReactNode }) {
         <AdminHeader />
 
         <Content className='!bg-background !text-secondary-gray border-primary-system rounded-tl-2xl border-t-2 border-l-2'>
-          <div className='min-h-[500px] rounded p-6 shadow'>{children}</div>
+          <div className='min-h-[500px] rounded shadow'>{children}</div>
         </Content>
       </Layout>
     </Layout>

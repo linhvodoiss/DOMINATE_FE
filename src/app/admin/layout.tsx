@@ -2,11 +2,23 @@ import './admin.css'
 import AntdThemeProvider from './_components/antd-theme-provider'
 
 import SideBarAdmin from './_components/sidebar-admin'
+import { AuthProvider } from '../_components/auth-context'
+import { cookies } from 'next/headers'
+import { AUTH } from '~/constants'
+import { User } from '#/user'
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies()
+  const token = cookieStore.get(AUTH.token)?.value
+  const user = (
+    cookieStore.get(AUTH.userInfo)?.value ? JSON.parse(cookieStore.get(AUTH.userInfo)!.value) : undefined
+  ) as User | undefined
+
   return (
     <AntdThemeProvider>
-      <SideBarAdmin>{children}</SideBarAdmin>
+      <AuthProvider token={token} user={user}>
+        <SideBarAdmin>{children}</SideBarAdmin>
+      </AuthProvider>
     </AntdThemeProvider>
   )
 }

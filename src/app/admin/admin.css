@@ -17,6 +17,9 @@
     background-color: var(--primary-foreground-hover) !important;
   border-color: var(--primary-system) !important;
 }
+.ant-input-group-addon{
+  border-color: var(--primary-system) !important;
+}
 /* table */
 .ant-table {
   background-color: var(--background) !important;
