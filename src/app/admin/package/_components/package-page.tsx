@@ -1,14 +1,14 @@
 'use client'
 
-import { Input, Button, Select, Space, Tag } from 'antd'
-import { SearchOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
+import { Button, Col, Form, Grid, Input, InputNumber, Modal, Row, Select, Slider, Space, Switch, Tag } from 'antd'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import TableAdmin from '../../_components/table-admin'
 import { PackageResponse } from '#/package'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
-import { SortOrder } from 'antd/es/table/interface'
+import { useSearchParams } from 'next/navigation'
 
-const { Option } = Select
+import { SortOrder } from 'antd/es/table/interface'
+import FilterPackage from './filter-package'
+import { useState } from 'react'
 
 interface Props {
   listPackage: PackageResponse[]
@@ -16,37 +16,65 @@ interface Props {
   pageSize: number
   totalElements: number
 }
+const billingCycleOptions = [
+  { label: 'Monthly', value: 'MONTHLY' },
+  { label: 'Yearly', value: 'YEARLY' },
+]
 
 export default function PackagePage({ listPackage, pageNumber, totalElements, pageSize }: Props) {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const sort = searchParams.get('sort') || ''
+  // State cho modal
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalType, setModalType] = useState<'add' | 'edit'>('add')
+  const [editRecord, setEditRecord] = useState<PackageResponse | null>(null)
+  const allOptions = listPackage.flatMap(pkg => pkg.options || [])
+  const uniqueOptions = Array.from(new Map(allOptions.map(opt => [opt.id, opt])).values())
+  const optionList = uniqueOptions.map(opt => ({
+    label: opt.name,
+    value: opt.id,
+  }))
+  const { useBreakpoint } = Grid
+  const screens = useBreakpoint()
+  const isMobile = !screens.md
 
-  const [cycle, setCycle] = useState(searchParams.get('cycle') || '')
-  const [type, setType] = useState(searchParams.get('type') || '')
-  const [active, setActive] = useState(searchParams.get('isActive') || '')
-  const [search, setSearch] = useState(searchParams.get('search') || '')
-  const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '')
-  const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '')
+  const [form] = Form.useForm()
 
-  const handleFilterChange = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (value) {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-    params.set('page', '1')
-    router.push(`?${params.toString()}`)
+  // Reset form khi mở modal add
+  const handleAdd = () => {
+    setModalType('add')
+    setEditRecord(null)
+    setIsModalOpen(true)
+    form.resetFields()
   }
-  const handleReset = () => {
-    setSearch('')
-    setCycle('')
-    setType('')
-    setActive('')
-    setMinPrice('')
-    setMaxPrice('')
-    router.push(window.location.pathname)
+
+  // Set giá trị form khi mở modal edit
+  const handleEdit = (record: PackageResponse) => {
+    setModalType('edit')
+    setEditRecord(record)
+    setIsModalOpen(true)
+    form.setFieldsValue({
+      ...record,
+      options: record.options?.map(opt => opt.id),
+    })
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false)
+    setEditRecord(null)
+    form.resetFields()
+  }
+
+  const handleFinish = (values: any) => {
+    if (modalType === 'add') {
+      // Xử lý thêm mới
+      console.log('Add:', values)
+    } else {
+      // Xử lý cập nhật
+      console.log('Update:', { ...editRecord, ...values })
+    }
+    setIsModalOpen(false)
+    form.resetFields()
   }
 
   const columns = [
@@ -82,7 +110,7 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
       key: 'action',
       render: (_: any, record: PackageResponse) => (
         <Space>
-          <Button type='link' icon={<EditOutlined />} onClick={() => console.log('Edit', record)} />
+          <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           <Button type='link' danger icon={<DeleteOutlined />} onClick={() => console.log('Delete', record)} />
         </Space>
       ),
@@ -92,99 +120,12 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
   return (
     <div className='min-h-[500px] rounded p-6 shadow'>
       <h2 className='mb-4 text-xl font-semibold'>List Package</h2>
-      <div className='mb-6 flex flex-wrap items-center gap-3'>
-        <Input
-          placeholder='Find package...'
-          className='!h-10 !w-60 rounded-md shadow-sm'
-          allowClear
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          onPressEnter={() => handleFilterChange('search', search)}
-          suffix={
-            <SearchOutlined
-              className='hover:text-primary cursor-pointer text-gray-400 transition'
-              onClick={() => handleFilterChange('search', search)}
-            />
-          }
-        />
-
-        <Input
-          placeholder='Min price'
-          className='!h-10 !w-32'
-          allowClear
-          type='number'
-          min={0}
-          value={minPrice}
-          onChange={e => {
-            setMinPrice(e.target.value)
-            handleFilterChange('minPrice', e.target.value)
-          }}
-        />
-
-        <Input
-          placeholder='Max price'
-          className='!h-10 !w-32'
-          allowClear
-          type='number'
-          min={0}
-          value={maxPrice}
-          onChange={e => {
-            setMaxPrice(e.target.value)
-            handleFilterChange('maxPrice', e.target.value)
-          }}
-        />
-
-        <Select
-          placeholder='Choose cycle'
-          className='!h-10 !w-48'
-          allowClear
-          value={cycle || undefined}
-          onChange={value => {
-            setCycle(value)
-            handleFilterChange('cycle', value)
-          }}
-        >
-          <Option value='MONTHLY'>Month</Option>
-          <Option value='HALF_YEARLY'>Half year</Option>
-          <Option value='YEARLY'>An year</Option>
-        </Select>
-
-        <Select
-          placeholder='Choose type'
-          className='!h-10 !w-48'
-          allowClear
-          value={type || undefined}
-          onChange={value => {
-            setType(value)
-            handleFilterChange('type', value)
-          }}
-        >
-          <Option value='DEV'>Dev</Option>
-          <Option value='RUNTIME'>Runtime</Option>
-        </Select>
-
-        <Select
-          placeholder='Choose active'
-          className='!h-10 !w-48'
-          allowClear
-          value={active || undefined}
-          onChange={value => {
-            setActive(value)
-            handleFilterChange('isActive', value)
-          }}
-        >
-          <Option value='true'>Active</Option>
-          <Option value='false'>Inactive</Option>
-        </Select>
-        <Button
-          onClick={handleReset}
-          className='filter-table flex items-center justify-center'
-          icon={<ReloadOutlined />}
-          shape='circle'
-          title='Reset bộ lọc'
-        />
-      </div>
-
+      <FilterPackage />
+      <Space className='mb-4 flex w-full justify-end'>
+        <Button type='text' className='filter-table !px-8' onClick={handleAdd}>
+          Add
+        </Button>
+      </Space>
       <TableAdmin
         columns={columns}
         dataSource={listPackage}
@@ -193,6 +134,72 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
         pageSize={pageSize}
         rowKey='id'
       />
+      <Modal
+        title={modalType === 'add' ? 'Add Package' : 'Update Package'}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+        centered
+      >
+        <Form
+          form={form}
+          layout={isMobile ? 'vertical' : 'horizontal'} // ✅ tự động thay đổi
+          labelCol={isMobile ? undefined : { span: 6 }}
+          wrapperCol={isMobile ? undefined : { span: 18 }}
+          initialValues={{
+            name: '',
+            price: 0,
+            discount: 0,
+            billingCycle: 'MONTHLY',
+            isActive: true,
+            options: [],
+          }}
+          onFinish={handleFinish}
+        >
+          <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Please input name!' }]}>
+            <Input />
+          </Form.Item>
+
+          <Form.Item name='price' label='Price' rules={[{ required: true, type: 'number', min: 0 }]}>
+            <Input type='number' className='!w-full' />
+          </Form.Item>
+
+          <Form.Item
+            name='discount'
+            label='Discount (%)'
+            rules={[{ required: true, type: 'number', min: 0, max: 100 }]}
+          >
+            <Slider min={0} max={100} className='!w-full' />
+          </Form.Item>
+
+          <Form.Item name='billingCycle' label='Billing Cycle' rules={[{ required: true }]}>
+            <Select options={billingCycleOptions} />
+          </Form.Item>
+
+          <Form.Item name='isActive' label='Active' valuePropName='checked' className='custom-switch'>
+            <Switch className='custom-switch' checkedChildren='Active' unCheckedChildren='Inactive' />
+          </Form.Item>
+
+          <Form.Item name='options' label='Options' rules={[{ required: true }]}>
+            <Select mode='multiple' options={optionList} placeholder='Select options' />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ xs: { span: 24 }, md: { offset: 6, span: 18 } }}>
+            <Row gutter={16}>
+              <Col>
+                <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
+                  {modalType === 'add' ? 'Add' : 'Update'}
+                </Button>
+              </Col>
+              <Col>
+                <Button type='primary' onClick={handleCancel} className='!border-primary-system !bg-red-500'>
+                  Cancel
+                </Button>
+              </Col>
+            </Row>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   )
 }

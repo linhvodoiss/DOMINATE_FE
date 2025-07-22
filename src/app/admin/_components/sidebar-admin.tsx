@@ -6,8 +6,21 @@ import Link from 'next/link'
 import Image from 'next/image'
 import AdminHeader from './header'
 import { ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
 const { Sider, Content } = Layout
+
+function getMenuKey(pathname: string) {
+  if (pathname.startsWith('/admin/dashboard')) return 'dashboard'
+  if (pathname.startsWith('/admin/user')) return 'user'
+  if (pathname.startsWith('/admin/order')) return 'order'
+  if (pathname.startsWith('/admin/package')) return 'package'
+  if (pathname.startsWith('/admin/option')) return 'option'
+  return 'dashboard'
+}
 export default function SideBarAdmin({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
+  const selectedKey = getMenuKey(pathname)
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider breakpoint='lg' collapsedWidth='0' className='!bg-background'>
@@ -17,7 +30,7 @@ export default function SideBarAdmin({ children }: { children: ReactNode }) {
         <Menu
           theme='dark'
           mode='inline'
-          defaultSelectedKeys={['dashboard']}
+          selectedKeys={[selectedKey]}
           className='!bg-background [&_.ant-menu-item-selected]:!bg-primary-system [&_.ant-menu-item-selected]:!text-[#ebebeb]'
           items={[
             {
