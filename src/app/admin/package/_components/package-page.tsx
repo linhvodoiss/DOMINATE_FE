@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Col, Form, Grid, Input, InputNumber, Modal, Row, Select, Slider, Space, Switch, Tag } from 'antd'
+import { Button, Col, Form, Grid, Input, Modal, Row, Select, Slider, Space, Switch, Tag } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import TableAdmin from '../../_components/table-admin'
 import { PackageResponse } from '#/package'
