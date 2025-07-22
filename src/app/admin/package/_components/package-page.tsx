@@ -6,6 +6,7 @@ import TableAdmin from '../../_components/table-admin'
 import { PackageResponse } from '#/package'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import { SortOrder } from 'antd/es/table/interface'
 
 const { Option } = Select
 
@@ -54,7 +55,7 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
       dataIndex: 'id',
       key: 'id',
       sorter: true,
-      sortOrder: sort === 'id,asc' ? 'ascend' : sort === 'id,desc' ? 'descend' : null,
+      sortOrder: (sort === 'id,asc' ? 'ascend' : sort === 'id,desc' ? 'descend' : undefined) as SortOrder | undefined,
     },
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
@@ -190,6 +191,7 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
         currentPage={pageNumber}
         totalItems={totalElements}
         pageSize={pageSize}
+        rowKey='id'
       />
     </div>
   )

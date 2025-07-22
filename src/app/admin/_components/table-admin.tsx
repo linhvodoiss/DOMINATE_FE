@@ -39,9 +39,10 @@ export default function TableAdmin<T extends object>({
       onChange={(pagination, filters, sorter) => {
         const params = new URLSearchParams(searchParams.toString())
 
-        if (Array.isArray(sorter)) return // AntD 5 chưa support multi sort
+        params.set('page', pagination.current?.toString() || '1')
+        params.set('size', pagination.pageSize?.toString() || '10')
 
-        if (sorter && sorter.field && sorter.order) {
+        if (!Array.isArray(sorter) && sorter.field && sorter.order) {
           params.set('sort', `${sorter.field},${sorter.order === 'ascend' ? 'asc' : 'desc'}`)
         } else {
           params.delete('sort')
