@@ -9,6 +9,7 @@ interface TableAdminProps<T> extends TableProps<T> {
   totalItems?: number
   currentPage?: number
   pageSize?: number
+  onSelectRows?: (selectedRowKeys: React.Key[], selectedRows: T[]) => void
 }
 
 export default function TableAdmin<T extends object>({
@@ -19,6 +20,7 @@ export default function TableAdmin<T extends object>({
   currentPage = 1,
   pageSize = 10,
   pagination,
+  onSelectRows,
   ...rest
 }: TableAdminProps<T>) {
   const router = useRouter()
@@ -36,6 +38,16 @@ export default function TableAdmin<T extends object>({
       columns={columns}
       dataSource={dataSource}
       rowKey={rowKey}
+      rowSelection={
+        onSelectRows
+          ? {
+              type: 'checkbox',
+              onChange: (selectedRowKeys, selectedRows) => {
+                onSelectRows(selectedRowKeys, selectedRows as T[])
+              },
+            }
+          : undefined
+      }
       onChange={(pagination, filters, sorter) => {
         const params = new URLSearchParams(searchParams.toString())
 

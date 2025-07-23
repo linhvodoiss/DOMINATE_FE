@@ -26,4 +26,6 @@ export const LINKS = {
   licenses_user: '/licenses/user',
   licenses_can_used: '/licenses/canUsed',
   licenses_activate_next: '/licenses/activate-next',
+  subscriptions: '/subscriptions',
+  options: '/options',
 }

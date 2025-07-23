@@ -1,14 +1,20 @@
 'use client'
 
-import { Button, Col, Form, Grid, Input, Modal, Row, Select, Slider, Space, Switch, Tag } from 'antd'
+import { Button, Form, Space, Tag } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Popconfirm } from 'antd'
 import TableAdmin from '../../_components/table-admin'
 import { PackageResponse } from '#/package'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { SortOrder } from 'antd/es/table/interface'
 import FilterPackage from './filter-package'
-import { useState } from 'react'
+import { startTransition, useState } from 'react'
+import http from '~/utils/http'
+import { CODE_SUCCESS } from '~/constants'
+import { toast } from 'sonner'
+import { LINKS } from '~/constants/links'
+import PackageAction from './package-action'
 
 interface Props {
   listPackage: PackageResponse[]
@@ -16,47 +22,67 @@ interface Props {
   pageSize: number
   totalElements: number
 }
-const billingCycleOptions = [
-  { label: 'Monthly', value: 'MONTHLY' },
-  { label: 'Yearly', value: 'YEARLY' },
-]
 
 export default function PackagePage({ listPackage, pageNumber, totalElements, pageSize }: Props) {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+
+  const handleDeleteMany = async () => {
+    if (selectedRowKeys.length === 0) {
+      toast.warning('Please select at least one package to delete')
+      return
+    }
+    startTransition(async () => {
+      const res = await http.delete(LINKS.subscriptions, {
+        body: JSON.stringify(selectedRowKeys),
+        baseUrl: '/api',
+      })
+      if (!CODE_SUCCESS.includes(res.code)) {
+        toast.error(res.message || 'Delete items failed')
+        return
+      }
+      toast.success(res.message || 'Delete items successfully')
+      setSelectedRowKeys([])
+      router.refresh()
+    })
+  }
   const searchParams = useSearchParams()
+  const router = useRouter()
   const sort = searchParams.get('sort') || ''
   // State cho modal
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalType, setModalType] = useState<'add' | 'edit'>('add')
   const [editRecord, setEditRecord] = useState<PackageResponse | null>(null)
-  const allOptions = listPackage.flatMap(pkg => pkg.options || [])
-  const uniqueOptions = Array.from(new Map(allOptions.map(opt => [opt.id, opt])).values())
-  const optionList = uniqueOptions.map(opt => ({
-    label: opt.name,
-    value: opt.id,
-  }))
-  const { useBreakpoint } = Grid
-  const screens = useBreakpoint()
-  const isMobile = !screens.md
+  const [optionList, setOptionList] = useState<{ label: string; value: string | number }[]>([])
 
+  const fetchOptions = async () => {
+    const res = await http.get(LINKS.options, {
+      baseUrl: '/api',
+    })
+    console.log('res', res)
+    if (res.data && Array.isArray(res.data)) {
+      setOptionList(res.data.map(opt => ({ label: opt.name, value: opt.id })))
+    } else {
+      setOptionList([])
+    }
+  }
   const [form] = Form.useForm()
 
-  // Reset form khi mở modal add
+  // Open modal for adding new package
+  // Reset form when opening add modal
   const handleAdd = () => {
     setModalType('add')
     setEditRecord(null)
     setIsModalOpen(true)
-    form.resetFields()
+    fetchOptions()
   }
 
-  // Set giá trị form khi mở modal edit
+  // Set modal type to edit and set record to edit
+  // Reset form when opening edit modal
   const handleEdit = (record: PackageResponse) => {
     setModalType('edit')
     setEditRecord(record)
     setIsModalOpen(true)
-    form.setFieldsValue({
-      ...record,
-      options: record.options?.map(opt => opt.id),
-    })
+    fetchOptions()
   }
 
   const handleCancel = () => {
@@ -64,17 +90,54 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
     setEditRecord(null)
     form.resetFields()
   }
-
-  const handleFinish = (values: any) => {
+  // Delete one package
+  // This function is called when the delete button is clicked
+  const handleDeleteOne = async (id: string | number) => {
+    startTransition(async () => {
+      const res = await http.delete(`${LINKS.subscriptions}/${id}`, {
+        baseUrl: '/api',
+      })
+      if (!CODE_SUCCESS.includes(res.code)) {
+        toast.error(res.message || 'Delete failed')
+        return
+      }
+      toast.success(res.message || 'Delete successfully')
+      router.refresh()
+    })
+  }
+  // Handle form submission for adding or editing package
+  // This function is called when the form is submitted
+  const handleFinish = (values: PackageResponse) => {
     if (modalType === 'add') {
-      // Xử lý thêm mới
-      console.log('Add:', values)
+      startTransition(async () => {
+        const res = await http.post(LINKS.subscriptions, {
+          body: JSON.stringify(values),
+          baseUrl: '/api',
+        })
+        if (!CODE_SUCCESS.includes(res.code)) {
+          toast.error(res.message || 'Add package failed')
+          return
+        }
+        toast.success(res.message || 'Add package successfully')
+        setIsModalOpen(false)
+        router.refresh()
+      })
     } else {
-      // Xử lý cập nhật
+      startTransition(async () => {
+        const res = await http.put(`${LINKS.subscriptions}/${editRecord?.id}`, {
+          body: JSON.stringify(values),
+          baseUrl: '/api',
+        })
+        if (!CODE_SUCCESS.includes(res.code)) {
+          toast.error(res.message || 'Update package failed')
+          return
+        }
+        toast.success(res.message || 'Update package successfully')
+        setIsModalOpen(false)
+        router.refresh()
+      })
       console.log('Update:', { ...editRecord, ...values })
     }
-    setIsModalOpen(false)
-    form.resetFields()
   }
 
   const columns = [
@@ -108,10 +171,18 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
     {
       title: 'Hành động',
       key: 'action',
-      render: (_: any, record: PackageResponse) => (
+      render: (_: unknown, record: PackageResponse) => (
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          <Button type='link' danger icon={<DeleteOutlined />} onClick={() => console.log('Delete', record)} />
+          <Popconfirm
+            title='Bạn có chắc chắn muốn xóa package này?'
+            onConfirm={() => handleDeleteOne(record.id as number)}
+            okText='Xóa'
+            cancelText='Hủy'
+            placement='bottom'
+          >
+            <Button type='link' danger icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -121,7 +192,23 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
     <div className='min-h-[500px] rounded p-6 shadow'>
       <h2 className='mb-4 text-xl font-semibold'>List Package</h2>
       <FilterPackage />
-      <Space className='mb-4 flex w-full justify-end'>
+      <Space className='mb-4 flex w-full justify-between'>
+        <Popconfirm
+          title='Are you sure want to delete those items?'
+          onConfirm={handleDeleteMany}
+          okText='OK'
+          cancelText='Cancel'
+          disabled={selectedRowKeys.length === 0}
+          placement='bottom'
+        >
+          <Button
+            type='primary'
+            danger
+            className='!ml-2'
+            disabled={selectedRowKeys.length === 0}
+            icon={<DeleteOutlined />}
+          />
+        </Popconfirm>
         <Button type='text' className='filter-table !px-8' onClick={handleAdd}>
           Add
         </Button>
@@ -133,73 +220,17 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
         totalItems={totalElements}
         pageSize={pageSize}
         rowKey='id'
+        onSelectRows={keys => setSelectedRowKeys(keys)}
       />
-      <Modal
-        title={modalType === 'add' ? 'Add Package' : 'Update Package'}
-        open={isModalOpen}
+      <PackageAction
+        visible={isModalOpen}
         onCancel={handleCancel}
-        footer={null}
-        centered
-      >
-        <Form
-          form={form}
-          layout={isMobile ? 'vertical' : 'horizontal'} // ✅ tự động thay đổi
-          labelCol={isMobile ? undefined : { span: 6 }}
-          wrapperCol={isMobile ? undefined : { span: 18 }}
-          initialValues={{
-            name: '',
-            price: 0,
-            discount: 0,
-            billingCycle: 'MONTHLY',
-            isActive: true,
-            options: [],
-          }}
-          onFinish={handleFinish}
-        >
-          <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Please input name!' }]}>
-            <Input />
-          </Form.Item>
-
-          <Form.Item name='price' label='Price' rules={[{ required: true, type: 'number', min: 0 }]}>
-            <Input type='number' className='!w-full' />
-          </Form.Item>
-
-          <Form.Item
-            name='discount'
-            label='Discount (%)'
-            rules={[{ required: true, type: 'number', min: 0, max: 100 }]}
-          >
-            <Slider min={0} max={100} className='!w-full' />
-          </Form.Item>
-
-          <Form.Item name='billingCycle' label='Billing Cycle' rules={[{ required: true }]}>
-            <Select options={billingCycleOptions} />
-          </Form.Item>
-
-          <Form.Item name='isActive' label='Active' valuePropName='checked' className='custom-switch'>
-            <Switch className='custom-switch' checkedChildren='Active' unCheckedChildren='Inactive' />
-          </Form.Item>
-
-          <Form.Item name='options' label='Options' rules={[{ required: true }]}>
-            <Select mode='multiple' options={optionList} placeholder='Select options' />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ xs: { span: 24 }, md: { offset: 6, span: 18 } }}>
-            <Row gutter={16}>
-              <Col>
-                <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
-                  {modalType === 'add' ? 'Add' : 'Update'}
-                </Button>
-              </Col>
-              <Col>
-                <Button type='primary' onClick={handleCancel} className='!border-primary-system !bg-red-500'>
-                  Cancel
-                </Button>
-              </Col>
-            </Row>
-          </Form.Item>
-        </Form>
-      </Modal>
+        onFinish={handleFinish}
+        modalType={modalType}
+        editRecord={editRecord}
+        optionList={optionList}
+        form={form}
+      />
     </div>
   )
 }

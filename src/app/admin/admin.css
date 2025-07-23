@@ -1,4 +1,24 @@
 @import './../globals.css'; /* Đảm bảo đường dẫn đúng */
+/* popconfirm */
+.ant-popover-inner {
+  background-color: var(--primary-foreground-hover) !important;
+  color: #fbfbfb !important;
+}
+.ant-popconfirm-message {
+  color: #fbfbfb !important;
+}
+.ant-popconfirm-buttons .ant-btn-primary {
+  background-color: var(--primary-system) !important;
+  border-color: var(--primary-system) !important;
+  color: #fbfbfb !important;
+}
+.ant-popconfirm-buttons .ant-btn-default {
+  border-color: var(--primary-system) !important;
+  background-color: transparent !important;
+}
+.ant-popconfirm-buttons .ant-btn-default:hover {
+  color: #fbfbfb !important;
+}
 
 /* modal */
 .ant-modal-content {
@@ -6,48 +26,45 @@
 }
 .ant-modal-header {
   background-color: var(--primary-foreground-hover) !important;
-  color: #FBFBFB !important;
+  color: #fbfbfb !important;
 }
 
 /* Khi switch bật */
 .custom-switch .ant-switch.ant-switch-checked {
-  background-color: #198754!important; 
+  background-color: #198754 !important;
 }
 
 /* Khi switch tắt */
 .custom-switch .ant-switch {
-  background-color: #dc3545!important; 
+  background-color: #dc3545 !important;
 }
 
 /* slider */
 .ant-slider-handle {
   background-color: var(--primary-system) !important;
-  
 }
 .ant-slider-handle::after {
   background-color: var(--primary-system) !important;
   box-shadow: 0 0 0 2px var(--primary-system) !important;
-  
 }
 .ant-slider-track {
   background-color: var(--primary-system) !important;
 }
 /* select and option */
 .ant-select-dropdown {
-  background-color: var(--primary-foreground-hover ) !important;
+  background-color: var(--primary-foreground-hover) !important;
 }
 
-.ant-input{
+.ant-input {
   background-color: var(--primary-foreground-hover) !important;
   border-color: var(--primary-system) !important;
 }
-.ant-input-number-input{
+.ant-input-number-input {
   background-color: var(--primary-foreground-hover) !important;
   border-color: var(--primary-system) !important;
- 
 }
 .ant-input-number-handler-wrap {
-display: none!important;
+  display: none !important;
 }
 
 .ant-select-dropdown .ant-select-item-option-selected {
@@ -58,51 +75,61 @@ display: none!important;
   background-color: var(--primary-foreground-hover) !important;
   border-color: var(--primary-system) !important;
 }
-.ant-input-affix-wrapper{
-    background-color: var(--primary-foreground-hover) !important;
+.ant-input-affix-wrapper {
+  background-color: var(--primary-foreground-hover) !important;
   border-color: var(--primary-system) !important;
 }
-.ant-input-group-addon{
+.ant-input-group-addon {
   border-color: var(--primary-system) !important;
 }
-.price-section{
+.price-section {
   display: flex;
   width: 100%;
   gap: 10px;
 }
 .price-section .ant-space-item {
   flex: 1;
-
 }
 /* table */
 .ant-table {
   background-color: var(--background) !important;
 }
 
-
 .ant-table thead > tr > th {
   background-color: var(--primary-system) !important;
-  color: #FBFBFB !important;
+  color: #fbfbfb !important;
 }
-
 
 .ant-table-tbody > tr.ant-table-row:hover > td {
   background-color: var(--primary-foreground-hover) !important;
 }
-/* button */
-.filter-table.ant-btn{
+
+.ant-checkbox-inner {
   background-color: var(--primary-foreground-hover) !important;
-      border-color: var(--primary-system) !important;
-      color: var(--primary)!important;
+  border-color: var(--primary-system) !important;
+}
+.ant-table-row-selected .ant-checkbox-checked .ant-checkbox-inner::after {
+  border-color: var(--primary-system) !important;
+}
+.ant-table-row-selected .ant-table-cell {
+  background-color: var(--primary-foreground-hover) !important;
+  /* color: #fbfbfb !important; */
+}
+
+/* button */
+.filter-table.ant-btn {
+  background-color: var(--primary-foreground-hover) !important;
+  border-color: var(--primary-system) !important;
+  color: var(--primary) !important;
 }
 
 /* pagination */
-.ant-pagination-item{
-    background-color: var(--primary-foreground-hover) !important;
+.ant-pagination-item {
+  background-color: var(--primary-foreground-hover) !important;
 }
-.ant-pagination-item-active{
-   border-color: var(--primary-system) !important;
+.ant-pagination-item-active {
+  border-color: var(--primary-system) !important;
 }
-.ant-pagination-item-active a{
-   color: var(--primary-system) !important;
+.ant-pagination-item-active a {
+  color: var(--primary-system) !important;
 }

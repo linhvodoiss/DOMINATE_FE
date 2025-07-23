@@ -94,7 +94,7 @@ const http = {
     return this.request<T>(url, 'PATCH', init)
   },
 
-  delete<T>(url: string, init?: Omit<CustomRequestInit, 'body'>) {
+  delete<T>(url: string, init?: CustomRequestInit) {
     return this.request<T>(url, 'DELETE', init)
   },
 }
