@@ -7,7 +7,7 @@ export default function FilterOption() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const [active, setActive] = useState(searchParams.get('isActive') || '')
+  const [status, setStatus] = useState(searchParams.get('status') || '')
   const [search, setSearch] = useState(searchParams.get('search') || '')
 
   const handleFilterChange = (key: string, value: string) => {
@@ -23,14 +23,14 @@ export default function FilterOption() {
   const handleReset = () => {
     setSearch('')
 
-    setActive('')
+    setStatus('')
 
     router.replace(window.location.pathname)
   }
   return (
     <div className='mb-6 flex flex-wrap items-center gap-3'>
       <Input
-        placeholder='Find option...'
+        placeholder='Find package...'
         className='!h-10 !w-60 rounded-md shadow-sm'
         allowClear
         value={search}
@@ -44,17 +44,17 @@ export default function FilterOption() {
         }
       />
       <Select
-        placeholder='Choose active'
+        placeholder='View permision'
         className='!h-10 !w-48'
         allowClear
-        value={active || undefined}
+        value={status || undefined}
         onChange={value => {
-          setActive(value)
-          handleFilterChange('isActive', value)
+          setStatus(value)
+          handleFilterChange('status', value)
         }}
       >
-        <Option value='true'>Active</Option>
-        <Option value='false'>Inactive</Option>
+        <Option value='1'>Accepted</Option>
+        <Option value='0'>Banned</Option>
       </Select>
       <Button
         onClick={handleReset}

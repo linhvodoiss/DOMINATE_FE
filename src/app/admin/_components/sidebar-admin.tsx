@@ -40,9 +40,9 @@ export default function SideBarAdmin({ children }: { children: ReactNode }) {
               className: '!text-secondary-gray',
             },
             {
-              key: 'user',
+              key: 'account',
               icon: <UserOutlined />,
-              label: <Link href='/admin/user'>User</Link>,
+              label: <Link href='/admin/account'>User</Link>,
               className: '!text-secondary-gray',
             },
             {

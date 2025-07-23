@@ -11,10 +11,14 @@ export type LoginResponse = {
 }
 
 export type User = {
-  id?: string
+  id?: number
   userName?: string
   email?: string
   firstName?: string
   lastName?: string
+  isActive?: boolean
   phoneNumber?: string
+  role?: string
+  status?: string
+  avatarUrl?: string
 }
