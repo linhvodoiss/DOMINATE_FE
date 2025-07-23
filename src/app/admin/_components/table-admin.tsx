@@ -75,6 +75,7 @@ export default function TableAdmin<T extends object>({
               ...pagination,
             }
       }
+      scroll={{ x: 'max-content' }}
       {...rest}
     />
   )

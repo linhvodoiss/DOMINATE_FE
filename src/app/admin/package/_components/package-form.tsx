@@ -17,6 +17,7 @@ interface Props {
 
 const billingCycleOptions = [
   { label: 'Monthly', value: 'MONTHLY' },
+  { label: 'Half yearly', value: 'HALF_YEARLY' },
   { label: 'Yearly', value: 'YEARLY' },
 ]
 const typePackage = [
@@ -24,7 +25,7 @@ const typePackage = [
   { label: 'Runtime', value: 'RUNTIME' },
 ]
 
-export default function PackageAction({ visible, onCancel, onFinish, modalType, editRecord, optionList, form }: Props) {
+export default function PackageForm({ visible, onCancel, onFinish, modalType, editRecord, optionList, form }: Props) {
   useEffect(() => {
     if (visible) {
       if (modalType === 'add') {

@@ -1,20 +1,21 @@
 'use client'
 
-import { Button, Form, Space, Tag } from 'antd'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Button, Form, Space } from 'antd'
+import { DeleteOutlined } from '@ant-design/icons'
 import { Popconfirm } from 'antd'
 import TableAdmin from '../../_components/table-admin'
 import { PackageResponse } from '#/package'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { SortOrder } from 'antd/es/table/interface'
 import FilterPackage from './filter-package'
 import { startTransition, useState } from 'react'
 import http from '~/utils/http'
 import { CODE_SUCCESS } from '~/constants'
 import { toast } from 'sonner'
 import { LINKS } from '~/constants/links'
-import PackageAction from './package-action'
+
+import getPackageColumns from './package-columns'
+import PackageForm from './package-form'
 
 interface Props {
   listPackage: PackageResponse[]
@@ -140,53 +141,7 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
     }
   }
 
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      sorter: true,
-      sortOrder: (sort === 'id,asc' ? 'ascend' : sort === 'id,desc' ? 'descend' : undefined) as SortOrder | undefined,
-    },
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Price', dataIndex: 'price', key: 'price' },
-    {
-      title: 'Discount',
-      dataIndex: 'discount',
-      key: 'discount',
-      render: (discount: number) => <p>{discount} %</p>,
-    },
-    { title: 'Cycle', dataIndex: 'billingCycle', key: 'billingCycle' },
-    { title: 'Type', dataIndex: 'typePackage', key: 'typePackage' },
-    {
-      title: 'Active',
-      dataIndex: 'isActive',
-      key: 'isActive',
-      render: (isActive: boolean) => (
-        <Tag color={isActive ? 'green' : 'red'} bordered={false}>
-          {isActive ? 'Active' : 'Inactive'}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Hành động',
-      key: 'action',
-      render: (_: unknown, record: PackageResponse) => (
-        <Space>
-          <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          <Popconfirm
-            title='Bạn có chắc chắn muốn xóa package này?'
-            onConfirm={() => handleDeleteOne(record.id as number)}
-            okText='Xóa'
-            cancelText='Hủy'
-            placement='bottom'
-          >
-            <Button type='link' danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ]
+  const columns = getPackageColumns({ sort, handleEdit, handleDeleteOne })
 
   return (
     <div className='min-h-[500px] rounded p-6 shadow'>
@@ -222,7 +177,7 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
         rowKey='id'
         onSelectRows={keys => setSelectedRowKeys(keys)}
       />
-      <PackageAction
+      <PackageForm
         visible={isModalOpen}
         onCancel={handleCancel}
         onFinish={handleFinish}
