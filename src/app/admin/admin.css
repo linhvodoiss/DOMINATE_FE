@@ -111,6 +111,14 @@
 .ant-table-row-selected .ant-checkbox-checked .ant-checkbox-inner::after {
   border-color: var(--primary-system) !important;
 }
+.ant-table-thead .ant-checkbox-inner::after {
+  background-color: transparent !important;
+  border-color: var(--primary-system) !important;
+  background-color: var(--primary-system) !important;
+}
+.ant-table-thead .ant-checkbox-checked .ant-checkbox-inner::after {
+  background-color: transparent !important;
+}
 .ant-table-row-selected .ant-table-cell {
   background-color: var(--primary-foreground-hover) !important;
   /* color: #fbfbfb !important; */
