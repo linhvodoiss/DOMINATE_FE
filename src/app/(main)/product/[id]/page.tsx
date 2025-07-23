@@ -14,7 +14,7 @@ interface Props {
 export default async function Page({ params }: Props) {
   const { id } = await params
   const { data } = await http.get<PackageResponse>(`${LINKS.detailPackage}/${id}`)
-
+  if (!data) return <p className='mt-20 text-center text-xl text-red-500'>Không tìm thấy dữ liệu gói cước.</p>
   return (
     <div className='mt-12 px-4 md:px-8'>
       <h1 className='text-primary mb-2 text-2xl font-semibold md:text-3xl'>{data?.name}</h1>

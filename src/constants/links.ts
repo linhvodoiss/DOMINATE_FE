@@ -28,4 +28,5 @@ export const LINKS = {
   licenses_activate_next: '/licenses/activate-next',
   subscriptions: '/subscriptions',
   options: '/options',
+  options_show_select: '/options/list',
 }

@@ -138,7 +138,7 @@ export default function MyOrderPage({ data, id }: Props) {
         endMessage={orders.length > 0 ? <p className='mt-4 text-center text-xl'>No more orders.</p> : undefined}
       >
         {orders.length === 0 ? (
-          <p className='mt-6 text-center text-2xl text-red-500'>You have no order.</p>
+          <p className='mt-6 text-center text-2xl text-[#dc3545]'>You have no order.</p>
         ) : (
           orders.map(order => (
             <div key={order.id} className='border-border mb-6 rounded-xl border shadow-sm transition hover:shadow-md'>
@@ -165,28 +165,56 @@ export default function MyOrderPage({ data, id }: Props) {
 
                 {/* Info */}
                 <div className='flex-1'>
-                  <h2 className='text-foreground text-base font-semibold md:text-lg'>{order.subscription.name}</h2>
-                  <p className='text-muted-foreground text-sm'>{order.subscription.billingCycle}</p>
-                  <p className='text-muted-foreground text-sm'>
-                    <span className='text-foreground font-medium'>Code:</span> {order.orderId}
-                  </p>
+                  {order.subscription ? (
+                    <>
+                      <h2 className='text-foreground text-base font-semibold md:text-lg'>{order.subscription.name}</h2>
+                      <p className='text-muted-foreground text-sm'>{order.subscription.billingCycle}</p>
+                      <p className='text-muted-foreground text-sm'>
+                        <span className='text-foreground font-medium'>Code:</span> {order.orderId}
+                      </p>
+                    </>
+                  ) : (
+                    <div className='text-destructive text-sm'>
+                      <p className='text-base font-semibold text-[#dc3545]'>This package is not exist</p>
+                      <p className='text-muted-foreground text-sm'>
+                        <span className='text-foreground font-medium'>Code:</span> {order.orderId}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Price */}
                 <div className='text-right whitespace-nowrap'>
-                  <p className='text-muted-foreground text-sm line-through'>{order.subscription.price} đ</p>
-                  <p className='text-primary text-lg font-bold md:text-xl'>{order.subscription.discount} đ</p>
+                  {order.subscription ? (
+                    <>
+                      <p className='text-muted-foreground text-sm line-through'>{order.subscription.price} đ</p>
+                      <p className='text-primary text-lg font-bold md:text-xl'>{order.subscription.discount} đ</p>
+                    </>
+                  ) : (
+                    <p className='text-muted-foreground italic'>Price is undefined</p>
+                  )}
                 </div>
               </div>
 
               {/* Footer */}
               <div className='flex justify-end border-t px-4 py-4'>
-                <Link
-                  href={`/orders/${order.subscriptionId}?orderId=${order.orderId}`}
-                  className='bg-primary-system hover:bg-primary-hover inline-flex h-10 items-center justify-center rounded-lg px-6 text-sm font-medium text-white transition'
-                >
-                  View detail
-                </Link>
+                <div className='flex justify-end border-t px-4 py-4'>
+                  {order.subscriptionId ? (
+                    <Link
+                      href={`/orders/${order.subscriptionId}?orderId=${order.orderId}`}
+                      className='bg-primary-system hover:bg-primary-hover inline-flex h-10 items-center justify-center rounded-lg px-6 text-sm font-medium text-white transition'
+                    >
+                      View detail
+                    </Link>
+                  ) : (
+                    <span
+                      className='inline-flex h-10 cursor-not-allowed items-center justify-center rounded-lg bg-gray-400 px-6 text-sm font-medium text-white'
+                      title='This package is not available'
+                    >
+                      View detail
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))

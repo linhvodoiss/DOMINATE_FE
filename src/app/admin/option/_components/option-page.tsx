@@ -1,39 +1,39 @@
 'use client'
-
 import { Button, Form, Space } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { Popconfirm } from 'antd'
 import TableAdmin from '../../_components/table-admin'
-import { PackageResponse } from '#/package'
+
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import FilterPackage from './filter-package'
 import { startTransition, useState } from 'react'
 import http from '~/utils/http'
 import { CODE_SUCCESS } from '~/constants'
 import { toast } from 'sonner'
 import { LINKS } from '~/constants/links'
 
-import getPackageColumns from './package-columns'
-import PackageForm from './package-form'
+import { OptionResponse } from '#/option'
+import getOptionColumns from './option-columns'
+import FilterOption from './filter-option'
+import OptionForm from './option-form'
 
 interface Props {
-  listPackage: PackageResponse[]
+  listOption: OptionResponse[]
   pageNumber: number
   pageSize: number
   totalElements: number
 }
 
-export default function PackagePage({ listPackage, pageNumber, totalElements, pageSize }: Props) {
+export default function OptionPage({ listOption, pageNumber, totalElements, pageSize }: Props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
   const handleDeleteMany = async () => {
     if (selectedRowKeys.length === 0) {
-      toast.warning('Please select at least one package to delete')
+      toast.warning('Please select at least one option to delete')
       return
     }
     startTransition(async () => {
-      const res = await http.delete(LINKS.subscriptions, {
+      const res = await http.delete(LINKS.options, {
         body: JSON.stringify(selectedRowKeys),
         baseUrl: '/api',
       })
@@ -52,38 +52,25 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
   // State cho modal
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalType, setModalType] = useState<'add' | 'edit'>('add')
-  const [editRecord, setEditRecord] = useState<PackageResponse | null>(null)
-  const [optionList, setOptionList] = useState<{ label: string; value: string | number }[]>([])
+  const [editRecord, setEditRecord] = useState<OptionResponse | null>(null)
 
-  const fetchOptions = async () => {
-    const res = await http.get(LINKS.options_show_select, {
-      baseUrl: '/api',
-    })
-    console.log('res', res)
-    if (res.data && Array.isArray(res.data)) {
-      setOptionList(res.data.map(opt => ({ label: opt.name, value: opt.id })))
-    } else {
-      setOptionList([])
-    }
-  }
   const [form] = Form.useForm()
 
-  // Open modal for adding new package
+  // Open modal for adding new option
   // Reset form when opening add modal
   const handleAdd = () => {
     setModalType('add')
     setEditRecord(null)
     setIsModalOpen(true)
-    fetchOptions()
   }
 
   // Set modal type to edit and set record to edit
   // Reset form when opening edit modal
-  const handleEdit = (record: PackageResponse) => {
+  const handleEdit = (record: OptionResponse) => {
+    console.log('handleEdit', record)
     setModalType('edit')
     setEditRecord(record)
     setIsModalOpen(true)
-    fetchOptions()
   }
 
   const handleCancel = () => {
@@ -91,11 +78,11 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
     setEditRecord(null)
     form.resetFields()
   }
-  // Delete one package
+  // Delete one option
   // This function is called when the delete button is clicked
   const handleDeleteOne = async (id: string | number) => {
     startTransition(async () => {
-      const res = await http.delete(`${LINKS.subscriptions}/${id}`, {
+      const res = await http.delete(`${LINKS.options}/${id}`, {
         baseUrl: '/api',
       })
       if (!CODE_SUCCESS.includes(res.code)) {
@@ -106,34 +93,34 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
       router.refresh()
     })
   }
-  // Handle form submission for adding or editing package
+  // Handle form submission for adding or editing option
   // This function is called when the form is submitted
-  const handleFinish = (values: PackageResponse) => {
+  const handleFinish = (values: OptionResponse) => {
     if (modalType === 'add') {
       startTransition(async () => {
-        const res = await http.post(LINKS.subscriptions, {
+        const res = await http.post(LINKS.options, {
           body: JSON.stringify(values),
           baseUrl: '/api',
         })
         if (!CODE_SUCCESS.includes(res.code)) {
-          toast.error(res.message || 'Add package failed')
+          toast.error(res.message || 'Add option failed')
           return
         }
-        toast.success(res.message || 'Add package successfully')
+        toast.success(res.message || 'Add option successfully')
         setIsModalOpen(false)
         router.refresh()
       })
     } else {
       startTransition(async () => {
-        const res = await http.put(`${LINKS.subscriptions}/${editRecord?.id}`, {
+        const res = await http.put(`${LINKS.options}/${editRecord?.id}`, {
           body: JSON.stringify(values),
           baseUrl: '/api',
         })
         if (!CODE_SUCCESS.includes(res.code)) {
-          toast.error(res.message || 'Update package failed')
+          toast.error(res.message || 'Update option failed')
           return
         }
-        toast.success(res.message || 'Update package successfully')
+        toast.success(res.message || 'Update option successfully')
         setIsModalOpen(false)
         router.refresh()
       })
@@ -141,12 +128,12 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
     }
   }
 
-  const columns = getPackageColumns({ sort, handleEdit, handleDeleteOne })
+  const columns = getOptionColumns({ sort, handleEdit, handleDeleteOne })
 
   return (
     <div className='min-h-[500px] rounded p-6 shadow'>
-      <h2 className='mb-4 text-xl font-semibold'>List Package</h2>
-      <FilterPackage />
+      <h2 className='mb-4 text-xl font-semibold'>List Option</h2>
+      <FilterOption />
       <Space className='mb-4 flex w-full justify-between'>
         <Popconfirm
           title='Are you sure want to delete those items?'
@@ -170,20 +157,19 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
       </Space>
       <TableAdmin
         columns={columns}
-        dataSource={listPackage}
+        dataSource={listOption}
         currentPage={pageNumber}
         totalItems={totalElements}
         pageSize={pageSize}
         rowKey='id'
         onSelectRows={keys => setSelectedRowKeys(keys)}
       />
-      <PackageForm
+      <OptionForm
         visible={isModalOpen}
         onCancel={handleCancel}
         onFinish={handleFinish}
         modalType={modalType}
         editRecord={editRecord}
-        optionList={optionList}
         form={form}
       />
     </div>
