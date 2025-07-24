@@ -2,7 +2,6 @@ import { Space, Button, Tag } from 'antd'
 import { EyeFilled } from '@ant-design/icons'
 import { SortOrder } from 'antd/es/table/interface'
 import { OrderResponse } from '#/order'
-import calPriceDiscount from '~/utils/price-discount-calculate'
 
 interface GetColumnsProps {
   sort: string
@@ -83,15 +82,11 @@ export default function getOrderColumns({ sort, handleEdit }: GetColumnsProps) {
     },
     {
       title: 'Price',
-      dataIndex: ['subscription', 'price'],
+      dataIndex: 'price',
       key: 'price',
       width: 100,
       ellipsis: true,
-      render: (_: number, record: OrderResponse) => {
-        const price = record.subscription?.price || 0
-        const discount = record.subscription?.discount || 0
-        return <span>{calPriceDiscount(price, discount)} đ</span>
-      },
+      render: (price: number) => price.toLocaleString('vi-VN') + ' đ',
     },
     {
       title: 'Actions',

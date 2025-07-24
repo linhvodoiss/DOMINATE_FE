@@ -2,6 +2,7 @@ import { Space, Tag, Button, Popconfirm } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { PackageResponse } from '#/package'
 import { SortOrder } from 'antd/es/table/interface'
+import calPriceDiscount from '~/utils/price-discount-calculate'
 
 interface GetColumnsProps {
   sort: string
@@ -42,6 +43,7 @@ export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }:
       dataIndex: 'price',
       key: 'price',
       width: 100,
+      render: (price: number) => price.toLocaleString('vi-VN') + ' đ',
     },
     {
       title: 'Discount',
@@ -49,6 +51,15 @@ export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }:
       key: 'discount',
       width: 100,
       render: (discount: number) => <p>{discount} %</p>,
+    },
+    {
+      title: 'Price after discount',
+      key: 'discountPrice',
+      width: 140,
+      render: (record: { price: number; discount: number }) => {
+        const discountedPrice = calPriceDiscount(record.price, record.discount)
+        return <span>{discountedPrice.toLocaleString('vi-VN')} đ</span>
+      },
     },
     {
       title: 'Cycle',

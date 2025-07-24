@@ -113,6 +113,7 @@ export default function BankTransferPayment({
             accountName: mockPaymentInfo.accountName,
             accountNumber: mockPaymentInfo.accountNumber,
             qrCode: mockPaymentInfo.qrCode,
+            price: calPriceDiscount(data.price as number, data.discount as number),
             paymentLink: `${env.APP_URL}${LINKS.order}/${id}?orderId=${orderId}`,
           }),
           baseUrl: '/api',
@@ -306,7 +307,9 @@ export default function BankTransferPayment({
         <CopyableText label='Description' value={`${paymentInfo.description}BANK`} />
         <CopyableText
           label='Money'
-          value={`${calPriceDiscount(data.price as number, data.discount as number).toLocaleString('vi-VN')} đ`}
+          value={`${(
+            paymentInfo.price ?? calPriceDiscount(data.price as number, data.discount as number)
+          ).toLocaleString('vi-VN')} đ`}
         />
       </div>
 

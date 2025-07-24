@@ -14,6 +14,7 @@ export type PaymentResponse = {
   orderCode: number
   status: string
   checkoutUrl: string
+  price?: number
   qrCode: string
   paymentStatus: string
   paymentLink: string
@@ -31,6 +32,7 @@ export type ResponseGlobal = {
   paymentLinkId: string
   amount: number
   description: string
+  price?: number
   orderCode: number
   status: string
   checkoutUrl: string

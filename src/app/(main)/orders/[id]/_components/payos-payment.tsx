@@ -71,6 +71,7 @@ export default function PayosPayment({
             accountNumber: paymentRes.data.accountNumber,
             qrCode: paymentRes.data.qrCode,
             paymentLink: paymentRes.data.checkoutUrl,
+            price: calPriceDiscount(data.price as number, data.discount as number),
           }),
           baseUrl: '/api',
         })
