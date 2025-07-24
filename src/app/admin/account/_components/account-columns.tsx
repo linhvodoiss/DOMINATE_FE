@@ -1,5 +1,5 @@
 import { Space, Tag, Button, Popconfirm } from 'antd'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { EditOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons'
 
 import { SortOrder } from 'antd/es/table/interface'
 import { User } from '#/user'
@@ -8,9 +8,15 @@ interface GetColumnsProps {
   sort: string
   handleEdit: (record: User) => void
   handleDeleteOne: (id: string | number) => void
+  handleChangePassword: (record: User) => void
 }
 
-export default function getAccountColumns({ sort, handleEdit, handleDeleteOne }: GetColumnsProps) {
+export default function getAccountColumns({
+  sort,
+  handleEdit,
+  handleDeleteOne,
+  handleChangePassword,
+}: GetColumnsProps) {
   return [
     {
       title: 'ID',
@@ -38,14 +44,7 @@ export default function getAccountColumns({ sort, handleEdit, handleDeleteOne }:
       title: 'Phone Number',
       dataIndex: 'phoneNumber',
       key: 'phoneNumber',
-      width: 130,
-      ellipsis: true,
-    },
-    {
-      title: 'Role',
-      dataIndex: 'role',
-      key: 'role',
-      width: 100,
+      width: 140,
       ellipsis: true,
     },
     {
@@ -55,7 +54,7 @@ export default function getAccountColumns({ sort, handleEdit, handleDeleteOne }:
       width: 100,
       render: (isActive: string) => (
         <Tag color={isActive === 'ACTIVE' ? 'green' : 'red'} bordered={false}>
-          {isActive ? 'Active' : 'Inactive'}
+          {isActive === 'ACTIVE' ? 'Active' : 'Inactive'}
         </Tag>
       ),
     },
@@ -73,7 +72,7 @@ export default function getAccountColumns({ sort, handleEdit, handleDeleteOne }:
     {
       title: 'Actions',
       key: 'action',
-      width: 100,
+      width: 140,
       render: (_: unknown, record: User) => (
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
@@ -86,6 +85,7 @@ export default function getAccountColumns({ sort, handleEdit, handleDeleteOne }:
           >
             <Button type='link' danger icon={<DeleteOutlined />} />
           </Popconfirm>
+          <Button type='link' icon={<LockOutlined />} onClick={() => handleChangePassword(record as User)} />
         </Space>
       ),
     },

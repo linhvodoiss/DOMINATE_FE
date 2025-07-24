@@ -13,7 +13,7 @@ interface Props {
   }>
 }
 
-export default async function ProductPage({ searchParams }: Props) {
+export default async function Page({ searchParams }: Props) {
   const { page, search, isActive, sort } = await searchParams
 
   const {

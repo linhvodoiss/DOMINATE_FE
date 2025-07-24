@@ -4,9 +4,14 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { useRouter } from 'next/navigation'
 import { jwtDecode } from 'jwt-decode'
 import { User } from '#/user'
+import SockJS from 'sockjs-client'
+import { CompatClient, Stomp } from '@stomp/stompjs'
+import http from '~/utils/http'
+import { LINKS } from '~/constants/links'
+import { toast } from 'sonner'
 
 type AuthContextType = {
-  user?: User
+  user?: UserS
   setUser: (user?: User) => void
 }
 
@@ -59,6 +64,50 @@ export const AuthProvider = ({ children, user: initialUser, token }: AuthProvide
       if (timeout) clearTimeout(timeout)
     }
   }, [token, initialUser, router])
+
+  useEffect(() => {
+    if (!user) return
+
+    const socket = new SockJS(`${process.env.NEXT_PUBLIC_BASE_API_URL}/ws`)
+    const stompClient: CompatClient = Stomp.over(socket)
+    const hasLoggedOutRef = { current: false }
+
+    const logoutHandler = async () => {
+      if (hasLoggedOutRef.current) return
+      hasLoggedOutRef.current = true
+
+      try {
+        await http.post(LINKS.logout_api, { baseUrl: 'api/auth' })
+        toast.error('Something went wrong, please login again')
+        setUser(undefined)
+        router.push('/login')
+      } catch (err) {
+        console.error('Failed to logout:', err)
+      }
+    }
+
+    stompClient.connect({}, () => {
+      stompClient.subscribe(`/topic/user-status/${user.id}`, message => {
+        try {
+          const payload = JSON.parse(message.body)
+          console.log('WebSocket message received:', payload)
+          const isUserAffected = payload.userId === user.id
+          const isDeactivated = payload.isActive === false || payload.status === 'NOT_ACTIVE'
+          if (isUserAffected && isDeactivated) {
+            logoutHandler()
+          }
+        } catch (err) {
+          console.error('Error parsing WebSocket message:', err)
+        }
+      })
+    })
+
+    return () => {
+      if (stompClient && stompClient.connected) {
+        stompClient.disconnect()
+      }
+    }
+  }, [user, router])
 
   return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>
 }

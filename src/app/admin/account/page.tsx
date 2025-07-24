@@ -9,12 +9,13 @@ interface Props {
     page?: string
     search?: string
     status?: boolean
+    isActive?: string
     sort?: string
   }>
 }
 
 export default async function ProductPage({ searchParams }: Props) {
-  const { page, search, status, sort } = await searchParams
+  const { page, search, status, isActive, sort } = await searchParams
 
   const {
     content = [],
@@ -22,7 +23,7 @@ export default async function ProductPage({ searchParams }: Props) {
     pageSize,
     totalElements,
   } = await http.get<User>(LINKS.account, {
-    params: { page, search, status, sort },
+    params: { page, search, status, isActive, sort },
   })
   const listUser = content as User[]
 

@@ -31,6 +31,7 @@ export default function CustomModalForm({
   return (
     <Modal title={modalTitle} open={visible} onCancel={onCancel} footer={null} centered>
       <Form
+        className='!mt-6'
         form={form}
         layout={isMobile ? 'vertical' : 'horizontal'}
         labelCol={isMobile ? undefined : { span: 6 }}

@@ -19,6 +19,6 @@ export type User = {
   isActive?: boolean
   phoneNumber?: string
   role?: string
-  status?: string
+  status?: number | string
   avatarUrl?: string
 }

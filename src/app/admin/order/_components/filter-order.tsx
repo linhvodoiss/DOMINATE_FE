@@ -3,14 +3,13 @@ import { SearchOutlined, ReloadOutlined } from '@ant-design/icons'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
 const { Option } = Select
-export default function FilterOption() {
+export default function FilterOrder() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const [status, setStatus] = useState(searchParams.get('status') || '')
-  const [active, setActive] = useState(searchParams.get('isActive') || '')
   const [search, setSearch] = useState(searchParams.get('search') || '')
-
+  const [status, setStatus] = useState(searchParams.get('status') || '')
+  const [type, setType] = useState(searchParams.get('type') || '')
   const handleFilterChange = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) {
@@ -23,17 +22,15 @@ export default function FilterOption() {
   }
   const handleReset = () => {
     setSearch('')
-
     setStatus('')
-    setActive('')
-
+    setType('')
     router.replace(window.location.pathname)
   }
   return (
     <div className='mb-6 flex flex-wrap items-center gap-3'>
       <Input
-        placeholder='Find account...'
-        className='!h-10 !w-60 rounded-md shadow-sm'
+        placeholder='Find order follow code and name package...'
+        className='!h-10 !w-100 rounded-md shadow-sm'
         allowClear
         value={search}
         onChange={e => setSearch(e.target.value)}
@@ -46,7 +43,7 @@ export default function FilterOption() {
         }
       />
       <Select
-        placeholder='View permission'
+        placeholder='Filter status'
         className='!h-10 !w-48'
         allowClear
         value={status || undefined}
@@ -55,21 +52,24 @@ export default function FilterOption() {
           handleFilterChange('status', value)
         }}
       >
-        <Option value='1'>Accepted</Option>
-        <Option value='0'>Banned</Option>
+        <Option value='PENDING'>Pending</Option>
+        <Option value='PROCESSING'>Processing</Option>
+        <Option value='SUCCESS'>Success</Option>
+        <Option value='FAILED'>Failed</Option>
       </Select>
+
       <Select
-        placeholder='Choose active'
+        placeholder='Choose type'
         className='!h-10 !w-48'
         allowClear
-        value={active || undefined}
+        value={type || undefined}
         onChange={value => {
-          setActive(value)
-          handleFilterChange('isActive', value)
+          setType(value)
+          handleFilterChange('type', value)
         }}
       >
-        <Option value='1'>Active</Option>
-        <Option value='0'>Inactive</Option>
+        <Option value='DEV'>Dev</Option>
+        <Option value='RUNTIME'>Runtime</Option>
       </Select>
       <Button
         onClick={handleReset}

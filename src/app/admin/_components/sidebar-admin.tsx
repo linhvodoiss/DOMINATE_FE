@@ -11,7 +11,7 @@ const { Sider, Content } = Layout
 
 function getMenuKey(pathname: string) {
   if (pathname.startsWith('/admin/dashboard')) return 'dashboard'
-  if (pathname.startsWith('/admin/user')) return 'user'
+  if (pathname.startsWith('/admin/account')) return 'account'
   if (pathname.startsWith('/admin/order')) return 'order'
   if (pathname.startsWith('/admin/package')) return 'package'
   if (pathname.startsWith('/admin/option')) return 'option'
@@ -42,7 +42,7 @@ export default function SideBarAdmin({ children }: { children: ReactNode }) {
             {
               key: 'account',
               icon: <UserOutlined />,
-              label: <Link href='/admin/account'>User</Link>,
+              label: <Link href='/admin/account'>Account</Link>,
               className: '!text-secondary-gray',
             },
             {

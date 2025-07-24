@@ -29,5 +29,6 @@ export const LINKS = {
   subscriptions: '/subscriptions',
   options: '/options',
   account: '/account',
+  account_change_pass: '/account/changePassword',
   options_show_select: '/options/list',
 }

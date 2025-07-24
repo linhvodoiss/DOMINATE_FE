@@ -51,7 +51,7 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
   const sort = searchParams.get('sort') || ''
   // State cho modal
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [modalType, setModalType] = useState<'add' | 'edit'>('add')
+  const [modalType, setModalType] = useState<'add' | 'edit' | 'change password'>('add')
   const [editRecord, setEditRecord] = useState<User | null>(null)
 
   const [form] = Form.useForm()
@@ -67,8 +67,13 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
   // Set modal type to edit and set record to edit
   // Reset form when opening edit modal
   const handleEdit = (record: User) => {
-    console.log('handleEdit', record)
     setModalType('edit')
+    setEditRecord(record)
+    setIsModalOpen(true)
+  }
+
+  const handleChangePassword = (record: User) => {
+    setModalType('change password')
     setEditRecord(record)
     setIsModalOpen(true)
   }
@@ -110,7 +115,7 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
         setIsModalOpen(false)
         router.refresh()
       })
-    } else {
+    } else if (modalType === 'edit') {
       startTransition(async () => {
         const res = await http.put(`${LINKS.account}/${editRecord?.id}`, {
           body: JSON.stringify(values),
@@ -125,10 +130,25 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
         router.refresh()
       })
       console.log('Update:', { ...editRecord, ...values })
+    } else {
+      startTransition(async () => {
+        const res = await http.patch(`${LINKS.account_change_pass}/${editRecord?.id}`, {
+          body: JSON.stringify(values),
+          baseUrl: '/api',
+        })
+        if (!CODE_SUCCESS.includes(res.code)) {
+          toast.error(res.message || 'Change password failed')
+          return
+        }
+        toast.success(res.message || 'Change password successfully')
+        setIsModalOpen(false)
+        router.refresh()
+      })
+      console.log('Change Password:', { ...editRecord, ...values })
     }
   }
 
-  const columns = getAccountColumns({ sort, handleEdit, handleDeleteOne })
+  const columns = getAccountColumns({ sort, handleEdit, handleDeleteOne, handleChangePassword })
 
   return (
     <div className='min-h-[500px] rounded p-6 shadow'>

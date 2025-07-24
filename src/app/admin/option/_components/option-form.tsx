@@ -60,37 +60,4 @@ export default function OptionForm({ visible, onCancel, onFinish, modalType, for
       </Form.Item>
     </CustomModalForm>
   )
-  return (
-    <CustomModalForm
-      visible={visible}
-      onCancel={onCancel}
-      onFinish={onFinish}
-      modalTitle={modalType === 'add' ? 'Add Option' : 'Update Option'}
-      form={form}
-    >
-      <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Please input name!' }]}>
-        <Input />
-      </Form.Item>
-
-      {modalType === 'edit' && (
-        <Form.Item name='isActive' label='Active' valuePropName='checked' className='custom-switch'>
-          <Switch className='custom-switch' checkedChildren='Active' unCheckedChildren='Inactive' />
-        </Form.Item>
-      )}
-      <Form.Item wrapperCol={{ xs: { span: 24 }, md: { offset: 6, span: 18 } }}>
-        <Row gutter={16}>
-          <Col>
-            <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
-              {modalType === 'add' ? 'Add' : 'Update'}
-            </Button>
-          </Col>
-          <Col>
-            <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
-              Cancel
-            </Button>
-          </Col>
-        </Row>
-      </Form.Item>
-    </CustomModalForm>
-  )
 }
