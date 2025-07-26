@@ -1,10 +1,9 @@
-import { Button, Col, Form, Input, Row } from 'antd'
-
-import { FormInstance } from 'antd'
-import CustomModalForm from '../../_components/custom-modal-form'
+import { Button, Col, Descriptions, Divider, Form, FormInstance, Radio, Row, Tag } from 'antd'
 import { useEffect } from 'react'
+import CustomModalForm from '../../_components/custom-modal-form'
 import { OrderResponse } from '#/order'
-
+import { paymentStatusMap, statusColorMap } from '~/constants/payment-type'
+import { EyeOutlined } from '@ant-design/icons'
 interface Props {
   visible: boolean
   onCancel: () => void
@@ -22,26 +21,73 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
     }
   }, [visible, editRecord, form])
 
-  return (
-    <CustomModalForm visible={visible} onCancel={onCancel} onFinish={onFinish} modalTitle='View Order' form={form}>
-      <Form.Item name='orderId' label='OrderID' rules={[{ required: true, message: 'Please input orderId!' }]}>
-        <Input />
-      </Form.Item>
+  if (!editRecord) return null
 
-      <Form.Item wrapperCol={{ xs: { span: 24 }, md: { offset: 6, span: 18 } }}>
-        <Row gutter={16}>
-          <Col>
-            <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
-              Update Status
-            </Button>
-          </Col>
-          <Col>
-            <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
-              Cancel
-            </Button>
-          </Col>
-        </Row>
+  return (
+    <CustomModalForm visible={visible} onCancel={onCancel} onFinish={onFinish} modalTitle='Detail Order' form={form}>
+      <Descriptions column={1} bordered size='middle'>
+        <Descriptions.Item label='Code'>{editRecord.orderId}</Descriptions.Item>
+        <Descriptions.Item label='Package name'>{editRecord.subscription?.name}</Descriptions.Item>
+        <Descriptions.Item label='Price'>{editRecord.price?.toLocaleString()}₫</Descriptions.Item>
+        <Descriptions.Item label='Status'>
+          {editRecord.paymentStatus && (
+            <Tag color={statusColorMap[editRecord.paymentStatus] || 'default'}>
+              {paymentStatusMap[editRecord.paymentStatus] || editRecord.paymentStatus}
+            </Tag>
+          )}
+        </Descriptions.Item>
+
+        <Descriptions.Item label='Method payment'>{editRecord.paymentMethod}</Descriptions.Item>
+
+        <Descriptions.Item label='Link payment'>
+          <Button
+            type='link'
+            href={editRecord.paymentLink}
+            target='_blank'
+            rel='noopener noreferrer'
+            icon={<EyeOutlined />}
+          >
+            View detail
+          </Button>
+        </Descriptions.Item>
+        <Descriptions.Item label='Ngày tạo'>{editRecord.createdAt}</Descriptions.Item>
+      </Descriptions>
+      <Divider />
+      <Form.Item
+        name='paymentStatus'
+        label='Select status'
+        initialValue={editRecord.paymentStatus}
+        rules={[{ required: true, message: 'Please select new status' }]}
+      >
+        <Radio.Group optionType='button' buttonStyle='solid'>
+          {Object.entries(paymentStatusMap).map(([status, label]) => (
+            <Radio.Button
+              key={status}
+              value={status}
+              style={{
+                color: '#fff',
+                backgroundColor: statusColorMap[status],
+                transition: 'all 0.3s',
+              }}
+              className='custom-radio-button'
+            >
+              {label}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
       </Form.Item>
+      <Row gutter={16} style={{ marginTop: 16 }}>
+        <Col>
+          <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
+            Update Status
+          </Button>
+        </Col>
+        <Col>
+          <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
+            Cancel
+          </Button>
+        </Col>
+      </Row>
     </CustomModalForm>
   )
 }

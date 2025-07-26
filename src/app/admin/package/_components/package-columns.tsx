@@ -3,22 +3,12 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { PackageResponse } from '#/package'
 import { SortOrder } from 'antd/es/table/interface'
 import calPriceDiscount from '~/utils/price-discount-calculate'
+import { billingCycleMap, typePackageMap } from '~/constants/package-type'
 
 interface GetColumnsProps {
   sort: string
   handleEdit: (record: PackageResponse) => void
   handleDeleteOne: (id: string | number) => void
-}
-const billingCycleMap: Record<string, string> = {
-  MONTHLY: 'Monthly',
-  HALF_YEARLY: 'Half yearly',
-  YEARLY: 'Yearly',
-}
-
-// Enum cho typePackage
-const typePackageMap: Record<string, string> = {
-  DEV: 'Dev',
-  RUNTIME: 'Runtime',
 }
 
 export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }: GetColumnsProps) {

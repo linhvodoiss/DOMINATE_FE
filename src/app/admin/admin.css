@@ -82,6 +82,21 @@
 .ant-input-group-addon {
   border-color: var(--primary-system) !important;
 }
+
+.custom-radio-button {
+  opacity: 0.3!important;
+}
+
+.custom-radio-button:hover {
+  opacity: 0.7!important;
+}
+
+.ant-radio-button-wrapper-checked.custom-radio-button {
+  opacity: 1!important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15)!important; /* Optional: light ring */
+  z-index: 1!important;
+}
+
 .price-section {
   display: flex;
   width: 100%;
@@ -98,6 +113,9 @@
 .ant-table thead > tr > th {
   background-color: var(--primary-system) !important;
   color: #fbfbfb !important;
+}
+.ant-table-tbody td {
+  background-color: transparent !important;
 }
 
 .ant-table-tbody > tr.ant-table-row:hover > td {
@@ -140,4 +158,15 @@
 }
 .ant-pagination-item-active a {
   color: var(--primary-system) !important;
+}
+/* description */
+.ant-descriptions-view{
+  border-color:var(--primary-foreground-hover) !important;
+}
+.ant-descriptions-row{
+  border-color:var(--primary-foreground-hover) !important;
+}
+
+.ant-descriptions-item-label{
+  border-color:var(--primary-foreground-hover) !important;
 }

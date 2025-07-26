@@ -56,7 +56,7 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
   // This function is called when the form is submitted
   const handleFinish = (values: OrderResponse) => {
     startTransition(async () => {
-      const res = await http.patch(`${LINKS.order}/${editRecord?.id}`, {
+      const res = await http.patch(`${LINKS.order}/${editRecord?.orderId}`, {
         params: {
           newStatus: values.paymentStatus,
         },

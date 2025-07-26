@@ -22,4 +22,5 @@ export type LicenseResponse = {
   createdAt: string
   updatedAt?: string
   subscription: PackageResponse
+  activatedAt?: string
 }

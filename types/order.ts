@@ -1,5 +1,6 @@
 import { LicenseResponse } from './licenses'
 import { PackageResponse } from './package'
+import { User } from './user'
 
 export type OrderResponse = {
   id?: number
@@ -20,4 +21,5 @@ export type OrderResponse = {
   subscription: PackageResponse
   license: LicenseResponse
   price?: number
+  buyer?: User
 }

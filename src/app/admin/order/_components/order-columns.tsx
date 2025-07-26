@@ -2,31 +2,12 @@ import { Space, Button, Tag } from 'antd'
 import { EyeFilled } from '@ant-design/icons'
 import { SortOrder } from 'antd/es/table/interface'
 import { OrderResponse } from '#/order'
+import { paymentMethodMap, paymentStatusMap, statusColorMap } from '~/constants/payment-type'
+import { typePackageMap } from '~/constants/package-type'
 
 interface GetColumnsProps {
   sort: string
   handleEdit: (record: OrderResponse) => void
-}
-const typePackageMap: Record<string, string> = {
-  DEV: 'Dev',
-  RUNTIME: 'Runtime',
-}
-const paymentMethodMap: Record<string, string> = {
-  BANK: 'Bank',
-  PAYOS: 'PayOS',
-}
-
-const paymentStatusMap: Record<string, string> = {
-  PENDING: 'Pending',
-  PROCESSING: 'Processing',
-  SUCCESS: 'Success',
-  FAILED: 'Canceled',
-}
-const statusColorMap: Record<string, string> = {
-  PENDING: '#ffc107',
-  PROCESSING: '#0d6efd',
-  SUCCESS: '#198754',
-  FAILED: '#dc3545',
 }
 
 export default function getOrderColumns({ sort, handleEdit }: GetColumnsProps) {
