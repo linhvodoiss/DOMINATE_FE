@@ -10,11 +10,12 @@ interface Props {
     search?: string
     isActive?: boolean
     sort?: string
+    size?: number
   }>
 }
 
 export default async function Page({ searchParams }: Props) {
-  const { page, search, isActive, sort } = await searchParams
+  const { page, search, isActive, sort, size } = await searchParams
 
   const {
     content = [],
@@ -22,7 +23,7 @@ export default async function Page({ searchParams }: Props) {
     pageSize,
     totalElements,
   } = await http.get<OptionResponse>(LINKS.options, {
-    params: { page, search, isActive, sort },
+    params: { page, search, isActive, sort, size },
   })
   const listOption = content as OptionResponse[]
 

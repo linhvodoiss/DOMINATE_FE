@@ -15,6 +15,7 @@ export const LINKS = {
   detailPackage: '/subscriptions',
   order_user: '/orders/user',
   order: '/orders',
+  order_admin: '/orders/admin',
   order_silent: '/orders/silent',
   order_email: '/orders/email',
   order_email_admin: '/orders/emailAdmin',

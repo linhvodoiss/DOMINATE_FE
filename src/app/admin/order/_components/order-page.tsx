@@ -5,7 +5,7 @@ import TableAdmin from '../../_components/table-admin'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { startTransition, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 
 import getOptionColumns from './order-columns'
 import FilterOption from './filter-order'
@@ -16,6 +16,7 @@ import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { CODE_SUCCESS } from '~/constants'
 import { toast } from 'sonner'
+import { getStompClient } from '~/app/_components/socket-link'
 
 interface Props {
   listOrder: OrderResponse[]
@@ -56,21 +57,61 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
   // This function is called when the form is submitted
   const handleFinish = (values: OrderResponse) => {
     startTransition(async () => {
-      const res = await http.patch(`${LINKS.order}/${editRecord?.orderId}`, {
+      const res = await http.patch(`${LINKS.order_admin}/${editRecord?.orderId}`, {
         params: {
           newStatus: values.paymentStatus,
         },
         baseUrl: '/api',
       })
       if (!CODE_SUCCESS.includes(res.code)) {
-        toast.error(res.message || 'Add option failed')
+        toast.error(res.message || 'Update status failed')
         return
       }
-      toast.success(res.message || 'Add option successfully')
+
+      toast.success(res.message || 'Update status successfully')
       setIsModalOpen(false)
       router.refresh()
     })
   }
+
+  // socket
+
+  useEffect(() => {
+    const client = getStompClient()
+
+    if (!client.connected) {
+      client.connect({}, () => {
+        client.subscribe('/topic/payment/global', message => {
+          const payload = JSON.parse(message.body)
+
+          console.log(' WebSocket Message:', payload)
+          toast.info(`Đơn ${payload.orderId} cập nhật trạng thái: ${payload.newStatus}`)
+          router.refresh()
+        })
+      })
+    }
+
+    return () => {
+      if (client.connected) client.disconnect()
+    }
+  }, [router])
+
+  useEffect(() => {
+    const client = getStompClient()
+    if (!client.connected) {
+      client.connect({}, () => {
+        console.log('[STOMP] Connected')
+        client.subscribe('/topic/order/global', message => {
+          const payload = JSON.parse(message.body)
+          toast.info(`You have an new order: ${payload.orderId}`)
+          router.refresh()
+        })
+      })
+    }
+    return () => {
+      if (client.connected) client.disconnect()
+    }
+  }, [router])
 
   const columns = getOptionColumns({ sort, handleEdit })
 

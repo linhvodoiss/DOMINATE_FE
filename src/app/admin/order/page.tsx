@@ -10,11 +10,12 @@ interface Props {
     sort?: string
     status?: string
     type?: string
+    size?: number
   }>
 }
 
 export default async function Page({ searchParams }: Props) {
-  const { page, search, sort, status, type } = await searchParams
+  const { page, search, sort, status, type, size } = await searchParams
 
   const {
     content = [],
@@ -22,7 +23,7 @@ export default async function Page({ searchParams }: Props) {
     pageSize,
     totalElements,
   } = await http.get<OrderResponse>(LINKS.order, {
-    params: { page, search, sort, status, type },
+    params: { page, search, sort, status, type, size },
   })
   const listOrder = content as OrderResponse[]
 
