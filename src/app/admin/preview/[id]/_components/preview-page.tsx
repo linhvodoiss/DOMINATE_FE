@@ -2,7 +2,6 @@
 import { Button, Descriptions, Tag, Divider, Radio } from 'antd'
 import React, { useState, useTransition } from 'react'
 import { paymentMethodMap, paymentStatusMap, statusColorMap } from '~/constants/payment-type'
-import { EyeOutlined } from '@ant-design/icons'
 import { OrderResponse } from '#/order'
 import { billingCycleMap, typePackageMap } from '~/constants/package-type'
 import { BIN_BANK_MAP } from '~/constants/bank-list'
@@ -18,6 +17,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
   const [status, setStatus] = useState(data.paymentStatus)
+  const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false)
   const handleUpdateStatus = () => {
     startTransition(async () => {
       const res = await http.patch(`${LINKS.order}/${data.orderId}`, {
@@ -34,7 +34,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
 
       toast.success(res.message || 'Status updated successfully')
 
-      // 👇 Nếu status mới là SUCCESS thì gọi thêm tạo license
+      // Check status success, take key
       if (status === 'SUCCESS') {
         try {
           const licenseRes = await http.post<LicenseResponse>(LINKS.licenses_create, {
@@ -49,6 +49,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
           } else {
             toast.error(licenseRes.message || 'Create license failed')
           }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
           toast.error('Error while creating license')
         }
@@ -123,10 +124,24 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
                 {typePackageMap[data.subscription.typePackage as string] || data.subscription.typePackage}
               </Descriptions.Item>
               <Descriptions.Item label='Is Active'>{data.subscription.isActive ? 'Yes' : 'No'}</Descriptions.Item>
+
               <Descriptions.Item label='Options' span={2}>
                 <ul className='list-disc pl-4'>
-                  {data.subscription.options?.map(opt => <li key={opt.id}>{opt.name}</li>)}
+                  {(showMoreOptions ? data.subscription?.options : data.subscription?.options?.slice(0, 4))?.map(
+                    opt => <li key={opt.id}>{opt.name}</li>
+                  )}
                 </ul>
+
+                {data.subscription?.options && data.subscription.options.length > 4 && (
+                  <Button
+                    type='link'
+                    size='small'
+                    onClick={() => setShowMoreOptions(prev => !prev)}
+                    className='mt-1 p-0'
+                  >
+                    {showMoreOptions ? 'Ẩn bớt' : 'Xem thêm'}
+                  </Button>
+                )}
               </Descriptions.Item>
             </Descriptions>
           ) : (

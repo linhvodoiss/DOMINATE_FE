@@ -84,7 +84,7 @@ export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }:
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           <Popconfirm
-            title='Bạn có chắc chắn muốn xóa package này?'
+            title='Are you sure want to delete this package ?'
             onConfirm={() => handleDeleteOne(record.id as number)}
             okText='Xóa'
             cancelText='Hủy'

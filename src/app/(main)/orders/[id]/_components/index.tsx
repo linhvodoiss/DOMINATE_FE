@@ -14,6 +14,7 @@ import SockJS from 'sockjs-client'
 import { CompatClient, Stomp } from '@stomp/stompjs'
 import OrderInfo from './info-order'
 import Reminder from './reminder'
+import { env } from '~/configs/env'
 
 interface Props {
   data: PackageResponse
@@ -71,7 +72,7 @@ export default function OrderPage({ data, user, id }: Props) {
   useEffect(() => {
     if (!orderId) return
 
-    const socket = new SockJS(`${process.env.NEXT_PUBLIC_BASE_API_URL}/ws`)
+    const socket = new SockJS(`${env.SOCKET_URL}/ws`)
     const stompClient: CompatClient = Stomp.over(socket)
 
     // stompClient.debug = console.log

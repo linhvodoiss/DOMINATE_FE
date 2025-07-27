@@ -11,7 +11,7 @@ import { LINKS } from '~/constants/links'
 import { toast } from 'sonner'
 
 type AuthContextType = {
-  user?: UserS
+  user?: User
   setUser: (user?: User) => void
 }
 

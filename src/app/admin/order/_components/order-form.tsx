@@ -42,12 +42,12 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
         <Descriptions.Item label='Link payment'>
           <Button
             type='link'
-            href={editRecord.paymentLink}
+            href={`/admin/preview/${editRecord.orderId}`}
             target='_blank'
             rel='noopener noreferrer'
             icon={<EyeOutlined />}
           >
-            View detail
+            Preview order
           </Button>
         </Descriptions.Item>
         <Descriptions.Item label='Ngày tạo'>{editRecord.createdAt}</Descriptions.Item>
@@ -79,7 +79,7 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
       <Row gutter={16} style={{ marginTop: 16 }}>
         <Col>
           <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
-            Update Status
+            Update
           </Button>
         </Col>
         <Col>

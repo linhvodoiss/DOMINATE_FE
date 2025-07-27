@@ -1,5 +1,5 @@
 import { Space, Button, Tag } from 'antd'
-import { EyeFilled } from '@ant-design/icons'
+import { EditOutlined } from '@ant-design/icons'
 import { SortOrder } from 'antd/es/table/interface'
 import { OrderResponse } from '#/order'
 import { paymentMethodMap, paymentStatusMap, statusColorMap } from '~/constants/payment-type'
@@ -76,7 +76,7 @@ export default function getOrderColumns({ sort, handleEdit }: GetColumnsProps) {
 
       render: (_: unknown, record: OrderResponse) => (
         <Space>
-          <Button type='link' icon={<EyeFilled />} onClick={() => handleEdit(record)} />
+          <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
         </Space>
       ),
     },

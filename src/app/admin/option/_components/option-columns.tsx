@@ -46,7 +46,7 @@ export default function getOptionColumns({ sort, handleEdit, handleDeleteOne }: 
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           <Popconfirm
-            title='Bạn có chắc chắn muốn xóa option này?'
+            title='Are you sure want to delete this option ?'
             onConfirm={() => handleDeleteOne(record.id as number)}
             okText='Xóa'
             cancelText='Hủy'

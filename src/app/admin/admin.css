@@ -170,3 +170,7 @@
 .ant-descriptions-item-label{
   border-color:var(--primary-foreground-hover) !important;
 }
+.ant-descriptions-item-content{
+  border-color:var(--primary-foreground-hover) !important;
+
+}
