@@ -7,7 +7,7 @@ import ThemeChange from './theme-change'
 import { toast } from 'sonner'
 
 import { useRouter } from 'next/navigation'
-import { getStompClient } from '~/app/_components/socket-link'
+import { subscribeOnce } from '~/app/_components/socket-link'
 
 const { Header } = Layout
 
@@ -25,27 +25,16 @@ export default function AdminHeader() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
 
   useEffect(() => {
-    const client = getStompClient()
-    if (!client.connected) {
-      client.connect({}, () => {
-        console.log('[STOMP] Connected')
-        client.subscribe('/topic/order/global', message => {
-          const payload = JSON.parse(message.body)
-          toast.info(`You have an new order: ${payload.orderId}`)
-          setNotifications(prev => [
-            {
-              ...payload,
-            },
-            ...prev.slice(0, 4),
-          ])
-          router.refresh()
-        })
+    subscribeOnce('/topic/order/global', client => {
+      client.subscribe('/topic/order/global', message => {
+        const payload = JSON.parse(message.body)
+        console.log('[Header] New order:', payload)
+
+        toast.info(`Bạn có đơn mới: ${payload.orderId}`)
+        setNotifications(prev => [{ ...payload }, ...prev.slice(0, 4)])
       })
-    }
-    return () => {
-      if (client.connected) client.disconnect()
-    }
-  }, [router])
+    })
+  }, [])
 
   const handleClick = (orderId: number) => {
     router.push(`/admin/orders/${orderId}`)

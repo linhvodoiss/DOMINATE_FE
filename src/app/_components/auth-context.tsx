@@ -4,11 +4,11 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { useRouter } from 'next/navigation'
 import { jwtDecode } from 'jwt-decode'
 import { User } from '#/user'
-import SockJS from 'sockjs-client'
-import { CompatClient, Stomp } from '@stomp/stompjs'
+
 import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { toast } from 'sonner'
+import { disconnectSocket, initSocket, subscribeOnce } from './socket-link'
 
 type AuthContextType = {
   user?: User
@@ -66,10 +66,13 @@ export const AuthProvider = ({ children, user: initialUser, token }: AuthProvide
   }, [token, initialUser, router])
 
   useEffect(() => {
-    if (!user) return
+    if (!user) {
+      disconnectSocket()
+      return
+    }
 
-    const socket = new SockJS(`${process.env.NEXT_PUBLIC_BASE_API_URL}/ws`)
-    const stompClient: CompatClient = Stomp.over(socket)
+    initSocket()
+
     const hasLoggedOutRef = { current: false }
 
     const logoutHandler = async () => {
@@ -78,7 +81,8 @@ export const AuthProvider = ({ children, user: initialUser, token }: AuthProvide
 
       try {
         await http.post(LINKS.logout_api, { baseUrl: 'api/auth' })
-        toast.error('Something went wrong, please login again')
+        disconnectSocket()
+        toast.error('Have something wrong with your account.')
         setUser(undefined)
         router.push('/login')
       } catch (err) {
@@ -86,8 +90,8 @@ export const AuthProvider = ({ children, user: initialUser, token }: AuthProvide
       }
     }
 
-    stompClient.connect({}, () => {
-      stompClient.subscribe(`/topic/user-status/${user.id}`, message => {
+    subscribeOnce(`/topic/user-status/${user.id}`, client => {
+      client.subscribe(`/topic/user-status/${user.id}`, message => {
         try {
           const payload = JSON.parse(message.body)
           console.log('WebSocket message received:', payload)
@@ -101,12 +105,6 @@ export const AuthProvider = ({ children, user: initialUser, token }: AuthProvide
         }
       })
     })
-
-    return () => {
-      if (stompClient && stompClient.connected) {
-        stompClient.disconnect()
-      }
-    }
   }, [user, router])
 
   return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>

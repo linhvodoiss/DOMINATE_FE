@@ -15,6 +15,7 @@ import { CompatClient, Stomp } from '@stomp/stompjs'
 import OrderInfo from './info-order'
 import Reminder from './reminder'
 import { env } from '~/configs/env'
+import { subscribeOnceNoRegister } from '~/app/_components/socket-link'
 
 interface Props {
   data: PackageResponse
@@ -72,22 +73,21 @@ export default function OrderPage({ data, user, id }: Props) {
   useEffect(() => {
     if (!orderId) return
 
-    const socket = new SockJS(`${env.SOCKET_URL}/ws`)
-    const stompClient: CompatClient = Stomp.over(socket)
+    const topic = `/topic/payment/${orderId}`
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let subscription: any = null
 
-    // stompClient.debug = console.log
-
-    stompClient.connect({}, () => {
-      stompClient.subscribe(`/topic/payment/${orderId}`, message => {
+    subscribeOnceNoRegister(client => {
+      subscription = client.subscribe(topic, message => {
         const status = message.body
         console.log('📩 WebSocket nhận trạng thái:', status)
-        fetchOrder() // update from socket
+        fetchOrder()
       })
     })
 
     return () => {
-      if (stompClient && stompClient.connected) {
-        stompClient.disconnect()
+      if (subscription) {
+        subscription.unsubscribe()
       }
     }
   }, [orderId, fetchOrder])

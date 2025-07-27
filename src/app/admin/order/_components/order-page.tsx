@@ -16,7 +16,7 @@ import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { CODE_SUCCESS } from '~/constants'
 import { toast } from 'sonner'
-import { getStompClient } from '~/app/_components/socket-link'
+import { initSocket, subscribeOnce, subscribeOnceNoRegister } from '~/app/_components/socket-link'
 
 interface Props {
   listOrder: OrderResponse[]
@@ -75,44 +75,21 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
   }
 
   // socket
-
   useEffect(() => {
-    const client = getStompClient()
-
-    if (!client.connected) {
-      client.connect({}, () => {
-        client.subscribe('/topic/payment/global', message => {
-          const payload = JSON.parse(message.body)
-
-          console.log(' WebSocket Message:', payload)
-          toast.info(`Đơn ${payload.orderId} cập nhật trạng thái: ${payload.newStatus}`)
-          router.refresh()
-        })
+    subscribeOnce('/topic/payment/global', client => {
+      client.subscribe('/topic/payment/global', message => {
+        const payload = JSON.parse(message.body)
+        toast.info(`Order ${payload.orderId} updated: ${payload.newStatus}`)
+        router.refresh()
       })
-    }
+    })
 
-    return () => {
-      if (client.connected) client.disconnect()
-    }
-  }, [router])
-
-  useEffect(() => {
-    const client = getStompClient()
-    if (!client.connected) {
-      client.connect({}, () => {
-        console.log('[STOMP] Connected')
-        client.subscribe('/topic/order/global', message => {
-          const payload = JSON.parse(message.body)
-          toast.info(`You have an new order: ${payload.orderId}`)
-          router.refresh()
-        })
+    subscribeOnceNoRegister(client => {
+      client.subscribe('/topic/order/global', message => {
+        router.refresh()
       })
-    }
-    return () => {
-      if (client.connected) client.disconnect()
-    }
+    })
   }, [router])
-
   const columns = getOptionColumns({ sort, handleEdit })
 
   return (

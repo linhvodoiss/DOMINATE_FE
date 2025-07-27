@@ -3,6 +3,7 @@ import { useTransition } from 'react'
 import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { useRouter } from 'next/navigation'
+import { disconnectSocket } from '../socket-link'
 
 export default function LogoutBtn() {
   const router = useRouter()
@@ -12,6 +13,7 @@ export default function LogoutBtn() {
     startTransition(async () => {
       await http.post(LINKS.logout_api, { baseUrl: 'api/auth' })
       router.push('/')
+      disconnectSocket()
       router.refresh()
     })
   }
