@@ -129,7 +129,6 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
         setIsModalOpen(false)
         router.refresh()
       })
-      console.log('Update:', { ...editRecord, ...values })
     } else {
       startTransition(async () => {
         const res = await http.patch(`${LINKS.account_change_pass}/${editRecord?.id}`, {
@@ -144,7 +143,6 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
         setIsModalOpen(false)
         router.refresh()
       })
-      console.log('Change Password:', { ...editRecord, ...values })
     }
   }
 

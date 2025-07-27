@@ -28,7 +28,7 @@ export default function AccountForm({ visible, onCancel, onFinish, modalType, fo
       }
     }
   }, [visible, modalType, editRecord, form])
-  console.log(editRecord)
+
   const handleFinish = (values: User) => {
     const processedValues: User = {
       ...values,

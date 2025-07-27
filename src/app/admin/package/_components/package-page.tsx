@@ -59,7 +59,7 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
     const res = await http.get(LINKS.options_show_select, {
       baseUrl: '/api',
     })
-    console.log('res', res)
+
     if (res.data && Array.isArray(res.data)) {
       setOptionList(res.data.map(opt => ({ label: opt.name, value: opt.id })))
     } else {
@@ -137,7 +137,6 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
         setIsModalOpen(false)
         router.refresh()
       })
-      console.log('Update:', { ...editRecord, ...values })
     }
   }
 

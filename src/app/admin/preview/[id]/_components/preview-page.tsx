@@ -1,4 +1,5 @@
 'use client'
+
 import { Button, Descriptions, Tag, Divider, Radio } from 'antd'
 import React, { useEffect, useState, useTransition } from 'react'
 import { paymentMethodMap, paymentStatusMap, statusColorMap } from '~/constants/payment-type'
@@ -14,29 +15,44 @@ import { LicenseResponse } from '#/licenses'
 import { subscribeOnce } from '~/app/_components/socket-link'
 
 const colResponsive = { xs: 1, sm: 1, md: 1, lg: 1 }
+
+function getStatusInfo(status: string | null | undefined) {
+  return {
+    label: paymentStatusMap[status as keyof typeof paymentStatusMap] || 'Unknown',
+    color: statusColorMap[status as keyof typeof statusColorMap] || 'default',
+  }
+}
+
+function getMethodLabel(method: string | null | undefined) {
+  return paymentMethodMap[method as keyof typeof paymentMethodMap] || 'Unknown'
+}
+
 export default function AdminOrderPreview({ data, id }: { data: OrderResponse; id: string }) {
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
-  const [status, setStatus] = useState(data.paymentStatus)
+  const [status, setStatus] = useState<string | null>(data.paymentStatus || null)
   const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false)
 
   useEffect(() => {
-    setStatus(data.paymentStatus)
+    setStatus(data.paymentStatus || null)
+
     subscribeOnce('/topic/payment/global', client => {
       client.subscribe('/topic/payment/global', message => {
         const payload = JSON.parse(message.body)
+        const info = getStatusInfo(payload.newStatus)
 
-        toast.info(`Order ${payload.orderId}  ${paymentStatusMap[payload.newStatus] || payload.newStatus}`)
+        toast.info(`Order ${payload.orderId} ${info.label}`)
         router.refresh()
       })
     })
   }, [data.paymentStatus, router])
+
   const handleUpdateStatus = () => {
+    if (!status) return toast.error('Please select a status before updating')
+
     startTransition(async () => {
       const res = await http.patch(`${LINKS.order_admin}/${data.orderId}`, {
-        params: {
-          newStatus: status,
-        },
+        params: { newStatus: status },
         baseUrl: '/api',
       })
 
@@ -47,13 +63,10 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
 
       toast.success(res.message || 'Status updated successfully')
 
-      // Check status success, take key
       if (status === 'SUCCESS') {
         try {
           const licenseRes = await http.post<LicenseResponse>(LINKS.licenses_create, {
-            body: JSON.stringify({
-              orderId: Number(id),
-            }),
+            body: JSON.stringify({ orderId: Number(id) }),
             baseUrl: '/api',
           })
 
@@ -62,8 +75,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
           } else {
             toast.error(licenseRes.message || 'Create license failed')
           }
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (err) {
+        } catch {
           toast.error('Error while creating license')
         }
       }
@@ -72,10 +84,13 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
     })
   }
 
+  const statusInfo = getStatusInfo(data.paymentStatus)
+  const methodLabel = getMethodLabel(data.paymentMethod)
+
   return (
     <div className='mx-auto max-w-7xl p-6'>
       <h2 className='!mb-4 !text-2xl !font-bold'>
-        # Order Code {id} - {paymentMethodMap[data.paymentMethod as string] || data.paymentMethod}
+        # Order Code {id} - {methodLabel}
       </h2>
 
       <Radio.Group optionType='button' buttonStyle='solid' value={status} onChange={e => setStatus(e.target.value)}>
@@ -83,7 +98,6 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
           <Radio.Button
             key={key}
             value={key}
-            onChange={e => setStatus(e.target.value)}
             style={{
               color: '#fff',
               backgroundColor: statusColorMap[key],
@@ -95,6 +109,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
           </Radio.Button>
         ))}
       </Radio.Group>
+
       <Button
         type='primary'
         loading={isPending}
@@ -104,26 +119,22 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
         Update
       </Button>
 
-      <div className='grid grid-cols-1 gap-6'>
+      <div className='mt-6 grid grid-cols-1 gap-6'>
         {/* Order Info */}
         <div>
           <Divider orientation='left'>Order Information</Divider>
           <Descriptions bordered size='middle' column={colResponsive}>
             <Descriptions.Item label='Order ID'>{id}</Descriptions.Item>
             <Descriptions.Item label='Payment Status'>
-              <Tag color={statusColorMap[data.paymentStatus as string]}>
-                {paymentStatusMap[data.paymentStatus as string]}
-              </Tag>
+              <Tag color={statusInfo.color}>{statusInfo.label}</Tag>
             </Descriptions.Item>
-            <Descriptions.Item label='Payment Method'>
-              {paymentMethodMap[data.paymentMethod as string] || data.paymentMethod}
-            </Descriptions.Item>
+            <Descriptions.Item label='Payment Method'>{methodLabel}</Descriptions.Item>
             <Descriptions.Item label='Total Price'>{data.price?.toLocaleString()}₫</Descriptions.Item>
             <Descriptions.Item label='Created At'>{data.createdAt}</Descriptions.Item>
           </Descriptions>
         </div>
 
-        {/* Subscription Info */}
+        {/* Package */}
         <div>
           <Divider orientation='left'>Package</Divider>
           {data.subscription ? (
@@ -132,21 +143,22 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
               <Descriptions.Item label='Original Price'>{data.subscription.price?.toLocaleString()}₫</Descriptions.Item>
               <Descriptions.Item label='Discount'>{data.subscription.discount}%</Descriptions.Item>
               <Descriptions.Item label='Billing Cycle'>
-                {billingCycleMap[data.subscription.billingCycle as string] || data.subscription.billingCycle}
+                {billingCycleMap[data.subscription.billingCycle as keyof typeof billingCycleMap] ||
+                  data.subscription.billingCycle}
               </Descriptions.Item>
               <Descriptions.Item label='Package Type'>
-                {typePackageMap[data.subscription.typePackage as string] || data.subscription.typePackage}
+                {typePackageMap[data.subscription.typePackage as keyof typeof typePackageMap] ||
+                  data.subscription.typePackage}
               </Descriptions.Item>
               <Descriptions.Item label='Is Active'>{data.subscription.isActive ? 'Yes' : 'No'}</Descriptions.Item>
-
               <Descriptions.Item label='Options' span={2}>
                 <ul className='list-disc pl-4'>
-                  {(showMoreOptions ? data.subscription?.options : data.subscription?.options?.slice(0, 4))?.map(
-                    opt => <li key={opt.id}>{opt.name}</li>
-                  )}
+                  {(showMoreOptions ? data.subscription.options : data.subscription.options?.slice(0, 4))?.map(opt => (
+                    <li key={opt.id}>{opt.name}</li>
+                  ))}
                 </ul>
 
-                {data.subscription?.options && data.subscription.options.length > 4 && (
+                {(data.subscription.options?.length ?? 0) > 4 && (
                   <Button
                     type='link'
                     size='small'
@@ -162,16 +174,18 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
             <p>No subscription data available.</p>
           )}
         </div>
+
+        {/* Customer */}
         <div>
           <Divider orientation='left'>Customer</Divider>
           {data.buyer ? (
             <Descriptions bordered size='middle' column={colResponsive}>
-              <Descriptions.Item label='User Name'>{data.buyer?.userName}</Descriptions.Item>
+              <Descriptions.Item label='User Name'>{data.buyer.userName}</Descriptions.Item>
               <Descriptions.Item label='Full Name'>
-                {data.buyer?.firstName} {data.buyer?.lastName}
+                {data.buyer.firstName} {data.buyer.lastName}
               </Descriptions.Item>
-              <Descriptions.Item label='Email'>{data.buyer?.email}</Descriptions.Item>
-              <Descriptions.Item label='Phone Number'>{data.buyer?.phoneNumber}</Descriptions.Item>
+              <Descriptions.Item label='Email'>{data.buyer.email}</Descriptions.Item>
+              <Descriptions.Item label='Phone Number'>{data.buyer.phoneNumber}</Descriptions.Item>
               {data.paymentMethod !== 'BANK' && (
                 <>
                   <Descriptions.Item label='Bank'>{BIN_BANK_MAP[data.bin as string]}</Descriptions.Item>
@@ -184,16 +198,17 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
             <p>No user data available.</p>
           )}
         </div>
+
+        {/* License */}
         <div>
           <Divider orientation='left'>License</Divider>
           {data.license ? (
             <Descriptions bordered size='middle' column={colResponsive}>
-              <Descriptions.Item label='Key'>{data.license?.licenseKey}</Descriptions.Item>
-              <Descriptions.Item label='Day Lefts'>{data.license?.daysLeft}</Descriptions.Item>
-              <Descriptions.Item label='Used?'>{data.license?.canUsed ? 'Yes' : 'No'}</Descriptions.Item>
-
+              <Descriptions.Item label='Key'>{data.license.licenseKey}</Descriptions.Item>
+              <Descriptions.Item label='Day Lefts'>{data.license.daysLeft}</Descriptions.Item>
+              <Descriptions.Item label='Used?'>{data.license.canUsed ? 'Yes' : 'No'}</Descriptions.Item>
               {data.license.activatedAt && (
-                <Descriptions.Item label='Actived At'>{data.license?.activatedAt}</Descriptions.Item>
+                <Descriptions.Item label='Activated At'>{data.license.activatedAt}</Descriptions.Item>
               )}
               {data.license.canUsed && (
                 <Descriptions.Item label='Hardware Id'>

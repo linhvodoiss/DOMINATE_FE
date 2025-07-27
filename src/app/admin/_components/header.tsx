@@ -7,6 +7,7 @@ import ThemeChange from './theme-change'
 import { toast } from 'sonner'
 import { subscribeOnce } from '~/app/_components/socket-link'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const { Header } = Layout
 
@@ -52,7 +53,7 @@ function storeNotifications(notifications: NotificationItem[]) {
 
 export default function AdminHeader() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
-
+  const router = useRouter()
   useEffect(() => {
     const existing = getStoredNotifications()
     setNotifications(existing)
@@ -102,6 +103,7 @@ export default function AdminHeader() {
                   e.stopPropagation()
                   setNotifications([])
                   localStorage.removeItem(STORAGE_KEY)
+                  router.refresh()
                 }}
               >
                 Clear

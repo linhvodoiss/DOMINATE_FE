@@ -68,7 +68,6 @@ export default function OptionPage({ listOption, pageNumber, totalElements, page
   // Set modal type to edit and set record to edit
   // Reset form when opening edit modal
   const handleEdit = (record: OptionResponse) => {
-    console.log('handleEdit', record)
     setModalType('edit')
     setEditRecord(record)
     setIsModalOpen(true)
@@ -125,7 +124,6 @@ export default function OptionPage({ listOption, pageNumber, totalElements, page
         setIsModalOpen(false)
         router.refresh()
       })
-      console.log('Update:', { ...editRecord, ...values })
     }
   }
 

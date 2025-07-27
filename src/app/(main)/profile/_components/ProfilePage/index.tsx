@@ -56,7 +56,6 @@ export default function ProfilePage({ user }: { user: User }) {
         body: JSON.stringify(rest),
         baseUrl: '/api',
       })
-      console.log(res)
 
       if (!CODE_SUCCESS.includes(res.code)) {
         toast.error('Update information failed')

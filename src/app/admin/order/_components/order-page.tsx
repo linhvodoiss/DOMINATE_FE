@@ -43,7 +43,6 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
   // Set modal type to edit and set record to edit
   // Reset form when opening edit modal
   const handleEdit = (record: OrderResponse) => {
-    console.log('handleEdit', record)
     setEditRecord(record)
     setIsModalOpen(true)
   }

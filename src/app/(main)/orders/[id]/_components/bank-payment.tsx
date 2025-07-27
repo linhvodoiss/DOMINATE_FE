@@ -48,47 +48,47 @@ export default function BankTransferPayment({
   const [modalType, setModalType] = useState<ModalType>(null)
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
-  const [licenseKey, setLicenseKey] = useState(paymentInfo?.license?.licenseKey || '')
+  // const [licenseKey, setLicenseKey] = useState(paymentInfo?.license?.licenseKey || '')
 
   const existingOrderId = searchParams.get('orderId')
   const tempOrderId = useMemo(() => {
     return existingOrderId ? parseInt(existingOrderId) : Math.floor(10_000_000 + Math.random() * 90_000_000)
   }, [existingOrderId])
 
-  const hasCalledLicense = useRef(false)
+  // const hasCalledLicense = useRef(false)
   // -------------------- CREATE KEY --------------------
-  useEffect(() => {
-    const createLicense = async () => {
-      const fixedHardwareId = getHardwareId()
-      if (!existingOrderId || hasCalledLicense.current || licenseKey) return
+  // useEffect(() => {
+  //   const createLicense = async () => {
+  //     const fixedHardwareId = getHardwareId()
+  //     if (!existingOrderId || hasCalledLicense.current || licenseKey) return
 
-      try {
-        const resLis = await http.post<LicenseResponse>(LINKS.licenses_create, {
-          body: JSON.stringify({
-            orderId: existingOrderId,
-            hardwareId: fixedHardwareId,
-          }),
-          baseUrl: '/api',
-        })
+  //     try {
+  //       const resLis = await http.post<LicenseResponse>(LINKS.licenses_create, {
+  //         body: JSON.stringify({
+  //           orderId: existingOrderId,
+  //           hardwareId: fixedHardwareId,
+  //         }),
+  //         baseUrl: '/api',
+  //       })
 
-        if (!CODE_SUCCESS.includes(resLis.code)) {
-          toast.error(resLis.message || 'Failed to create license')
-          return
-        }
+  //       if (!CODE_SUCCESS.includes(resLis.code)) {
+  //         toast.error(resLis.message || 'Failed to create license')
+  //         return
+  //       }
 
-        setLicenseKey(resLis?.data?.licenseKey as string)
-        toast.success(resLis.message || 'License created successfully.')
-        hasCalledLicense.current = true
-      } catch (error) {
-        console.error('License creation failed:', error)
-        toast.error('Something went wrong when creating license')
-      }
-    }
+  //       setLicenseKey(resLis?.data?.licenseKey as string)
+  //       toast.success(resLis.message || 'License created successfully.')
+  //       hasCalledLicense.current = true
+  //     } catch (error) {
+  //       console.error('License creation failed:', error)
+  //       toast.error('Something went wrong when creating license')
+  //     }
+  //   }
 
-    if (paymentInfo?.paymentStatus === OrderStatusEnum.SUCCESS) {
-      createLicense()
-    }
-  }, [existingOrderId, licenseKey, paymentInfo?.paymentStatus])
+  //   if (paymentInfo?.paymentStatus === OrderStatusEnum.SUCCESS) {
+  //     createLicense()
+  //   }
+  // }, [existingOrderId, licenseKey, paymentInfo?.paymentStatus])
 
   // -------------------- CLOSE MODAL FROM WEBSOCKET --------------------
   useEffect(() => {
@@ -288,7 +288,7 @@ export default function BankTransferPayment({
 
       {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
         <span className='hover:text-primary-system relative inline-block -translate-y-2 font-medium'>
-          Your license key: {licenseKey} <br />
+          Your license key: {paymentInfo?.license?.licenseKey} <br />
           Type: {paymentInfo?.subscription?.typePackage}
         </span>
       )}
