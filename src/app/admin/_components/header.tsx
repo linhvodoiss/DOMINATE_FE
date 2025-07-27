@@ -25,27 +25,23 @@ export default function AdminHeader() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
 
   useEffect(() => {
-    console.log('Header mounted')
     const client = getStompClient()
-
-    client.connect({}, () => {
-      console.log('[STOMP] Connected')
-      client.subscribe('/topic/order/global', message => {
-        const payload: NotificationItem = JSON.parse(message.body)
-        console.log(payload)
-        toast.info(
-          `Đơn mới từ ${payload.userName} (${payload.packageName} - ${payload.price.toLocaleString()}₫ - ${payload.paymentMethod})`
-        )
-
-        setNotifications(prev => [
-          {
-            ...payload,
-          },
-          ...prev.slice(0, 4), // chỉ giữ 5 thông báo gần nhất
-        ])
+    if (!client.connected) {
+      client.connect({}, () => {
+        console.log('[STOMP] Connected')
+        client.subscribe('/topic/order/global', message => {
+          const payload = JSON.parse(message.body)
+          toast.info(`You have an new order: ${payload.orderId}`)
+          setNotifications(prev => [
+            {
+              ...payload,
+            },
+            ...prev.slice(0, 4),
+          ])
+          router.refresh()
+        })
       })
-    })
-
+    }
     return () => {
       if (client.connected) client.disconnect()
     }
@@ -86,6 +82,7 @@ export default function AdminHeader() {
       label: 'Logout',
     },
   ]
+  console.log(notifications)
 
   return (
     <Header className='!bg-background flex h-16 items-center justify-end pl-3'>
