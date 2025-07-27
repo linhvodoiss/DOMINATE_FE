@@ -28,7 +28,6 @@ export default async function page({ params }: Props) {
     params: { page: 1, size: PAGE_SIZE },
   })
   const detailOrder = data
-  console.log(data)
 
   return <PreviewPage data={detailOrder as OrderResponse} id={id} />
 }

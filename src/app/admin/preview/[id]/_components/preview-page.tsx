@@ -1,6 +1,6 @@
 'use client'
 import { Button, Descriptions, Tag, Divider, Radio } from 'antd'
-import React, { useState, useTransition } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { paymentMethodMap, paymentStatusMap, statusColorMap } from '~/constants/payment-type'
 import { OrderResponse } from '#/order'
 import { billingCycleMap, typePackageMap } from '~/constants/package-type'
@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { LicenseResponse } from '#/licenses'
+import { subscribeOnce } from '~/app/_components/socket-link'
 
 const colResponsive = { xs: 1, sm: 1, md: 1, lg: 1 }
 export default function AdminOrderPreview({ data, id }: { data: OrderResponse; id: string }) {
@@ -18,9 +19,21 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
   const router = useRouter()
   const [status, setStatus] = useState(data.paymentStatus)
   const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false)
+
+  useEffect(() => {
+    setStatus(data.paymentStatus)
+    subscribeOnce('/topic/payment/global', client => {
+      client.subscribe('/topic/payment/global', message => {
+        const payload = JSON.parse(message.body)
+
+        toast.info(`Order ${payload.orderId}  ${paymentStatusMap[payload.newStatus] || payload.newStatus}`)
+        router.refresh()
+      })
+    })
+  }, [data.paymentStatus, router])
   const handleUpdateStatus = () => {
     startTransition(async () => {
-      const res = await http.patch(`${LINKS.order}/${data.orderId}`, {
+      const res = await http.patch(`${LINKS.order_admin}/${data.orderId}`, {
         params: {
           newStatus: status,
         },
@@ -70,6 +83,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
           <Radio.Button
             key={key}
             value={key}
+            onChange={e => setStatus(e.target.value)}
             style={{
               color: '#fff',
               backgroundColor: statusColorMap[key],

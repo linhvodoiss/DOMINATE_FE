@@ -16,7 +16,8 @@ import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { CODE_SUCCESS } from '~/constants'
 import { toast } from 'sonner'
-import { initSocket, subscribeOnce, subscribeOnceNoRegister } from '~/app/_components/socket-link'
+import { subscribeOnce, subscribeOnceNoRegister } from '~/app/_components/socket-link'
+import { paymentStatusMap } from '~/constants/payment-type'
 
 interface Props {
   listOrder: OrderResponse[]
@@ -79,13 +80,13 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
     subscribeOnce('/topic/payment/global', client => {
       client.subscribe('/topic/payment/global', message => {
         const payload = JSON.parse(message.body)
-        toast.info(`Order ${payload.orderId} updated: ${payload.newStatus}`)
+        toast.info(`Order ${payload.orderId}  ${paymentStatusMap[payload.newStatus] || payload.newStatus}`)
         router.refresh()
       })
     })
 
     subscribeOnceNoRegister(client => {
-      client.subscribe('/topic/order/global', message => {
+      client.subscribe('/topic/order/global', () => {
         router.refresh()
       })
     })
