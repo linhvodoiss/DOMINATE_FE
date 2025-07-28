@@ -62,11 +62,13 @@ export default function AdminHeader() {
       client.subscribe('/topic/order/global', message => {
         const payload = JSON.parse(message.body)
 
-        toast.info(`Bạn có đơn mới: ${payload.orderId}`)
+        toast.info(`You have an new order: ${payload.orderId}`)
 
-        const updated = [{ ...payload }, ...existing].slice(0, MAX_NOTIFICATIONS)
-        setNotifications(updated)
-        storeNotifications(updated)
+        setNotifications(prev => {
+          const updated = [{ ...payload }, ...prev].slice(0, MAX_NOTIFICATIONS)
+          storeNotifications(updated)
+          return updated
+        })
       })
     })
   }, [])
@@ -82,7 +84,10 @@ export default function AdminHeader() {
                 target='_blank'
                 className='hover:bg-muted block max-w-[300px] cursor-pointer rounded-sm px-2 py-1'
               >
-                <div className='font-semibold'>{item.userName}</div>
+                <div className='font-semibold'>
+                  #{item.orderId} - {item.userName}
+                </div>
+
                 <div className='text-muted-foreground text-sm'>
                   {item.packageName} - {item.price.toLocaleString()}₫
                 </div>

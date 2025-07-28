@@ -13,6 +13,7 @@ interface Props {
   editRecord: PackageResponse | null
   optionList: { label: string; value: string | number }[]
   form: FormInstance
+  isPending: boolean
 }
 
 const billingCycleOptions = [
@@ -25,7 +26,16 @@ const typePackage = [
   { label: 'Runtime', value: 'RUNTIME' },
 ]
 
-export default function PackageForm({ visible, onCancel, onFinish, modalType, editRecord, optionList, form }: Props) {
+export default function PackageForm({
+  visible,
+  onCancel,
+  onFinish,
+  modalType,
+  editRecord,
+  optionList,
+  form,
+  isPending,
+}: Props) {
   useEffect(() => {
     if (visible) {
       if (modalType === 'add') {
@@ -73,12 +83,22 @@ export default function PackageForm({ visible, onCancel, onFinish, modalType, ed
       <Form.Item wrapperCol={{ xs: { span: 24 }, md: { offset: 6, span: 18 } }}>
         <Row gutter={16}>
           <Col>
-            <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
+            <Button
+              type='primary'
+              htmlType='submit'
+              className='!bg-primary-system !border-primary-system'
+              disabled={isPending}
+            >
               {modalType === 'add' ? 'Add' : 'Update'}
             </Button>
           </Col>
           <Col>
-            <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
+            <Button
+              type='primary'
+              onClick={onCancel}
+              className='!border-primary-system !bg-red-500'
+              disabled={isPending}
+            >
               Cancel
             </Button>
           </Col>

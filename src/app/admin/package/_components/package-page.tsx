@@ -8,7 +8,7 @@ import { PackageResponse } from '#/package'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import FilterPackage from './filter-package'
-import { startTransition, useState } from 'react'
+import { useState, useTransition } from 'react'
 import http from '~/utils/http'
 import { CODE_SUCCESS } from '~/constants'
 import { toast } from 'sonner'
@@ -26,7 +26,7 @@ interface Props {
 
 export default function PackagePage({ listPackage, pageNumber, totalElements, pageSize }: Props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
-
+  const [isPending, startTransition] = useTransition()
   const handleDeleteMany = async () => {
     if (selectedRowKeys.length === 0) {
       toast.warning('Please select at least one package to delete')
@@ -108,7 +108,7 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
   }
   // Handle form submission for adding or editing package
   // This function is called when the form is submitted
-  const handleFinish = (values: PackageResponse) => {
+  const handleFinish = async (values: PackageResponse) => {
     if (modalType === 'add') {
       startTransition(async () => {
         const res = await http.post(LINKS.subscriptions, {
@@ -184,6 +184,7 @@ export default function PackagePage({ listPackage, pageNumber, totalElements, pa
         editRecord={editRecord}
         optionList={optionList}
         form={form}
+        isPending={isPending}
       />
     </div>
   )

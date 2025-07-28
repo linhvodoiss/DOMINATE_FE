@@ -25,10 +25,10 @@ export default function SuccessPage() {
     hasRun.current = true
 
     const orderId = searchParams.get('orderCode')
-    const hardwareId = 'hihi'
+
     const newStatus = OrderStatusEnum.SUCCESS
 
-    if (!orderId || !hardwareId) return
+    if (!orderId) return
 
     const createLicense = async () => {
       try {
@@ -45,7 +45,7 @@ export default function SuccessPage() {
 
         // 2. CALL API MAKE LICENSE
         const resLis = await http.post<LicenseResponse>(LINKS.licenses_create, {
-          body: JSON.stringify({ orderId: Number(orderId), hardwareId }),
+          body: JSON.stringify({ orderId: Number(orderId) }),
           baseUrl: '/api',
         })
 
@@ -53,10 +53,6 @@ export default function SuccessPage() {
           setErrorMessage(resLis.message || 'Create license failed')
           return
         }
-        await http.patch<OrderResponse>(`${LINKS.order}/${orderId}`, {
-          params: { newStatus },
-          baseUrl: '/api',
-        })
         setLicenseKey(resLis?.data?.licenseKey as string)
         toast.success(resLis.message || 'License created successfully.')
       } catch (err) {
