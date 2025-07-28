@@ -15,41 +15,60 @@ import { useEffect } from 'react'
 import { ProfileFormValues, ProfileSchema } from '#/zodType'
 import { PlusCircle } from 'lucide-react'
 
-export default function ProfilePage({ user }: { user: User }) {
+export default function ProfilePage() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [update, setUpdate] = useState(true)
-  const mockData = {
-    userName: user.userName,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    phoneNumber: user.phoneNumber,
-  }
-  const [data] = useState(mockData)
+  const [initialPhone, setInitialPhone] = useState<User | string>('')
+  const [initialData, setInitialData] = useState<User | null>(null)
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      userName: data.userName,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
+      userName: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
     },
   })
+
+  // Fetch profile data from API
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await http.get<User>(LINKS.profile, {
+          baseUrl: '/api',
+        })
+        if (res) {
+          form.reset(res.data)
+          setInitialData(res.data as User)
+          setInitialPhone(res?.data?.phoneNumber ?? (0 as User))
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (err) {
+        toast.error('Failed to load profile data')
+      }
+    }
+
+    fetchProfile()
+  }, [form])
+
   async function onSubmit(data: ProfileFormValues) {
     startTransition(async () => {
-      const [checkPhoneNumberRes] = await Promise.all([
-        http.get<{ check: boolean }>(LINKS.check_phone_number__exist, {
-          params: { phoneNumber: data.phoneNumber },
-        }),
-      ])
+      const isPhoneChanged = data.phoneNumber !== initialPhone
 
-      if (checkPhoneNumberRes.check) {
-        if (checkPhoneNumberRes.check) toast.error('Phone number have already exist')
-        return
+      if (isPhoneChanged) {
+        const checkRes = await http.get<{ check: boolean }>(LINKS.check_phone_number__exist, {
+          params: { phoneNumber: data.phoneNumber },
+        })
+
+        if (checkRes.check) {
+          toast.error('Phone number already exists')
+          return
+        }
       }
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { email, userName, ...rest } = data
       const res = await http.put(LINKS.profile, {
@@ -61,23 +80,21 @@ export default function ProfilePage({ user }: { user: User }) {
         toast.error('Update information failed')
         return
       }
-
+      setUpdate(!update)
       toast.success(res.message)
-      router.push('/login')
       router.refresh()
     })
   }
 
   const updateProfileHandler = (e?: React.MouseEvent<HTMLButtonElement>) => {
     e?.preventDefault()
+
+    if (!update && initialData) {
+      form.reset(initialData)
+    }
     setUpdate(!update)
   }
 
-  useEffect(() => {
-    if (update) {
-      form.reset(data)
-    }
-  }, [data, form, update])
   return (
     <ProfileStyled className='bg-primary-foreground mt-12 rounded-2xl border-[1px] px-6 pt-8 pb-12 shadow-md md:px-12 xl:px-32'>
       {/* Choose Image block - mobile lên trên, desktop nằm phải */}

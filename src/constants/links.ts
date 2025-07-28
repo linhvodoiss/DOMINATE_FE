@@ -31,5 +31,6 @@ export const LINKS = {
   options: '/options',
   account: '/account',
   account_change_pass: '/account/changePassword',
+  account_dashboard: '/account/dashboard',
   options_show_select: '/options/list',
 }

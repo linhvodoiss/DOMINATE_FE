@@ -19,3 +19,17 @@ export async function PUT(request: NextRequest) {
 
   return response
 }
+
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get(AUTH.token)?.value
+
+  const res = await http.get(LINKS.profile, {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : '',
+    },
+  })
+
+  const response = NextResponse.json(res)
+
+  return response
+}
