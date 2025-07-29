@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Card, Col, Row } from 'antd'
-import { Pie } from '@ant-design/plots'
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { DashBoardResponse } from '#/dashboard'
 import numeral from 'numeral'
 import { statusColorMap } from '~/constants/payment-type'
@@ -11,49 +11,82 @@ export default function DashBoardPage({ data }: { data?: DashBoardResponse }) {
   if (!data) return null
 
   const paymentMethodData = Object.entries(data.ordersByPaymentMethod || {}).map(([type, value]) => ({
-    type,
+    name: type,
     value: Number(value),
   }))
 
   const revenueData = Object.entries(data.revenueByPaymentMethod || {}).map(([type, value]) => ({
-    type,
+    name: type,
     value: Number(value),
   }))
 
   const statusData = Object.entries(data.ordersByStatus || {}).map(([type, value]) => ({
-    type,
+    name: type,
     value: Number(value),
   }))
 
-  const pieConfig = (chartData: any[], isStatusChart = false) => {
-    const total = chartData.reduce((sum, d) => sum + d.value, 0)
+  const colorMap: Record<string, string> = {
+    SUCCESS: '#198754',
+    PENDING: '#ffc107',
+    FAILED: '#dc3545',
+    PROCESSING: '#0d6efd',
+    PAYOS: 'violet',
+  }
+  const labelMap: Record<string, string> = {
+    SUCCESS: 'Success',
+    PENDING: 'Pending',
+    FAILED: 'Failed',
+    PROCESSING: 'Processing',
+    PAYOS: 'PayOS',
+    BANK: 'Bank',
+  }
+  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5
+    const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180))
+    const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180))
 
-    return {
-      data: chartData,
-      angleField: 'value',
-      colorField: 'type',
-      radius: 1,
-      height: 240,
-      autoFit: true,
-      // Đổi màu thủ công nếu là chart theo status
-      color: isStatusChart ? chartData.map(d => statusColorMap[d.type] || '#ccc') : undefined,
+    return (
+      <text x={x} y={y} fill='white' textAnchor='middle' dominantBaseline='central' fontSize={12} fontWeight='bold'>
+        {`${(percent * 100).toFixed(1)}%`}
+      </text>
+    )
+  }
 
-      label: {
-        type: 'inner', // hoặc 'spider'
-        content: (datum: { type: string; value: number }) => {
-          const percent = total ? ((datum.value / total) * 100).toFixed(1) : '0'
-          return `${datum.type}: ${percent}%`
-        },
-        style: {
-          fontSize: 14,
-          fill: '#fff',
-        },
-      },
-      legend: {
-        position: 'top',
-      },
-      interactions: [{ type: 'element-active' }],
-    }
+  const renderPieChart = (chartData: any[], title: string, useStatusColor = false) => {
+    const isRevenue = title.includes('Revenue')
+    return (
+      <Card title={title}>
+        <ResponsiveContainer width='100%' height={240}>
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey='value'
+              nameKey='name'
+              cx='50%'
+              cy='50%'
+              outerRadius={80}
+              label={renderCustomLabel}
+              labelLine={false}
+            >
+              {chartData.map(entry => (
+                <Cell
+                  key={`cell-${entry.name}`}
+                  fill={(useStatusColor ? statusColorMap : colorMap)[entry.name] || '#8884d8'}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value: number, name: string) =>
+                isRevenue
+                  ? [`${numeral(value).format('0,0')} ₫`, labelMap[name] || name]
+                  : [`${numeral(value).format('0,0')} orders`, labelMap[name] || name]
+              }
+            />
+            <Legend verticalAlign='top' height={36} formatter={(value: string) => labelMap[value] || value} />
+          </PieChart>
+        </ResponsiveContainer>
+      </Card>
+    )
   }
 
   return (
@@ -80,19 +113,13 @@ export default function DashBoardPage({ data }: { data?: DashBoardResponse }) {
 
       <Row gutter={[16, 16]}>
         <Col xs={24} md={8}>
-          <Card title='Revenue by Payment Method'>
-            <Pie {...pieConfig(revenueData)} />
-          </Card>
+          {renderPieChart(revenueData, 'Revenue by Payment Method')}
         </Col>
         <Col xs={24} md={8}>
-          <Card title='Orders by Status'>
-            <Pie {...pieConfig(statusData, true)} />
-          </Card>
+          {renderPieChart(statusData, 'Orders by Status', true)}
         </Col>
         <Col xs={24} md={8}>
-          <Card title='Orders by Payment Method'>
-            <Pie {...pieConfig(paymentMethodData)} />
-          </Card>
+          {renderPieChart(paymentMethodData, 'Orders by Payment Method')}
         </Col>
       </Row>
     </div>
