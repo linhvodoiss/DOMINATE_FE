@@ -33,7 +33,11 @@ export default function LoginForm() {
         return
       }
       toast.success(res.message)
-      router.push('/')
+      if (res.user?.role === 'ADMIN') {
+        router.push('/admin')
+      } else {
+        router.push('/')
+      }
       router.refresh()
     })
   }

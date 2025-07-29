@@ -1,13 +1,15 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { BellOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Badge, Button, Dropdown, Layout, MenuProps, Space } from 'antd'
 import ThemeChange from './theme-change'
 import { toast } from 'sonner'
-import { subscribeOnce } from '~/app/_components/socket-link'
+import { disconnectSocket, subscribeOnce } from '~/app/_components/socket-link'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import http from '~/utils/http'
+import { LINKS } from '~/constants/links'
 
 const { Header } = Layout
 
@@ -54,6 +56,8 @@ function storeNotifications(notifications: NotificationItem[]) {
 export default function AdminHeader() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+
   useEffect(() => {
     const existing = getStoredNotifications()
     setNotifications(existing)
@@ -73,6 +77,17 @@ export default function AdminHeader() {
     })
   }, [])
 
+  async function logoutHandler() {
+    startTransition(async () => {
+      await http.post(LINKS.logout_api, { baseUrl: 'api/auth' })
+      router.push('/')
+      disconnectSocket()
+      router.refresh()
+    })
+  }
+  // const hi = () => {
+  //   toast.success('ca cho')
+  // }
   const notificationItems: MenuProps['items'] =
     notifications.length > 0
       ? [
@@ -131,6 +146,7 @@ export default function AdminHeader() {
     {
       key: 'logout',
       label: 'Logout',
+      onClick: () => logoutHandler(),
     },
   ]
 
