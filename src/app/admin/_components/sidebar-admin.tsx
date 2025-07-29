@@ -10,13 +10,14 @@ import { usePathname } from 'next/navigation'
 const { Sider, Content } = Layout
 
 function getMenuKey(pathname: string) {
-  if (pathname.startsWith('/admin/dashboard')) return 'dashboard'
   if (pathname.startsWith('/admin/account')) return 'account'
   if (pathname.startsWith('/admin/order')) return 'order'
   if (pathname.startsWith('/admin/package')) return 'package'
   if (pathname.startsWith('/admin/option')) return 'option'
-  return 'dashboard'
+  if (pathname === '/admin') return 'dashboard'
+  return ''
 }
+
 export default function SideBarAdmin({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const selectedKey = getMenuKey(pathname)
@@ -36,7 +37,7 @@ export default function SideBarAdmin({ children }: { children: ReactNode }) {
             {
               key: 'dashboard',
               icon: <DashboardOutlined />,
-              label: <Link href='/admin/dashboard'>Dashboard</Link>,
+              label: <Link href='/admin'>Dashboard</Link>,
               className: '!text-secondary-gray',
             },
             {

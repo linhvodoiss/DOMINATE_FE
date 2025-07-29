@@ -40,7 +40,8 @@ export default function DashBoardPage({ data }: { data?: DashBoardResponse }) {
     PAYOS: 'PayOS',
     BANK: 'Bank',
   }
-  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5
     const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180))
     const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180))
@@ -52,6 +53,7 @@ export default function DashBoardPage({ data }: { data?: DashBoardResponse }) {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderPieChart = (chartData: any[], title: string, useStatusColor = false) => {
     const isRevenue = title.includes('Revenue')
     return (
