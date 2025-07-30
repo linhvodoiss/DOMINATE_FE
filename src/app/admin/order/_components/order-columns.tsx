@@ -2,7 +2,7 @@ import { Space, Button, Tag } from 'antd'
 import { EditOutlined } from '@ant-design/icons'
 import { SortOrder } from 'antd/es/table/interface'
 import { OrderResponse } from '#/order'
-import { paymentMethodMap, paymentStatusMap, statusColorMap } from '~/constants/payment-type'
+import { paymentStatusMap, statusColorMap } from '~/constants/payment-type'
 import { typePackageMap } from '~/constants/package-type'
 
 interface GetColumnsProps {
@@ -27,14 +27,6 @@ export default function getOrderColumns({ sort, handleEdit }: GetColumnsProps) {
       key: 'orderId',
       width: 120,
       ellipsis: true,
-    },
-    {
-      title: 'Payment Method',
-      dataIndex: 'paymentMethod',
-      key: 'paymentMethod',
-      width: 140,
-      ellipsis: true,
-      render: (method: string) => paymentMethodMap[method] || method,
     },
     {
       title: 'Status',
@@ -67,7 +59,7 @@ export default function getOrderColumns({ sort, handleEdit }: GetColumnsProps) {
       key: 'price',
       width: 100,
       ellipsis: true,
-      render: (price: number) => price.toLocaleString('vi-VN') + ' đ',
+      render: (price?: number) => (price != null ? price.toLocaleString('vi-VN') + ' đ' : '--'),
     },
     {
       title: 'Actions',

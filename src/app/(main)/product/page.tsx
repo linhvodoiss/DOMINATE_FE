@@ -6,6 +6,7 @@ import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import calPriceDiscount from '~/utils/price-discount-calculate'
 import FilterForm from './_components/filter-form'
+import { billingCycleMap } from '~/constants/package-type'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -48,15 +49,23 @@ export default async function ProductPage({ searchParams }: Props) {
               </div>
 
               <h2 className='mt-1 text-center text-lg font-semibold'>
-                [{pkg.billingCycle}] {pkg.name}
+                [{billingCycleMap[pkg.billingCycle as string] || pkg.billingCycle}] {pkg.name}
               </h2>
-              {pkg.discount ? (
+              {pkg.discount != null && pkg.discount > 0 ? (
                 <p className='mt-1 flex items-center gap-2 text-base font-bold'>
-                  <span className='text-sm font-medium line-through'>{pkg.price} đ</span>
-                  <span className='text-base font-bold'>{calPriceDiscount(pkg.price as number, pkg.discount)} đ</span>
+                  <span className='text-sm font-medium text-gray-500 line-through'>
+                    {pkg.price != null ? pkg.price.toLocaleString('vi-VN') + ' đ' : '--'}
+                  </span>
+                  <span className='text-base font-bold'>
+                    {pkg.price != null
+                      ? calPriceDiscount(pkg.price, pkg.discount).toLocaleString('vi-VN') + ' đ'
+                      : '--'}
+                  </span>
                 </p>
               ) : (
-                <p className='mt-1 text-base font-bold'>{pkg.price} đ</p>
+                <p className='mt-1 text-base font-bold'>
+                  {pkg.price != null ? pkg.price.toLocaleString('vi-VN') + ' đ' : '--'}
+                </p>
               )}
 
               <Link

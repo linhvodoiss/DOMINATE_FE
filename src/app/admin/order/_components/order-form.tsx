@@ -37,8 +37,6 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label='Method payment'>{editRecord.paymentMethod}</Descriptions.Item>
-
         <Descriptions.Item label='Link payment'>
           <Button
             type='link'
@@ -50,7 +48,7 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
             Preview order
           </Button>
         </Descriptions.Item>
-        <Descriptions.Item label='Ngày tạo'>{editRecord.createdAt}</Descriptions.Item>
+        <Descriptions.Item label='Created at'>{editRecord.createdAt}</Descriptions.Item>
       </Descriptions>
       <Divider />
       <Form.Item

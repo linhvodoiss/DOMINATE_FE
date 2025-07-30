@@ -54,7 +54,7 @@ export default function FilterOrder() {
         }}
       >
         <Option value='PENDING'>Pending</Option>
-        <Option value='PROCESSING'>Processing</Option>
+        {/* <Option value='PROCESSING'>Processing</Option> */}
         <Option value='SUCCESS'>Success</Option>
         <Option value='FAILED'>Failed</Option>
       </Select>

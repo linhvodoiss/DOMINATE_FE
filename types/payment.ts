@@ -18,8 +18,10 @@ export type PaymentResponse = {
   qrCode: string
   paymentStatus: string
   paymentLink: string
+  dateTransfer: string
   createdAt?: string
   updatedAt?: string
+  orderId: number
 }
 
 export type ResponseGlobal = {

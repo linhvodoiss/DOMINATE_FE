@@ -33,21 +33,26 @@ export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }:
       dataIndex: 'price',
       key: 'price',
       width: 100,
-      render: (price: number) => price.toLocaleString('vi-VN') + ' đ',
+      ellipsis: true,
+      render: (price?: number) => (price != null ? price.toLocaleString('vi-VN') + ' đ' : '--'),
     },
     {
       title: 'Discount',
       dataIndex: 'discount',
       key: 'discount',
       width: 100,
-      render: (discount: number) => <p>{discount} %</p>,
+      ellipsis: true,
+      render: (discount?: number) => (discount != null ? `${discount} %` : '--'),
     },
     {
       title: 'Price after discount',
       key: 'discountPrice',
       width: 140,
-      render: (record: { price: number; discount: number }) => {
-        const discountedPrice = calPriceDiscount(record.price, record.discount)
+      ellipsis: true,
+      render: (record: { price?: number; discount?: number }) => {
+        const { price, discount } = record
+        if (price == null || discount == null) return '--'
+        const discountedPrice = calPriceDiscount(price, discount)
         return <span>{discountedPrice.toLocaleString('vi-VN')} đ</span>
       },
     },

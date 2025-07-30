@@ -187,8 +187,9 @@ export default function MyOrderPage({ data, id }: Props) {
                 <div className='text-right whitespace-nowrap'>
                   {order.subscription ? (
                     <>
-                      <p className='text-muted-foreground text-sm line-through'>{order.subscription.price} đ</p>
-                      <p className='text-primary text-lg font-bold md:text-xl'>{order.subscription.discount} đ</p>
+                      <p className='text-primary text-lg font-bold md:text-xl'>
+                        {order?.price != null ? order.price.toLocaleString('vi-VN') + ' đ' : '--'}
+                      </p>
                     </>
                   ) : (
                     <p className='text-muted-foreground italic'>Price is undefined</p>

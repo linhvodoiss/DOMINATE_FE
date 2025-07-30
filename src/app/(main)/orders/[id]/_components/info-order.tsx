@@ -30,13 +30,21 @@ export default function OrderInfo({ data, user }: Props) {
         <p className='mb-3'>
           <span className='flex items-center gap-2 font-semibold'>
             Price:
-            {data?.discount ? (
+            {data?.discount != null && data.discount > 0 ? (
               <>
-                <span className='line-through'>{data?.price} đ</span>
-                <span className='font-bold'>{calPriceDiscount(data?.price as number, data?.discount as number)} đ</span>
+                <span className='text-gray-500 line-through'>
+                  {data?.price != null ? data.price.toLocaleString('vi-VN') + ' đ' : '--'}
+                </span>
+                <span className='text-primary font-bold'>
+                  {data?.price != null
+                    ? calPriceDiscount(data.price, data.discount).toLocaleString('vi-VN') + ' đ'
+                    : '--'}
+                </span>
               </>
             ) : (
-              <span className='font-bold'>{data?.price} đ</span>
+              <span className='text-primary font-bold'>
+                {data?.price != null ? data.price.toLocaleString('vi-VN') + ' đ' : '--'}
+              </span>
             )}
           </span>
         </p>

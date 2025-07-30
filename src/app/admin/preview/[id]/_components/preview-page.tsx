@@ -13,6 +13,8 @@ import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { LicenseResponse } from '#/licenses'
 import { subscribeOnce } from '~/app/_components/socket-link'
+import { formatDateTimeVN } from '~/utils/date-convert-pro'
+import { OrderStatusEnum } from '#/tabs-order'
 
 const colResponsive = { xs: 1, sm: 1, md: 1, lg: 1 }
 
@@ -128,8 +130,10 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
             <Descriptions.Item label='Payment Status'>
               <Tag color={statusInfo.color}>{statusInfo.label}</Tag>
             </Descriptions.Item>
-            <Descriptions.Item label='Payment Method'>{methodLabel}</Descriptions.Item>
-            <Descriptions.Item label='Total Price'>{data.price?.toLocaleString()}₫</Descriptions.Item>
+            <Descriptions.Item label='Total Price'>
+              {data.price != null ? data.price.toLocaleString('vi-VN') + '₫' : '--'}
+            </Descriptions.Item>
+
             <Descriptions.Item label='Created At'>{data.createdAt}</Descriptions.Item>
           </Descriptions>
         </div>
@@ -140,7 +144,10 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
           {data.subscription ? (
             <Descriptions bordered size='middle' column={colResponsive}>
               <Descriptions.Item label='Package Name'>{data.subscription.name}</Descriptions.Item>
-              <Descriptions.Item label='Original Price'>{data.subscription.price?.toLocaleString()}₫</Descriptions.Item>
+              <Descriptions.Item label='Original Price'>
+                {data.subscription?.price != null ? data.subscription.price.toLocaleString('vi-VN') + '₫' : '--'}
+              </Descriptions.Item>
+
               <Descriptions.Item label='Discount'>{data.subscription.discount}%</Descriptions.Item>
               <Descriptions.Item label='Billing Cycle'>
                 {billingCycleMap[data.subscription.billingCycle as keyof typeof billingCycleMap] ||
@@ -165,7 +172,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
                     onClick={() => setShowMoreOptions(prev => !prev)}
                     className='mt-1 p-0'
                   >
-                    {showMoreOptions ? 'Ẩn bớt' : 'Xem thêm'}
+                    {showMoreOptions ? 'Hide' : 'View more'}
                   </Button>
                 )}
               </Descriptions.Item>
@@ -186,11 +193,14 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
               </Descriptions.Item>
               <Descriptions.Item label='Email'>{data.buyer.email}</Descriptions.Item>
               <Descriptions.Item label='Phone Number'>{data.buyer.phoneNumber}</Descriptions.Item>
-              {data.paymentMethod !== 'BANK' && (
+              {data.paymentStatus === OrderStatusEnum.SUCCESS && (
                 <>
-                  <Descriptions.Item label='Bank'>{BIN_BANK_MAP[data.bin as string]}</Descriptions.Item>
-                  <Descriptions.Item label='Account Number'>{data.accountNumber}</Descriptions.Item>
                   <Descriptions.Item label='Account Name'>{data.accountName}</Descriptions.Item>
+                  <Descriptions.Item label='Account Number'>{data.accountNumber}</Descriptions.Item>
+                  <Descriptions.Item label='Account Bank'>
+                    {data?.bin && BIN_BANK_MAP[data.bin] ? BIN_BANK_MAP[data.bin] : data?.bin || '--'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='Date Transfer'>{formatDateTimeVN(data?.dateTransfer)}</Descriptions.Item>
                 </>
               )}
             </Descriptions>
@@ -209,11 +219,6 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
               <Descriptions.Item label='Used?'>{data.license.canUsed ? 'Yes' : 'No'}</Descriptions.Item>
               {data.license.activatedAt && (
                 <Descriptions.Item label='Activated At'>{data.license.activatedAt}</Descriptions.Item>
-              )}
-              {data.license.canUsed && (
-                <Descriptions.Item label='Hardware Id'>
-                  {data.license.hardwareId || 'No connect device'}
-                </Descriptions.Item>
               )}
             </Descriptions>
           ) : (

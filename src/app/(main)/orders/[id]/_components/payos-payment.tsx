@@ -14,6 +14,8 @@ import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import ModalOrder from './modal-order'
 import calPriceDiscount from '~/utils/price-discount-calculate'
+import { BIN_BANK_MAP } from '~/constants/bank-list'
+import { formatDateTimeVN } from '~/utils/date-convert-pro'
 
 type ModalType = 'create' | 'cancel' | null
 
@@ -22,7 +24,6 @@ interface Props {
   isPaymentSubmitted: boolean
   data: PackageResponse
   paymentInfo: PaymentResponse
-  paymentMethod: string
   setPaymentInfo: (info: PaymentResponse) => void
   setIsPaymentSubmitted: (state: boolean) => void
 }
@@ -34,7 +35,6 @@ export default function PayosPayment({
   setIsPaymentSubmitted,
   isPaymentSubmitted,
   id,
-  paymentMethod,
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -64,12 +64,12 @@ export default function PayosPayment({
         const orderRes = await http.post<OrderResponse>(LINKS.order, {
           body: JSON.stringify({
             subscriptionId: data.id,
-            paymentMethod,
+            paymentMethod: 'PAYOS',
             orderId,
-            bin: paymentRes.data.bin,
-            accountName: paymentRes.data.accountName,
-            accountNumber: paymentRes.data.accountNumber,
-            qrCode: paymentRes.data.qrCode,
+            // bin: paymentRes.data.bin,
+            // accountName: paymentRes.data.accountName,
+            // accountNumber: paymentRes.data.accountNumber,
+            // qrCode: paymentRes.data.qrCode,
             paymentLink: paymentRes.data.checkoutUrl,
             price: calPriceDiscount(data.price as number, data.discount as number),
           }),
@@ -165,7 +165,7 @@ export default function PayosPayment({
   if (!isPaymentSubmitted || !paymentInfo) {
     return (
       <>
-        <div className='mt-4 flex justify-end'>
+        <div className='mt-4 flex justify-start'>
           <button
             className='bg-primary-system hover:bg-primary-hover cursor-pointer rounded-md px-6 py-2 font-semibold text-white'
             disabled={isPending || isPaymentSubmitted}
@@ -189,62 +189,116 @@ export default function PayosPayment({
   }
 
   return (
-    <div className='mt-10 rounded-xl border p-4 md:p-6'>
-      {paymentInfo?.paymentStatus === OrderStatusEnum.PENDING && paymentInfo?.paymentLink && (
-        <div className='mb-4 flex items-center gap-4'>
-          <Link
-            href={paymentInfo.paymentLink}
-            target='_blank'
-            className='text-primary text-center text-lg font-bold underline md:text-left md:text-xl'
-          >
-            Link PAYOS →
-          </Link>
-          <button
-            className='text-destructive border-destructive hover:bg-primary-foreground-hover cursor-pointer rounded-md border px-6 py-2 font-semibold'
-            disabled={isPending}
-            onClick={() => setModalType('cancel')}
-          >
-            Cancel
-          </button>
-        </div>
-      )}
-
-      <div className='mt-2'>
-        {paymentInfo.paymentStatus === OrderStatusEnum.PENDING && (
-          <span className='font-bold text-blue-600'>Waiting for confirmation...</span>
-        )}
-        {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
-          <>
-            <span className='mb-3 block font-bold text-[#198754]'>Payment successful!</span>
-            <span className='hover:text-primary-system relative inline-block -translate-y-2 font-medium'>
-              Your license key: {paymentInfo?.license?.licenseKey} <br />
-              Type: {paymentInfo?.subscription?.typePackage}
-            </span>
-          </>
-        )}
-        {paymentInfo.paymentStatus === OrderStatusEnum.FAILED && (
-          <>
-            <span className='mb-3 block font-bold text-[#dc3545]'>Your order has been cancelled.</span>
+    <>
+      <div className='mt-10 rounded-xl border p-4 md:p-6'>
+        {paymentInfo?.paymentStatus === OrderStatusEnum.PENDING && paymentInfo?.paymentLink && (
+          <div className='mb-4 flex items-center gap-4'>
             <Link
-              href={`product/${data?.id}`}
-              className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'
+              href={paymentInfo.paymentLink}
+              target='_blank'
+              className='text-primary text-center text-lg font-bold underline md:text-left md:text-xl'
             >
-              Reorder →
+              Link PAYOS →
             </Link>
-          </>
+            <button
+              className='text-destructive border-destructive hover:bg-primary-foreground-hover cursor-pointer rounded-md border px-6 py-2 font-semibold'
+              disabled={isPending}
+              onClick={() => setModalType('cancel')}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
+        <div className='mt-2'>
+          {paymentInfo.paymentStatus === OrderStatusEnum.PENDING && (
+            <span className='font-bold text-blue-600'>Waiting for confirmation...</span>
+          )}
+          {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (
+            <>
+              <span className='mb-3 block font-bold text-[#198754]'>Payment successful!</span>
+              {paymentInfo.license ? (
+                <span className='hover:text-primary-system relative inline-block -translate-y-2 font-medium'>
+                  Your license key: {paymentInfo?.license?.licenseKey} <br />
+                  Type: {paymentInfo?.subscription?.typePackage}
+                </span>
+              ) : (
+                <span className='relative inline-block -translate-y-2 font-medium'>
+                  Can&apos;t get key, click{' '}
+                  <Link
+                    className='hover:text-primary-system'
+                    href={`/payment/success?orderCode=${paymentInfo.orderId}`}
+                  >
+                    here!
+                  </Link>
+                </span>
+              )}
+            </>
+          )}
+          {paymentInfo.paymentStatus === OrderStatusEnum.FAILED && (
+            <>
+              <span className='mb-3 block font-bold text-[#dc3545]'>Your order has been cancelled.</span>
+              <Link
+                href={`product/${data?.id}`}
+                className='text-primary hover:text-primary-hover relative block -translate-y-2 font-medium underline'
+              >
+                Reorder →
+              </Link>
+            </>
+          )}
+        </div>
+
+        {modalType && (
+          <ModalOrder
+            open={!!modalType}
+            onOpenChange={open => !open && setModalType(null)}
+            title={modalConfig[modalType].title}
+            content={modalConfig[modalType].content}
+            onSubmitOrder={modalConfig[modalType].onSubmit}
+            pending={pending}
+          />
         )}
       </div>
+      {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS ? (
+        <div className='mt-10 rounded-xl border p-4 md:p-6'>
+          <h2 className='mb-3 py-2 text-xl font-semibold'>Infomation Payment</h2>
+          <div className='flex flex-col md:flex-row md:gap-6'>
+            <div className='w-full'>
+              <p className='mb-3'>
+                <span className='font-semibold'>Account Name:</span> {paymentInfo?.accountName}
+              </p>
+              <p className='mb-3'>
+                <span className='font-semibold'>Account Number:</span> {paymentInfo?.accountNumber}
+              </p>
+              <p className='mb-3'>
+                <span className='font-semibold'>Account Bank:</span>{' '}
+                {paymentInfo?.bin && BIN_BANK_MAP[paymentInfo.bin]
+                  ? BIN_BANK_MAP[paymentInfo.bin]
+                  : paymentInfo?.bin || '--'}
+              </p>
+            </div>
 
-      {modalType && (
-        <ModalOrder
-          open={!!modalType}
-          onOpenChange={open => !open && setModalType(null)}
-          title={modalConfig[modalType].title}
-          content={modalConfig[modalType].content}
-          onSubmitOrder={modalConfig[modalType].onSubmit}
-          pending={pending}
-        />
+            <div className='w-full'>
+              <p className='mb-3'>
+                <span className='flex items-center gap-2 font-semibold'>
+                  Price:
+                  <span className='text-primary font-bold'>
+                    {paymentInfo?.price != null ? paymentInfo?.price.toLocaleString('vi-VN') + ' đ' : '--'}
+                  </span>
+                </span>
+              </p>
+              <p className='mb-3'>
+                <span className='font-semibold'>Date transfer:</span> {formatDateTimeVN(paymentInfo?.dateTransfer)}
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className='mt-10 rounded-xl border p-4 md:p-6'>
+          <h2 className='mb-3 py-2 text-xl font-semibold'>Infomation Payment</h2>
+          <p className='text-center text-lg font-semibold text-red-500'>No informtion!</p>
+        </div>
       )}
-    </div>
+    </>
   )
 }

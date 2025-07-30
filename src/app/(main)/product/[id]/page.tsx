@@ -36,15 +36,21 @@ export default async function Page({ params }: Props) {
         <div className='bg-primary-foreground w-full flex-1 rounded-xl border px-6 py-8 text-base shadow-md md:text-lg lg:w-1/3'>
           {/* Price */}
           <p className='flex items-center gap-4 py-2'>
-            {data?.discount ? (
+            {data?.discount != null && data.discount > 0 ? (
               <>
-                <span className='text-gray-500 line-through'>{data?.price} đ</span>
+                <span className='text-gray-500 line-through'>
+                  {data?.price != null ? data.price.toLocaleString('vi-VN') + ' đ' : '--'}
+                </span>
                 <span className='text-primary text-2xl font-bold'>
-                  {calPriceDiscount(data?.price as number, data?.discount as number)} đ
+                  {data?.price != null
+                    ? calPriceDiscount(data.price, data.discount).toLocaleString('vi-VN') + ' đ'
+                    : '--'}
                 </span>
               </>
             ) : (
-              <span className='text-primary text-2xl font-bold'>{data?.price} đ</span>
+              <span className='text-primary text-2xl font-bold'>
+                {data?.price != null ? data.price.toLocaleString('vi-VN') + ' đ' : '--'}
+              </span>
             )}
           </p>
 

@@ -17,6 +17,7 @@ export const LINKS = {
   order: '/orders',
   order_admin: '/orders/admin',
   order_silent: '/orders/silent',
+  order_license: '/orders/license',
   order_email: '/orders/email',
   order_email_admin: '/orders/emailAdmin',
   order_email_report: '/orders/emailReport',

@@ -2,19 +2,16 @@
 import { PackageResponse } from '#/package'
 import { User } from '#/user'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
-import BankTransferPayment from './bank-payment'
+
 import PayosPayment from './payos-payment'
 import { PaymentResponse, ResponseGlobal } from '#/payment'
 import { useSearchParams } from 'next/navigation'
 import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { OrderResponse } from '#/order'
-import SockJS from 'sockjs-client'
-import { CompatClient, Stomp } from '@stomp/stompjs'
+
 import OrderInfo from './info-order'
 import Reminder from './reminder'
-import { env } from '~/configs/env'
 import { subscribeOnceNoRegister } from '~/app/_components/socket-link'
 
 interface Props {
@@ -25,21 +22,17 @@ interface Props {
 
 export default function OrderPage({ data, user, id }: Props) {
   const searchParams = useSearchParams()
-  const [paymentMethod, setPaymentMethod] = useState<string | undefined>(undefined)
   const [paymentInfo, setPaymentInfo] = useState<ResponseGlobal>()
   const [isPaymentSubmitted, setIsPaymentSubmitted] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
 
   const orderId = searchParams.get('orderId')
 
   const fetchOrder = useCallback(async () => {
     if (!orderId) return
 
-    setIsLoading(true)
     try {
       const res = await http.get<OrderResponse>(`${LINKS.order}/${orderId}`, { baseUrl: '/api' })
       if (res && res.data) {
-        setPaymentMethod(res.data.paymentMethod)
         setIsPaymentSubmitted(true)
         setPaymentInfo({
           description: `DOMINATE${orderId}`,
@@ -50,7 +43,6 @@ export default function OrderPage({ data, user, id }: Props) {
     } catch (err) {
       console.error('Không tìm thấy đơn hàng:', err)
     } finally {
-      setIsLoading(false)
     }
   }, [orderId])
 
@@ -65,8 +57,6 @@ export default function OrderPage({ data, user, id }: Props) {
       )
 
       return () => clearTimeout(timeoutId)
-    } else {
-      setIsLoading(false)
     }
   }, [orderId, fetchOrder])
 
@@ -98,46 +88,15 @@ export default function OrderPage({ data, user, id }: Props) {
         Order {orderId ? `${orderId}` : 'Information'}
       </h1>
       <OrderInfo data={data} user={user} />
-      <div className='w-full'>
-        <label className='mb-2 block font-semibold'>Choose payment method:</label>
-        <Select
-          onValueChange={value => setPaymentMethod(value)}
-          value={paymentMethod}
-          disabled={isLoading || isPaymentSubmitted}
-        >
-          <SelectTrigger className='w-full'>
-            <SelectValue placeholder='Chọn phương thức' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='BANK'>Bank Transfer</SelectItem>
-            <SelectItem value='PAYOS'>PAYOS</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
 
-      {paymentMethod === 'PAYOS' && (
-        <PayosPayment
-          id={id}
-          data={data}
-          paymentInfo={paymentInfo as PaymentResponse}
-          setPaymentInfo={setPaymentInfo}
-          setIsPaymentSubmitted={setIsPaymentSubmitted}
-          paymentMethod={paymentMethod}
-          isPaymentSubmitted={isPaymentSubmitted}
-        />
-      )}
-
-      {paymentMethod === 'BANK' && (
-        <BankTransferPayment
-          user={user}
-          id={id}
-          paymentInfo={paymentInfo as PaymentResponse}
-          data={data}
-          paymentMethod={paymentMethod}
-          isPaymentSubmitted={isPaymentSubmitted}
-          setIsPaymentSubmitted={setIsPaymentSubmitted}
-        />
-      )}
+      <PayosPayment
+        id={id}
+        data={data}
+        paymentInfo={paymentInfo as PaymentResponse}
+        setPaymentInfo={setPaymentInfo}
+        setIsPaymentSubmitted={setIsPaymentSubmitted}
+        isPaymentSubmitted={isPaymentSubmitted}
+      />
       <Reminder data={data} user={user} paymentInfo={paymentInfo} orderId={orderId} />
     </div>
   )

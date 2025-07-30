@@ -20,6 +20,7 @@ export type OrderResponse = {
   updatedAt?: string
   subscription: PackageResponse
   license: LicenseResponse
+  dateTransfer?: string
   price?: number
   buyer?: User
 }
