@@ -1,8 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { CircleCheck } from 'lucide-react'
+import { BellRing, CircleCheck, CircleX } from 'lucide-react'
 import React from 'react'
 import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
@@ -12,98 +12,12 @@ import { toast } from 'sonner'
 import { CODE_SUCCESS } from '~/constants'
 import Link from 'next/link'
 import { OrderStatusEnum } from '#/tabs-order'
+import ModalOrder from '../../orders/[id]/_components/modal-order'
+import z from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { env } from '~/configs/env'
 
-// export default function SuccessPage() {
-//   const searchParams = useSearchParams()
-//   const [isLoading, setIsLoading] = useState(true)
-//   const [errorMessage, setErrorMessage] = useState('')
-//   const [licenseKey, setLicenseKey] = useState<string>('')
-//   const hasRun = useRef(false)
-
-//   useEffect(() => {
-//     if (hasRun.current) return
-//     hasRun.current = true
-
-//     const orderId = searchParams.get('orderCode')
-
-//     const newStatus = OrderStatusEnum.SUCCESS
-
-//     if (!orderId) return
-
-//     const createLicense = async () => {
-//       try {
-//         // 1. UPDATE STATUS ORDER
-//         const resOrder = await http.patch<OrderResponse>(`${LINKS.order_silent}/${orderId}`, {
-//           params: { newStatus },
-//           baseUrl: '/api',
-//         })
-
-//         if (!CODE_SUCCESS.includes(resOrder.code)) {
-//           setErrorMessage(resOrder.message || 'Update order failed')
-//           return
-//         }
-
-//         // 2. CALL API MAKE LICENSE
-//         const resLis = await http.post<LicenseResponse>(LINKS.licenses_create, {
-//           body: JSON.stringify({ orderId: Number(orderId) }),
-//           baseUrl: '/api',
-//         })
-
-//         if (!CODE_SUCCESS.includes(resLis.code)) {
-//           setErrorMessage(resLis.message || 'Create license failed')
-//           return
-//         }
-//         setLicenseKey(resLis?.data?.licenseKey as string)
-//         toast.success(resLis.message || 'License created successfully.')
-//       } catch (err) {
-//         setErrorMessage('Something went wrong while processing your request.')
-//         console.error(err)
-//       } finally {
-//         setIsLoading(false)
-//       }
-//     }
-
-//     createLicense()
-//   }, [searchParams])
-
-//   return (
-//     <div className='bg-primary-foreground fixed inset-0 z-[999] flex flex-col items-center justify-center px-4 text-center'>
-//       {errorMessage ? (
-//         <>
-//           <AlertTriangle className='mb-4 h-10 w-10 text-red-600' />
-//           <p className='text-2xl font-semibold text-red-600'>{errorMessage}</p>
-//           <Link
-//             href='/'
-//             className='mt-6 rounded bg-red-600 px-6 py-2 font-medium text-white transition hover:bg-red-700'
-//           >
-//             Back to Homepage
-//           </Link>
-//         </>
-//       ) : isLoading ? (
-//         <>
-//           <CircleCheck className='mb-4 h-10 w-10 text-green-600' />
-//           <p className='text-2xl font-semibold'>
-//             Your payment was successful. We are now retrieving your license. This will only take a moment.
-//           </p>
-//         </>
-//       ) : licenseKey ? (
-//         <>
-//           <CircleCheck className='mb-4 h-10 w-10 text-green-600' />
-//           <p className='text-2xl font-semibold text-green-700'>License has been created successfully!</p>
-//           <p className='mt-2 text-lg font-medium'>
-//             Your license key is: <span className='font-mono text-blue-700'>{licenseKey}</span>
-//           </p>
-//           <Link
-//             href='/'
-//             className='mt-6 rounded bg-green-600 px-6 py-2 font-medium text-white transition hover:bg-green-700'
-//           >
-//             Back to Homepage
-//           </Link>
-//         </>
-//       ) : null}
-//     </div>
-//   )
-// }
 const TIME = 5
 
 export default function SuccessPage() {
@@ -113,15 +27,32 @@ export default function SuccessPage() {
   const [orderId, setOrderId] = useState<string | null>(null)
   const [countdown, setCountdown] = useState(TIME)
   const [subscriptionId, setSubscriptionId] = useState<number>()
+  const [checkPayOS, setCheckPayOS] = useState(true)
+  const [checkOrderExist, setCheckOrderExist] = useState(true)
+  const [open, setOpen] = useState(false)
+  const [isPending, startTransition] = useTransition()
+  const [pending, setPending] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const onOpenChange = (open: boolean) => setOpen(open)
+  const ReminderSchema = z.object({
+    reminder: z.string().min(1, 'No empty').max(100, 'Max 100 character'),
+  })
+  type ReminderData = z.infer<typeof ReminderSchema>
+
+  const form = useForm<ReminderData>({
+    resolver: zodResolver(ReminderSchema),
+    defaultValues: {
+      reminder: '',
+    },
+  })
   const hasFetched = useRef(false)
 
-  // Lấy orderId một lần duy nhất từ searchParams
   useEffect(() => {
     const id = searchParams.get('orderCode')
     setOrderId(id)
   }, [searchParams])
 
-  // Gọi API fetchOrder
   useEffect(() => {
     if (!orderId || hasFetched.current) return
     hasFetched.current = true
@@ -136,6 +67,18 @@ export default function SuccessPage() {
           setSubscriptionId(res.data.subscriptionId)
         }
 
+        if (!CODE_SUCCESS.includes(res.code)) {
+          toast.error(`Not found order ${orderId}`)
+          setCheckOrderExist(false)
+          return
+        }
+
+        if (!res?.data?.accountName) {
+          setCheckPayOS(false)
+          toast.warning('Error payment from PayOS')
+          return
+        }
+
         if (res?.data?.paymentStatus === OrderStatusEnum.SUCCESS && res?.data?.licenseCreated === false) {
           const resLicense = await http.put<OrderResponse>(`${LINKS.order_license}/${orderId}`, {
             params: { newStatus: OrderStatusEnum.SUCCESS },
@@ -148,12 +91,11 @@ export default function SuccessPage() {
             toast.success(resLicense.message ?? 'License created successfully')
           }
         }
-
-        if (!CODE_SUCCESS.includes(res.code)) {
-          toast.error(`Not found order ${orderId}`)
-        }
       } catch (err) {
         console.error('Not found order:', err)
+        setCheckOrderExist(false)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -161,7 +103,7 @@ export default function SuccessPage() {
   }, [orderId])
 
   useEffect(() => {
-    if (!subscriptionId) return
+    if (!subscriptionId || !checkPayOS) return
 
     const timer = setInterval(() => {
       setCountdown(prev => prev - 1)
@@ -176,20 +118,102 @@ export default function SuccessPage() {
       clearInterval(timer)
       clearTimeout(redirectTimer)
     }
-  }, [subscriptionId, router, orderId])
+  }, [subscriptionId, router, orderId, checkPayOS])
 
+  const reminderHandler = form.handleSubmit(async values => {
+    setPending(true)
+    startTransition(async () => {
+      try {
+        const res = await http.post(LINKS.order_email_report, {
+          params: {
+            email: env.ADMIN_MAIL,
+            packageId: subscriptionId,
+            orderId,
+            content: values.reminder,
+          },
+          baseUrl: '/api',
+        })
+
+        if (!CODE_SUCCESS.includes(res.code)) {
+          toast.error(res.message)
+          return
+        }
+
+        setOpen(false)
+        router.push(`/orders/${subscriptionId}?orderId=${orderId}`)
+        toast.success(res.message)
+      } catch (error) {
+        console.error('Error:', error)
+        toast.error('Send failed.')
+      } finally {
+        setPending(false)
+      }
+    })
+  })
   return (
-    <div className='bg-primary-foreground fixed inset-0 z-[999] flex flex-col items-center justify-center px-4 text-center'>
-      <CircleCheck className='mb-4 h-10 w-10 text-green-600' />
-      <p className='text-2xl font-semibold text-green-700'>
-        Direct your order {orderId} : {countdown} s
-      </p>
-      <Link
-        href='/'
-        className='mt-6 rounded bg-green-600 px-6 py-2 font-medium text-white transition hover:bg-green-700'
-      >
-        Back to Homepage
-      </Link>
-    </div>
+    <>
+      <div className='bg-primary-foreground fixed inset-0 z-[20] flex flex-col items-center justify-center px-4 text-center'>
+        {isLoading ? (
+          <p className='text-2xl font-bold text-blue-700'>Checking order...</p>
+        ) : !checkOrderExist ? (
+          // Not found
+          <>
+            <CircleX className='mb-4 h-10 w-10 text-red-600' />
+            <p className='text-2xl font-semibold text-red-700'>Order not found</p>
+            <Link
+              href='/'
+              className='mt-6 rounded bg-red-600 px-6 py-2 font-medium text-white transition hover:bg-red-700'
+            >
+              Back to Homepage
+            </Link>
+          </>
+        ) : checkPayOS ? (
+          // Success
+          <>
+            <CircleCheck className='mb-4 h-10 w-10 text-green-600' />
+            <p className='text-2xl font-semibold text-green-700'>
+              Direct your order {orderId} : {countdown} s
+            </p>
+            <Link
+              href='/'
+              className='mt-6 rounded bg-green-600 px-6 py-2 font-medium text-white transition hover:bg-green-700'
+            >
+              Back to Homepage
+            </Link>
+          </>
+        ) : (
+          // PayOS error
+          <>
+            <BellRing className='mb-4 h-10 w-10 text-yellow-600' />
+            <p className='text-2xl font-semibold text-yellow-700'>Something error from PayOS payment</p>
+            <div className='mt-6 flex items-center justify-center gap-8'>
+              <Link
+                href={`/orders/${subscriptionId}?orderId=${orderId}`}
+                className='rounded bg-yellow-600 px-6 py-2 font-medium text-white transition hover:bg-yellow-700'
+              >
+                Return Order
+              </Link>
+              <button
+                disabled={isPending}
+                onClick={() => onOpenChange(true)}
+                className='hover:bg-primary-foreground-hover w-40 cursor-pointer rounded-lg border border-blue-600 py-3 text-center font-semibold text-blue-600 shadow-sm'
+              >
+                Reminder
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+      <ModalOrder
+        open={open}
+        onOpenChange={setOpen}
+        onSubmitOrder={reminderHandler}
+        pending={pending}
+        isReminder
+        title='Reminder payment'
+        content='Please enter content reminder'
+        form={form}
+      />
+    </>
   )
 }

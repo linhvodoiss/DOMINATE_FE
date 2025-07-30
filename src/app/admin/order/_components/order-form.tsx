@@ -24,7 +24,13 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
   if (!editRecord) return null
 
   return (
-    <CustomModalForm visible={visible} onCancel={onCancel} onFinish={onFinish} modalTitle='Detail Order' form={form}>
+    <CustomModalForm
+      visible={visible}
+      onCancel={onCancel}
+      onFinish={onFinish as (values: Record<string, unknown>) => void}
+      modalTitle='Detail Order'
+      form={form}
+    >
       <Descriptions column={1} bordered size='middle'>
         <Descriptions.Item label='Code'>{editRecord.orderId}</Descriptions.Item>
         <Descriptions.Item label='Package name'>{editRecord.subscription?.name}</Descriptions.Item>
