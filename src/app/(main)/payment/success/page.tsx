@@ -73,25 +73,23 @@ export default function SuccessPage() {
           return
         }
 
-        if (!res?.data?.accountName) {
-          setCheckPayOS(false)
-          toast.warning('Error payment from PayOS')
-          return
-        }
-
         if (res?.data?.paymentStatus === OrderStatusEnum.PENDING) {
-          const resLicense = await http.put<OrderResponse>(`${LINKS.order_silent}/${orderId}`, {
+          const resLicense = await http.patch<OrderResponse>(`${LINKS.order_silent}/${orderId}`, {
             params: { newStatus: OrderStatusEnum.PROCESSING },
             baseUrl: '/api',
           })
 
           if (!CODE_SUCCESS.includes(resLicense.code)) {
-            toast.warning('License has created with this order')
-          } else {
-            toast.success(resLicense.message ?? 'License created successfully')
+            toast.error('Cannot update processs status with order.')
+            setCheckPayOS(false)
+            return
           }
         }
-
+        if (!res?.data?.accountName) {
+          setCheckPayOS(false)
+          toast.warning('Error payment from PayOS')
+          return
+        }
         if (res?.data?.paymentStatus === OrderStatusEnum.SUCCESS && res?.data?.licenseCreated === false) {
           const resLicense = await http.put<OrderResponse>(`${LINKS.order_license}/${orderId}`, {
             params: { newStatus: OrderStatusEnum.SUCCESS },

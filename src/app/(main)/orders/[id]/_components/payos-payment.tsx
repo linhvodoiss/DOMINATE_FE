@@ -190,7 +190,49 @@ export default function PayosPayment({
 
   return (
     <>
-      <div className='mt-10 rounded-xl border p-4 md:p-6'>
+      <div className='mt-2 rounded-xl border p-4 md:p-6'>
+        <h2 className='mb-3 py-2 text-xl font-semibold'>Bill Payment</h2>
+
+        {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && paymentInfo.accountName ? (
+          <div className='flex flex-col md:flex-row md:gap-6'>
+            <div className='w-full'>
+              <p className='mb-3'>
+                <span className='font-semibold'>Account Name:</span> {paymentInfo.accountName}
+              </p>
+              <p className='mb-3'>
+                <span className='font-semibold'>Account Number:</span> {paymentInfo.accountNumber}
+              </p>
+              <p className='mb-3'>
+                <span className='font-semibold'>Account Bank:</span>{' '}
+                {paymentInfo.bin && BIN_BANK_MAP[paymentInfo.bin]
+                  ? BIN_BANK_MAP[paymentInfo.bin]
+                  : paymentInfo.bin || '--'}
+              </p>
+            </div>
+
+            <div className='w-full'>
+              <p className='mb-3'>
+                <span className='flex items-center gap-2 font-semibold'>
+                  Price:
+                  <span className='text-primary font-bold'>
+                    {paymentInfo.price != null ? paymentInfo.price.toLocaleString('vi-VN') + ' đ' : '--'}
+                  </span>
+                </span>
+              </p>
+              <p className='mb-3'>
+                <span className='font-semibold'>Date transfer:</span> {formatDateTimeVN(paymentInfo.dateTransfer)}
+              </p>
+            </div>
+          </div>
+        ) : paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && !paymentInfo.accountName ? (
+          <p className='text-center text-lg font-semibold text-green-600'>
+            Something error from PayOS. Your order is confirmed
+          </p>
+        ) : (
+          <p className='text-center text-lg font-semibold'>No information!</p>
+        )}
+      </div>
+      <div className='mt-2 rounded-xl border p-4 md:p-6'>
         {paymentInfo?.paymentStatus === OrderStatusEnum.PENDING && paymentInfo?.paymentLink && (
           <div className='mb-4 flex items-center gap-4'>
             <Link
@@ -259,46 +301,6 @@ export default function PayosPayment({
           />
         )}
       </div>
-      {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS ? (
-        <div className='mt-10 rounded-xl border p-4 md:p-6'>
-          <h2 className='mb-3 py-2 text-xl font-semibold'>Infomation Payment</h2>
-          <div className='flex flex-col md:flex-row md:gap-6'>
-            <div className='w-full'>
-              <p className='mb-3'>
-                <span className='font-semibold'>Account Name:</span> {paymentInfo?.accountName}
-              </p>
-              <p className='mb-3'>
-                <span className='font-semibold'>Account Number:</span> {paymentInfo?.accountNumber}
-              </p>
-              <p className='mb-3'>
-                <span className='font-semibold'>Account Bank:</span>{' '}
-                {paymentInfo?.bin && BIN_BANK_MAP[paymentInfo.bin]
-                  ? BIN_BANK_MAP[paymentInfo.bin]
-                  : paymentInfo?.bin || '--'}
-              </p>
-            </div>
-
-            <div className='w-full'>
-              <p className='mb-3'>
-                <span className='flex items-center gap-2 font-semibold'>
-                  Price:
-                  <span className='text-primary font-bold'>
-                    {paymentInfo?.price != null ? paymentInfo?.price.toLocaleString('vi-VN') + ' đ' : '--'}
-                  </span>
-                </span>
-              </p>
-              <p className='mb-3'>
-                <span className='font-semibold'>Date transfer:</span> {formatDateTimeVN(paymentInfo?.dateTransfer)}
-              </p>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className='mt-10 rounded-xl border p-4 md:p-6'>
-          <h2 className='mb-3 py-2 text-xl font-semibold'>Infomation Payment</h2>
-          <p className='text-center text-lg font-semibold text-red-500'>No informtion!</p>
-        </div>
-      )}
     </>
   )
 }
