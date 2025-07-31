@@ -62,8 +62,9 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
         toast.error(res.message || 'Update status failed')
         return
       }
-
-      toast.success(res.message || 'Status updated successfully')
+      if (status !== OrderStatusEnum.SUCCESS) {
+        toast.success(res.message || 'Status updated successfully')
+      }
 
       if (status === 'SUCCESS') {
         try {

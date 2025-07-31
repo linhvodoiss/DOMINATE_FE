@@ -10,15 +10,15 @@ import { statusColorMap } from '~/constants/payment-type'
 export default function DashBoardPage({ data }: { data?: DashBoardResponse }) {
   if (!data) return null
 
-  const paymentMethodData = Object.entries(data.ordersByPaymentMethod || {}).map(([type, value]) => ({
-    name: type,
-    value: Number(value),
-  }))
+  // const paymentMethodData = Object.entries(data.ordersByPaymentMethod || {}).map(([type, value]) => ({
+  //   name: type,
+  //   value: Number(value),
+  // }))
 
-  const revenueData = Object.entries(data.revenueByPaymentMethod || {}).map(([type, value]) => ({
-    name: type,
-    value: Number(value),
-  }))
+  // const revenueData = Object.entries(data.revenueByPaymentMethod || {}).map(([type, value]) => ({
+  //   name: type,
+  //   value: Number(value),
+  // }))
 
   const statusData = Object.entries(data.ordersByStatus || {}).map(([type, value]) => ({
     name: type,
@@ -114,15 +114,15 @@ export default function DashBoardPage({ data }: { data?: DashBoardResponse }) {
       </Row>
 
       <Row gutter={[16, 16]}>
-        <Col xs={24} md={8}>
+        {/* <Col xs={24} md={8}>
           {renderPieChart(revenueData, 'Revenue by Payment Method')}
-        </Col>
+        </Col> */}
         <Col xs={24} md={8}>
           {renderPieChart(statusData, 'Orders by Status', true)}
         </Col>
-        <Col xs={24} md={8}>
+        {/* <Col xs={24} md={8}>
           {renderPieChart(paymentMethodData, 'Orders by Payment Method')}
-        </Col>
+        </Col> */}
       </Row>
     </div>
   )

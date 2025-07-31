@@ -39,14 +39,27 @@ export default async function ProductPage({ searchParams }: Props) {
               key={pkg.id}
               className='bg-background-primary flex flex-col items-center rounded-xl p-6 text-[#e5e5e5] shadow-md transition-shadow hover:shadow-lg'
             >
-              <div className='relative mb-2 h-24 w-24'>
-                <Image
-                  src='https://cdn.pixabay.com/photo/2020/03/31/02/32/package-4986026_640.png'
-                  alt='image package'
-                  fill
-                  className='object-contain'
-                />
-              </div>
+              {pkg.typePackage === 'DEV' ? (
+                <div className='relative mb-2 h-24 w-24'>
+                  <Image
+                    src='/package/dev_package.png'
+                    alt='image package'
+                    width={1100}
+                    height={1280}
+                    className='object-contain'
+                  />
+                </div>
+              ) : (
+                <div className='relative mb-2 h-24 w-24'>
+                  <Image
+                    src='/package/runtime_package.png'
+                    alt='image package'
+                    width={1100}
+                    height={1280}
+                    className='object-contain'
+                  />
+                </div>
+              )}
 
               <h2 className='mt-1 text-center text-lg font-semibold'>
                 [{billingCycleMap[pkg.billingCycle as string] || pkg.billingCycle}] {pkg.name}

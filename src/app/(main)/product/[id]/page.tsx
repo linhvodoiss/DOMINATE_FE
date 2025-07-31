@@ -22,16 +22,27 @@ export default async function Page({ params }: Props) {
 
       <div className='flex w-full flex-col items-start justify-start gap-6 py-6 lg:flex-row'>
         {/* Image */}
-        <div className='bg-primary-foreground aspect-video w-full rounded-xl border p-4 shadow-md sm:w-2/3 lg:w-2/3'>
-          <Image
-            src='https://cdn.pixabay.com/photo/2020/03/31/02/32/package-4986026_640.png'
-            alt='ảnh sản phẩm'
-            width={100}
-            height={100}
-            className='size-full object-contain'
-          />
-        </div>
-
+        {data.typePackage === 'DEV' ? (
+          <div className='bg-primary-foreground aspect-video w-full rounded-xl border p-4 shadow-md sm:w-2/3 lg:w-2/3'>
+            <Image
+              src='/package/dev_package.png'
+              alt='ảnh sản phẩm'
+              width={1100}
+              height={1280}
+              className='size-full object-contain'
+            />
+          </div>
+        ) : (
+          <div className='bg-primary-foreground aspect-video w-full rounded-xl border p-4 shadow-md sm:w-2/3 lg:w-2/3'>
+            <Image
+              src='/package/runtime_package.png'
+              alt='ảnh sản phẩm'
+              width={1100}
+              height={1280}
+              className='size-full object-contain'
+            />
+          </div>
+        )}
         {/* Info */}
         <div className='bg-primary-foreground w-full flex-1 rounded-xl border px-6 py-8 text-base shadow-md md:text-lg lg:w-1/3'>
           {/* Price */}
