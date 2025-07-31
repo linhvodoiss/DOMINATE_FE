@@ -5,13 +5,13 @@ export const paymentMethodMap: Record<string, string> = {
 
 export const paymentStatusMap: Record<string, string> = {
   PENDING: 'Pending',
-  // PROCESSING: 'Processing',
+  PROCESSING: 'Processing',
   SUCCESS: 'Success',
   FAILED: 'Canceled',
 }
 export const statusColorMap: Record<string, string> = {
   PENDING: '#ffc107',
-  // PROCESSING: '#0d6efd',
+  PROCESSING: '#0d6efd',
   SUCCESS: '#198754',
   FAILED: '#dc3545',
 }

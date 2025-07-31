@@ -9,7 +9,7 @@ import { Label } from '~/components/ui/label'
 const TABS = [
   { label: 'All', value: OrderStatusEnum.ALL },
   { label: 'Pending', value: OrderStatusEnum.PENDING },
-  // { label: 'Processing', value: OrderStatusEnum.PROCESSING },
+  { label: 'Processing', value: OrderStatusEnum.PROCESSING },
   { label: 'Success', value: OrderStatusEnum.SUCCESS },
   { label: 'Cancel', value: OrderStatusEnum.FAILED },
 ]
