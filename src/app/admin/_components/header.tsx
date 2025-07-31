@@ -20,6 +20,7 @@ interface NotificationItem {
   price: number
   paymentMethod: string
   createdAt: string
+  content: string
 }
 
 const STORAGE_KEY = 'admin_notifications'
@@ -74,6 +75,17 @@ export default function AdminHeader() {
           return updated
         })
       })
+      client.subscribe('/topic/order/report', message => {
+        const payload = JSON.parse(message.body)
+
+        toast.warning(`Order #${payload.orderId} has been reported`)
+
+        setNotifications(prev => {
+          const updated = [{ ...payload }, ...prev].slice(0, MAX_NOTIFICATIONS)
+          storeNotifications(updated)
+          return updated
+        })
+      })
     })
   }, [])
 
@@ -100,13 +112,21 @@ export default function AdminHeader() {
                 className='hover:bg-muted block max-w-[300px] cursor-pointer rounded-sm px-2 py-1'
               >
                 <div className='font-semibold'>
-                  #{item.orderId} - {item.userName}
+                  #{item.orderId} {item.userName ? `- ${item.userName}` : ''}
                 </div>
 
-                <div className='text-muted-foreground text-sm'>
-                  {item.packageName} - {item.price.toLocaleString()}₫
-                </div>
-                <div className='text-xs text-gray-400'>{new Date(item.createdAt).toLocaleString()}</div>
+                {item.content ? (
+                  <div className='text-sm text-red-500'>{item.content}</div>
+                ) : (
+                  <>
+                    <div className='text-muted-foreground text-sm'>
+                      {item.packageName} - {item.price?.toLocaleString()}₫
+                    </div>
+                    <div className='text-xs text-gray-400'>
+                      {item.createdAt ? new Date(item.createdAt).toLocaleString() : ''}
+                    </div>
+                  </>
+                )}
               </Link>
             ),
           })),
