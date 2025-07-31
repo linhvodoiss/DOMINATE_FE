@@ -57,7 +57,7 @@ function storeNotifications(notifications: NotificationItem[]) {
 export default function AdminHeader() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
   useEffect(() => {
     const existing = getStoredNotifications()

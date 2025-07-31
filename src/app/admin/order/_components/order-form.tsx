@@ -4,6 +4,7 @@ import CustomModalForm from '../../_components/custom-modal-form'
 import { OrderResponse } from '#/order'
 import { paymentStatusMap, statusColorMap } from '~/constants/payment-type'
 import { EyeOutlined } from '@ant-design/icons'
+import { OrderStatusEnum } from '#/tabs-order'
 interface Props {
   visible: boolean
   onCancel: () => void
@@ -57,35 +58,42 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
         <Descriptions.Item label='Created at'>{editRecord.createdAt}</Descriptions.Item>
       </Descriptions>
       <Divider />
-      <Form.Item
-        name='paymentStatus'
-        label='Select status'
-        initialValue={editRecord.paymentStatus}
-        rules={[{ required: true, message: 'Please select new status' }]}
-      >
-        <Radio.Group optionType='button' buttonStyle='solid'>
-          {Object.entries(paymentStatusMap).map(([status, label]) => (
-            <Radio.Button
-              key={status}
-              value={status}
-              style={{
-                color: '#fff',
-                backgroundColor: statusColorMap[status],
-                transition: 'all 0.3s',
-              }}
-              className='custom-radio-button'
-            >
-              {label}
-            </Radio.Button>
-          ))}
-        </Radio.Group>
-      </Form.Item>
+      {(editRecord.paymentStatus === OrderStatusEnum.PENDING ||
+        editRecord.paymentStatus === OrderStatusEnum.PROCESSING) && (
+        <Form.Item
+          name='paymentStatus'
+          label='Select status'
+          initialValue={editRecord.paymentStatus}
+          rules={[{ required: true, message: 'Please select new status' }]}
+        >
+          <Radio.Group optionType='button' buttonStyle='solid'>
+            {Object.entries(paymentStatusMap).map(([status, label]) => (
+              <Radio.Button
+                key={status}
+                value={status}
+                style={{
+                  color: '#fff',
+                  backgroundColor: statusColorMap[status],
+                  transition: 'all 0.3s',
+                }}
+                className='custom-radio-button'
+              >
+                {label}
+              </Radio.Button>
+            ))}
+          </Radio.Group>
+        </Form.Item>
+      )}
+
       <Row gutter={16} style={{ marginTop: 16 }}>
-        <Col>
-          <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
-            Update
-          </Button>
-        </Col>
+        {(editRecord.paymentStatus === OrderStatusEnum.PENDING ||
+          editRecord.paymentStatus === OrderStatusEnum.PROCESSING) && (
+          <Col>
+            <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
+              Update
+            </Button>
+          </Col>
+        )}
         <Col>
           <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
             Cancel

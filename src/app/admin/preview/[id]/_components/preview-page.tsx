@@ -91,37 +91,39 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
   const methodLabel = getMethodLabel(data.paymentMethod)
 
   return (
-    <div className='mx-auto max-w-7xl p-6'>
+    <div className='max-w-7xl p-6'>
       <h2 className='!mb-4 !text-2xl !font-bold'>
         # Order Code {id} - {methodLabel}
       </h2>
+      {(data.paymentStatus === OrderStatusEnum.PENDING || data.paymentStatus === OrderStatusEnum.PROCESSING) && (
+        <>
+          <Radio.Group optionType='button' buttonStyle='solid' value={status} onChange={e => setStatus(e.target.value)}>
+            {Object.entries(paymentStatusMap).map(([key, label]) => (
+              <Radio.Button
+                key={key}
+                value={key}
+                style={{
+                  color: '#fff',
+                  backgroundColor: statusColorMap[key],
+                  transition: 'all 0.3s',
+                }}
+                className='custom-radio-button'
+              >
+                {label}
+              </Radio.Button>
+            ))}
+          </Radio.Group>
 
-      <Radio.Group optionType='button' buttonStyle='solid' value={status} onChange={e => setStatus(e.target.value)}>
-        {Object.entries(paymentStatusMap).map(([key, label]) => (
-          <Radio.Button
-            key={key}
-            value={key}
-            style={{
-              color: '#fff',
-              backgroundColor: statusColorMap[key],
-              transition: 'all 0.3s',
-            }}
-            className='custom-radio-button'
+          <Button
+            type='primary'
+            loading={isPending}
+            onClick={handleUpdateStatus}
+            className='!bg-primary-system !border-primary-system mt-4 !block'
           >
-            {label}
-          </Radio.Button>
-        ))}
-      </Radio.Group>
-
-      <Button
-        type='primary'
-        loading={isPending}
-        onClick={handleUpdateStatus}
-        className='!bg-primary-system !border-primary-system mt-4 !block'
-      >
-        Update
-      </Button>
-
+            Update
+          </Button>
+        </>
+      )}
       <div className='mt-6 grid grid-cols-1 gap-6'>
         {/* Order Info */}
         <div>
