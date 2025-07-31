@@ -1,7 +1,36 @@
 import { LicenseResponse } from '#/licenses'
 import clsx from 'clsx'
+import { useState, useTransition } from 'react'
+import { Button } from '~/components/ui/button'
+import ModalBind from './modal-bind'
+import http from '~/utils/http'
+import { LINKS } from '~/constants/links'
+import { useRouter } from 'next/navigation'
+import { CODE_SUCCESS } from '~/constants'
+import { toast } from 'sonner'
 
 export default function ActiveTable({ dataLicenseUsed }: { dataLicenseUsed: LicenseResponse[] }) {
+  const [openBind, setOpenBind] = useState<boolean>(false)
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const onOpenChangeBind = (openBind: boolean) => setOpenBind(openBind)
+  const unbindHandler = (item: string) => {
+    startTransition(async () => {
+      const res = await http.patch(`${LINKS.licenses_unbind}`, {
+        params: {
+          licenseKey: item,
+        },
+        baseUrl: '/api',
+      })
+      if (!CODE_SUCCESS.includes(res.code)) {
+        toast.error(res.message)
+        return
+      }
+      toast.success(res.message)
+      setOpenBind(false)
+      router.refresh()
+    })
+  }
   return (
     <div className='mb-6'>
       <h2 className='mb-1 text-lg font-semibold'>Key are using</h2>
@@ -15,6 +44,7 @@ export default function ActiveTable({ dataLicenseUsed }: { dataLicenseUsed: Lice
               <th className='border p-2'>Day left</th>
               <th className='border p-2'>Activated at</th>
               <th className='border p-2'>Status</th>
+              <th className='border p-2'>Device</th>
             </tr>
           </thead>
           <tbody>
@@ -38,6 +68,25 @@ export default function ActiveTable({ dataLicenseUsed }: { dataLicenseUsed: Lice
                   <td className='border p-2'>{license.daysLeft}</td>
                   <td className='border p-2'>{license.createdAt.split(' ')[0]}</td>
                   <td className='border p-2'>{license.daysLeft <= 0 ? 'Key can’t be used' : 'Key is activated'}</td>
+                  <td className='max-w-40 overflow-x-auto border p-2 text-center'>
+                    {license.hardwareId ? license.hardwareId : 'No connect any device'}
+                  </td>
+                  {license.hardwareId && (
+                    <td className='border p-2 text-center'>
+                      <Button
+                        className='w-[100px] cursor-pointer bg-[#dc3545] text-white hover:bg-red-600'
+                        onClick={() => onOpenChangeBind(true)}
+                      >
+                        Remove
+                      </Button>
+                      <ModalBind
+                        open={openBind}
+                        onOpenChange={setOpenBind}
+                        unbindHandler={() => unbindHandler(license.licenseKey)}
+                        pending={isPending}
+                      />
+                    </td>
+                  )}
                 </tr>
               ))
             )}

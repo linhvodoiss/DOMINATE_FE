@@ -35,7 +35,6 @@ export default async function page({ params, searchParams }: Props) {
     params: { page, size: PAGE_SIZE, type, search },
   })
   const listLicenses = content
-
   const { data = [] } = await http.get<LicenseResponse>(`${LINKS.licenses_can_used}/${id}`, {
     headers: {
       Authorization: token ? `Bearer ${token}` : '',

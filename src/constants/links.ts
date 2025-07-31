@@ -27,6 +27,7 @@ export const LINKS = {
   licenses_create: '/licenses/create',
   licenses_user: '/licenses/user',
   licenses_can_used: '/licenses/canUsed',
+  licenses_unbind: '/licenses/unbind-hardware',
   licenses_activate_next: '/licenses/activate-next',
   subscriptions: '/subscriptions',
   options: '/options',
