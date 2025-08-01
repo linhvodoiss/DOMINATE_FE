@@ -3,7 +3,7 @@ import { useTransition } from 'react'
 import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { useRouter } from 'next/navigation'
-import { disconnectSocket } from '../socket-link'
+import { disconnectSocket } from '../../../_components/socket-link'
 
 export default function LogoutBtn() {
   const router = useRouter()

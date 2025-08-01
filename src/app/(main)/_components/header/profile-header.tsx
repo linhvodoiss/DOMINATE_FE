@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover'
 
-import { useAuth } from '../auth-context'
+import { useAuth } from '../../../_components/auth-context'
 import LockBtn from './change-pass-btn'
 import LogoutBtn from './logout-btn'
 import Image from 'next/image'

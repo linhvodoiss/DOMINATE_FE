@@ -1,12 +1,9 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { WebHeaderStyled } from './styled'
-import ThemeChange from '../theme-change'
-import ProfileHeader from './profile-header'
-import MenuMobile from './menu-mb'
-import { User } from '#/user'
-import { LINKS } from '~/constants/links'
-import http from '~/utils/http'
+
+import Image from 'next/image'
+import ThemeChange from '../../../_components/theme-change'
+import MenuMobile from '../../../(main)/_components/header/menu-mb'
 
 const menuItems = [
   { label: 'Home', href: '/' },
@@ -15,13 +12,7 @@ const menuItems = [
   { label: 'About', href: '/about' },
 ]
 
-export default async function Header({ token }: { token?: string }) {
-  const { data, message } = await http.get<User>(`${LINKS.profile}`, {
-    headers: {
-      Authorization: token ? `Bearer ${token}` : '',
-    },
-  })
-
+export default function HeaderMail() {
   return (
     <WebHeaderStyled className='bg-background-primary border-primary-system relative z-10 border-b-2'>
       <div className='header__container relative mx-auto flex max-w-[1920px] items-center justify-between py-2 pr-4 pl-0 text-xl text-[#e5e5e5] md:pr-8 md:pl-4'>
@@ -54,7 +45,6 @@ export default async function Header({ token }: { token?: string }) {
           <MenuMobile menuItems={menuItems} />
         </div>
         <ThemeChange className='ml-auto -translate-x-8 md:hidden' />
-        <ProfileHeader data={data as User} />
       </div>
 
       {/* Mobile Dropdown Menu */}

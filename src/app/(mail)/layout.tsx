@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import HeaderMail from '../_components/headerMail'
+import HeaderMail from './_components/headerMail'
 import { LoadingFallback } from '../_components/page-content'
 
 export default async function Layout({

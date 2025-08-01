@@ -4,6 +4,7 @@ import { PackageResponse } from '#/package'
 
 import { FormInstance } from 'antd'
 import CustomModalForm from '../../_components/custom-modal-form'
+import TextArea from 'antd/es/input/TextArea'
 
 interface Props {
   visible: boolean
@@ -59,6 +60,9 @@ export default function PackageForm({
     >
       <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Please input name!' }]}>
         <Input />
+      </Form.Item>
+      <Form.Item name='description' label='Description'>
+        <TextArea />
       </Form.Item>
       <Form.Item name='price' label='Price'>
         <Input type='number' className='!w-full' />

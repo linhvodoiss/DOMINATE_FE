@@ -3,6 +3,7 @@ import { OptionResponse } from './option'
 export type PackageResponse = {
   id?: number
   name?: string
+  description?: string
   price?: number
   discount?: number
   billingCycle?: string

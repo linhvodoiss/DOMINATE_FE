@@ -32,7 +32,9 @@ export default async function PricingSection() {
 
               <div className='mb-8 text-center'>
                 <h3 className='text-third-gray mb-2 text-2xl font-bold'>{plan.name}</h3>
-                {/* <p className='text-secondary-gray mb-4'>{plan.description}</p> */}
+                <p className='text-secondary-gray mb-4 line-clamp-4' style={{ whiteSpace: 'pre-line' }}>
+                  {plan.description}
+                </p>
                 <div className='flex items-end justify-center'>
                   <span className='text-third-gray text-4xl font-bold'>{plan.price}</span>
                   <span className='text-secondary-gray ml-1'>/{plan.billingCycle}</span>

@@ -87,16 +87,9 @@ export default async function Page({ params }: Props) {
 
       {/* Description */}
       <div className='mt-8 w-full text-sm leading-relaxed md:text-base'>
-        <h2 className='text-primary mb-4 text-xl font-semibold md:text-2xl'>Product description:</h2>
-        <p className=''>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, voluptatibus reprehenderit itaque dicta
-          impedit tempore aliquam eaque magnam quod labore eius, nemo ipsa voluptas commodi? Illum doloribus voluptatem
-          a excepturi!
-          <br />
-          <br />
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum, voluptatibus reprehenderit itaque dicta
-          impedit tempore aliquam eaque magnam quod labore eius, nemo ipsa voluptas commodi? Illum doloribus voluptatem
-          a excepturi!
+        <h2 className='text-primary mb-4 text-xl font-semibold md:text-2xl'>Package description:</h2>
+        <p className='' style={{ whiteSpace: 'pre-line' }}>
+          {data.description}
         </p>
       </div>
     </div>
