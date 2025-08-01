@@ -68,7 +68,7 @@ export default function ActiveTable({ dataLicenseUsed }: { dataLicenseUsed: Lice
                   <td className='border p-2'>{license.daysLeft}</td>
                   <td className='border p-2'>{license.createdAt.split(' ')[0]}</td>
                   <td className='border p-2'>{license.daysLeft <= 0 ? 'Key can’t be used' : 'Key is activated'}</td>
-                  <td className='max-w-40 overflow-x-auto border p-2 text-center'>
+                  <td className='max-w-40 overflow-x-auto border p-2'>
                     {license.hardwareId ? license.hardwareId : 'No connect any device'}
                   </td>
                   {license.hardwareId && (

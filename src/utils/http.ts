@@ -25,8 +25,9 @@ const http = {
     const href = `${iBaseUrl}${prettyUrl(url, true)}`
     const fullUrl = `${href}${params ? `?${qs.stringify(params)}` : ''}`
     try {
+      const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
       const iHeaders: HeadersInit = {
-        'Content-Type': 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         ...headers,
       }
 

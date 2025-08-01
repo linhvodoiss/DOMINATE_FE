@@ -28,35 +28,31 @@ export default function StoredTable({ data, isPending }: Props) {
   return (
     <>
       <h2 className='mb-1 text-lg font-semibold'>Stored key</h2>
-
-      {data.length > 0 && (
-        <div className='mb-3 flex w-full flex-col gap-3 sm:max-w-[700px] sm:flex-row sm:items-center'>
-          <div className='flex w-full flex-1 gap-3'>
-            <Input
-              type='text'
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder='Search license key...'
-              className='text-base'
-              classNameWrap='w-2/3 '
-            />
-            <Select onValueChange={chooseType} value={type}>
-              <SelectTrigger className='w-1/3'>
-                <SelectValue placeholder='Filter type' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='ALL'>All</SelectItem>
-                <SelectItem value='DEV'>Dev</SelectItem>
-                <SelectItem value='RUNTIME'>Runtime</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button onClick={handleSearch} className='w-[100px]' disabled={isPending}>
-            Search
-          </Button>
+      <div className='mb-3 flex w-full flex-col gap-3 sm:max-w-[700px] sm:flex-row sm:items-center'>
+        <div className='flex w-full flex-1 gap-3'>
+          <Input
+            type='text'
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder='Search license key...'
+            className='text-base'
+            classNameWrap='w-2/3 '
+          />
+          <Select onValueChange={chooseType} value={type}>
+            <SelectTrigger className='w-1/3'>
+              <SelectValue placeholder='Filter type' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='ALL'>All</SelectItem>
+              <SelectItem value='DEV'>Dev</SelectItem>
+              <SelectItem value='RUNTIME'>Runtime</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-      )}
-
+        <Button onClick={handleSearch} className='w-[100px]' disabled={isPending}>
+          Search
+        </Button>
+      </div>
       <div className='overflow-x-auto rounded-md border'>
         <table className='w-full min-w-[700px] border-collapse text-sm'>
           <thead>

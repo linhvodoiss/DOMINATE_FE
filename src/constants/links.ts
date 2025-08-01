@@ -35,4 +35,5 @@ export const LINKS = {
   account_change_pass: '/account/changePassword',
   account_dashboard: '/account/dashboard',
   options_show_select: '/options/list',
+  update_avatar: '/files/avatar',
 }

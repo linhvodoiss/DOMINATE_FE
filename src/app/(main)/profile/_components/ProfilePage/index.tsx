@@ -13,7 +13,8 @@ import { ProfileStyled } from './styled'
 import { User } from '#/user'
 import { useEffect } from 'react'
 import { ProfileFormValues, ProfileSchema } from '#/zodType'
-import { PlusCircle } from 'lucide-react'
+
+import AvatarUpload from '../avatar-upload'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -21,6 +22,7 @@ export default function ProfilePage() {
   const [update, setUpdate] = useState(true)
   const [initialPhone, setInitialPhone] = useState<User | string>('')
   const [initialData, setInitialData] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileSchema),
@@ -37,6 +39,7 @@ export default function ProfilePage() {
   useEffect(() => {
     async function fetchProfile() {
       try {
+        setIsLoading(true)
         const res = await http.get<User>(LINKS.profile, {
           baseUrl: '/api',
         })
@@ -48,6 +51,8 @@ export default function ProfilePage() {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Failed to load profile data')
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -102,11 +107,7 @@ export default function ProfilePage() {
       <hr className='mt-3 mb-6' />
       <div className='grid grid-cols-1 gap-4 md:grid-cols-12'>
         <div className='order-1 flex justify-center md:order-2 md:col-span-3 md:col-start-11'>
-          <div className='bg-background-primary ring-primary-system relative aspect-square h-32 w-32 rounded-full ring-2'>
-            <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-nowrap'>
-              <PlusCircle />
-            </span>
-          </div>
+          <AvatarUpload avatarUrl={initialData?.avatarUrl} isLoading={isLoading} />
         </div>
 
         {/* Form block */}
@@ -250,6 +251,7 @@ export default function ProfilePage() {
               {update ? (
                 <div className='col-span-10 col-start-1 md:col-start-3'>
                   <button
+                    disabled={isLoading}
                     type='button'
                     className='hover-header-button bg-primary-system inline-block w-40 cursor-pointer items-center justify-center rounded-2xl py-4 font-semibold text-white'
                     onClick={e => updateProfileHandler(e)}
