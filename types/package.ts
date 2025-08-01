@@ -10,6 +10,9 @@ export type PackageResponse = {
   options?: OptionResponse[]
   typePackage?: string
   simulatedCount?: number
+  realCount?: number
+  totalCount?: number
+  popular?: boolean
   createdAt?: string
   updatedAt?: string
 }
