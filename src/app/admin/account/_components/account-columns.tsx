@@ -73,6 +73,7 @@ export default function getAccountColumns({
       title: 'Actions',
       key: 'action',
       width: 140,
+      fixed: 'right',
       render: (_: unknown, record: User) => (
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />

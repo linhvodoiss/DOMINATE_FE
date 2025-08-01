@@ -63,6 +63,9 @@ export default function PackageForm({
       <Form.Item name='price' label='Price'>
         <Input type='number' className='!w-full' />
       </Form.Item>
+      <Form.Item name='simulatedCount' label='Simulated'>
+        <Input type='number' className='!w-full' />
+      </Form.Item>
       <Form.Item name='discount' label='Discount (%)' rules={[{ required: true, type: 'number', min: 0, max: 100 }]}>
         <Slider min={0} max={100} className='!w-full' />
       </Form.Item>

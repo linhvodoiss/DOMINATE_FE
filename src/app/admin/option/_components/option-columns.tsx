@@ -41,6 +41,7 @@ export default function getOptionColumns({ sort, handleEdit, handleDeleteOne }: 
     {
       title: 'Actions',
       key: 'action',
+      fixed: 'right',
       width: 120,
       render: (_: unknown, record: PackageResponse) => (
         <Space>

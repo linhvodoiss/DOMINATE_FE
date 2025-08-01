@@ -114,7 +114,9 @@
   background-color: var(--primary-system) !important;
   color: #fbfbfb !important;
 }
-.ant-table-tbody td {
+
+
+.ant-table-tbody .ant-table-cell {
   background-color: transparent !important;
 }
 
@@ -122,6 +124,10 @@
   background-color: var(--primary-foreground-hover) !important;
 }
 
+.ant-table-tbody .ant-table-cell-fix-right {
+   background-color: var(--background) !important;
+  z-index: 1;
+}
 .ant-checkbox-inner {
   background-color: var(--primary-foreground-hover) !important;
   border-color: var(--primary-system) !important;
@@ -190,3 +196,5 @@
 .dark .ant-dropdown-menu {
   outline: solid var(--primary-system) 2px !important;
 }
+
+

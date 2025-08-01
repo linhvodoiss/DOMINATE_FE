@@ -11,17 +11,17 @@ import { User } from '#/user'
 
 import { env } from '~/configs/env'
 
-export default function ProfileHeader({ data }: { data: User }) {
+export default function ProfileHeader({ data }: { data?: User }) {
   const { user } = useAuth()
 
-  if (!user) {
+  if (!user || !data) {
     return (
       <Link href='/login' className='font-bold'>
         Login
       </Link>
     )
   }
-  const avatarSrc = data.avatarUrl
+  const avatarSrc = data?.avatarUrl
     ? `${env.SOCKET_URL}${data.avatarUrl}`
     : 'https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small_2x/profile-icon-design-free-vector.jpg'
 

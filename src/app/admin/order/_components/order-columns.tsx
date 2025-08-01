@@ -64,9 +64,11 @@ export default function getOrderColumns({ sort, handleEdit }: GetColumnsProps) {
     {
       title: 'Actions',
       key: 'action',
+      fixed: 'right' as const,
       width: 100,
 
-      render: (_: unknown, record: OrderResponse) => (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      render: (_: any, record: OrderResponse) => (
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
         </Space>

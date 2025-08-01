@@ -28,6 +28,7 @@ export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }:
       width: 200,
       ellipsis: true,
     },
+
     {
       title: 'Price',
       dataIndex: 'price',
@@ -36,18 +37,11 @@ export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }:
       ellipsis: true,
       render: (price?: number) => (price != null ? price.toLocaleString('vi-VN') + ' đ' : '--'),
     },
+
     {
-      title: 'Discount',
-      dataIndex: 'discount',
-      key: 'discount',
-      width: 100,
-      ellipsis: true,
-      render: (discount?: number) => (discount != null ? `${discount} %` : '--'),
-    },
-    {
-      title: 'Price after discount',
+      title: 'After discount',
       key: 'discountPrice',
-      width: 140,
+      width: 100,
       ellipsis: true,
       render: (record: { price?: number; discount?: number }) => {
         const { price, discount } = record
@@ -60,15 +54,29 @@ export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }:
       title: 'Cycle',
       dataIndex: 'billingCycle',
       key: 'billingCycle',
-      width: 120,
+      width: 100,
       render: (cycle: string) => billingCycleMap[cycle] || cycle,
     },
     {
       title: 'Type',
       dataIndex: 'typePackage',
       key: 'typePackage',
-      width: 140,
+      width: 100,
       render: (type: string) => typePackageMap[type] || type,
+    },
+    {
+      title: 'Orders',
+      dataIndex: 'realCount',
+      key: 'realCount',
+      width: 100,
+      render: (realCount?: number) => (realCount != null ? realCount.toLocaleString('vi-VN') + ' ' : '--'),
+    },
+    {
+      title: 'Simulated',
+      dataIndex: 'simulatedCount',
+      key: 'simulatedCount',
+      width: 100,
+      render: (realCount?: number) => (realCount != null ? realCount.toLocaleString('vi-VN') + ' ' : '--'),
     },
     {
       title: 'Active',
@@ -85,7 +93,10 @@ export default function getPackageColumns({ sort, handleEdit, handleDeleteOne }:
       title: 'Actions',
       key: 'action',
       width: 120,
-      render: (_: unknown, record: PackageResponse) => (
+      fixed: 'right' as const,
+      className: 'bg-fixed-column',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      render: (_: any, record: PackageResponse) => (
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
           <Popconfirm
