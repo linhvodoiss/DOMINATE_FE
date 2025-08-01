@@ -1,6 +1,4 @@
 'use client'
-
-import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover'
 
@@ -8,30 +6,14 @@ import { useAuth } from '../auth-context'
 import LockBtn from './change-pass-btn'
 import LogoutBtn from './logout-btn'
 import Image from 'next/image'
-import http from '~/utils/http'
+
 import { User } from '#/user'
-import { LINKS } from '~/constants/links'
+
 import { env } from '~/configs/env'
 
-export default function ProfileHeader() {
+export default function ProfileHeader({ data }: { data: User }) {
   const { user } = useAuth()
-  // Fetch profile data from API
-  const [avatar, setAvatar] = useState<string>('')
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const res = await http.get<User>(LINKS.profile, {
-          baseUrl: '/api',
-        })
-        if (res) {
-          setAvatar(res.data?.avatarUrl ?? '')
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (err) {}
-    }
 
-    fetchProfile()
-  }, [user])
   if (!user) {
     return (
       <Link href='/login' className='font-bold'>
@@ -39,8 +21,8 @@ export default function ProfileHeader() {
       </Link>
     )
   }
-  const avatarSrc = avatar
-    ? `${env.SOCKET_URL}${avatar}`
+  const avatarSrc = data.avatarUrl
+    ? `${env.SOCKET_URL}${data.avatarUrl}`
     : 'https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small_2x/profile-icon-design-free-vector.jpg'
 
   return (

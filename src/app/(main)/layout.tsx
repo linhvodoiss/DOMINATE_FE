@@ -17,11 +17,12 @@ export default async function MainLayout({
   const user = (
     cookieStore.get(AUTH.userInfo)?.value ? JSON.parse(cookieStore.get(AUTH.userInfo)!.value) : undefined
   ) as User | undefined
+  console.log(token)
 
   return (
     <Suspense fallback={<LoadingFallback />}>
       <AuthProvider token={token} user={user}>
-        <Header />
+        <Header token={token} />
         <div className='mx-auto min-h-[100vh] w-full max-w-[1440px] pb-24 md:px-8'>{children}</div>
         <Footer />
       </AuthProvider>
