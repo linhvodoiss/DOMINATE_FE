@@ -1,5 +1,6 @@
 import { PackageResponse } from '#/package'
 import { ArrowRight, CheckCircle } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
@@ -49,24 +50,25 @@ export default async function PricingSection() {
                   </li>
                 ))}
               </ul>
-              <button
-                className={`w-full rounded-xl px-6 py-3 font-semibold transition-colors ${
+              <Link
+                href={`/product/${plan.id}`}
+                className={`inline-block w-full rounded-xl px-6 py-3 text-center font-semibold transition-colors ${
                   plan.popular
                     ? 'bg-primary-system hover:bg-primary-hover text-white'
                     : 'text-primary-system ring-primary-system hover:bg-muted ring-1 transition-colors'
                 }`}
               >
                 Get Started
-              </button>
+              </Link>
             </div>
           ))}
         </div>
 
         <div className='mt-12 text-center'>
           <p className='text-secondary-gray mb-4'>Need a custom enterprise solution?</p>
-          <button className='text-primary-system hover:text-primary-hover font-semibold transition-colors'>
+          <Link href='/about' className='text-primary-system hover:text-primary-hover font-semibold transition-colors'>
             Contact our sales team <ArrowRight className='ml-1 inline h-4 w-4' />
-          </button>
+          </Link>
         </div>
       </div>
     </section>
