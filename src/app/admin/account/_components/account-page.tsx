@@ -22,9 +22,10 @@ interface Props {
   pageNumber: number
   pageSize: number
   totalElements: number
+  user: User
 }
 
-export default function AccountPage({ listUser, pageNumber, totalElements, pageSize }: Props) {
+export default function AccountPage({ listUser, pageNumber, totalElements, pageSize, user }: Props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
   const handleDeleteMany = async () => {
@@ -46,6 +47,8 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
       router.refresh()
     })
   }
+  console.log(user)
+
   const searchParams = useSearchParams()
   const router = useRouter()
   const sort = searchParams.get('sort') || ''
@@ -146,7 +149,13 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
     }
   }
 
-  const columns = getAccountColumns({ sort, handleEdit, handleDeleteOne, handleChangePassword })
+  const columns = getAccountColumns({
+    sort,
+    handleEdit,
+    handleDeleteOne,
+    handleChangePassword,
+    currentUserId: user.id as number,
+  })
 
   return (
     <div className='min-h-[500px] rounded p-6 shadow'>

@@ -62,9 +62,19 @@ export default function AccountForm({ visible, onCancel, onFinish, modalType, fo
     >
       {modalType !== 'change password' && (
         <>
-          <Form.Item name='userName' label='User name' rules={[{ required: true, message: 'Please input username!' }]}>
-            <Input />
-          </Form.Item>
+          {modalType === 'add' ? (
+            <Form.Item
+              name='userName'
+              label='User name'
+              rules={[{ required: true, message: 'Please input username!' }]}
+            >
+              <Input />
+            </Form.Item>
+          ) : (
+            <Form.Item label='User name'>
+              <Input value={editRecord?.userName} disabled />
+            </Form.Item>
+          )}
           <Form.Item
             name='firstName'
             label='First Name'
@@ -85,13 +95,11 @@ export default function AccountForm({ visible, onCancel, onFinish, modalType, fo
           >
             <Input />
           </Form.Item>
-
           {modalType === 'add' && (
             <Form.Item name='password' label='Password' rules={[{ required: true, message: 'Please input password!' }]}>
               <Input type='password' />
             </Form.Item>
           )}
-
           {modalType === 'edit' && (
             <>
               <Form.Item name='status' label='Active' valuePropName='checked' className='custom-switch'>

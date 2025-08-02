@@ -9,6 +9,7 @@ interface GetColumnsProps {
   handleEdit: (record: User) => void
   handleDeleteOne: (id: string | number) => void
   handleChangePassword: (record: User) => void
+  currentUserId: number
 }
 
 export default function getAccountColumns({
@@ -16,6 +17,7 @@ export default function getAccountColumns({
   handleEdit,
   handleDeleteOne,
   handleChangePassword,
+  currentUserId,
 }: GetColumnsProps) {
   return [
     {
@@ -73,22 +75,25 @@ export default function getAccountColumns({
       title: 'Actions',
       key: 'action',
       width: 140,
-      fixed: 'right',
-      render: (_: unknown, record: User) => (
-        <Space>
-          <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          <Popconfirm
-            title='Are you sure want to delete this option ?'
-            onConfirm={() => handleDeleteOne(record.id as number)}
-            okText='Xóa'
-            cancelText='Hủy'
-            placement='bottom'
-          >
-            <Button type='link' danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-          <Button type='link' icon={<LockOutlined />} onClick={() => handleChangePassword(record as User)} />
-        </Space>
-      ),
+      fixed: 'right' as const,
+      render: (_: unknown, record: User) => {
+        if (record.id === currentUserId) return null
+        return (
+          <Space>
+            <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+            <Popconfirm
+              title='Are you sure want to delete this option ?'
+              onConfirm={() => handleDeleteOne(record.id as number)}
+              okText='Xóa'
+              cancelText='Hủy'
+              placement='bottom'
+            >
+              <Button type='link' danger icon={<DeleteOutlined />} />
+            </Popconfirm>
+            <Button type='link' icon={<LockOutlined />} onClick={() => handleChangePassword(record as User)} />
+          </Space>
+        )
+      },
     },
   ]
 }
