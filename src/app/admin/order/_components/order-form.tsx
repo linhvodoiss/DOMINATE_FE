@@ -1,4 +1,4 @@
-import { Button, Col, Descriptions, Divider, Form, FormInstance, Radio, Row, Tag } from 'antd'
+import { Button, Descriptions, Divider, Form, FormInstance, Radio, Tag } from 'antd'
 import { useEffect } from 'react'
 import CustomModalForm from '../../_components/custom-modal-form'
 import { OrderResponse } from '#/order'
@@ -31,6 +31,24 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
       onFinish={onFinish as (values: Record<string, unknown>) => void}
       modalTitle='Detail Order'
       form={form}
+      footer={
+        <>
+          {(editRecord.paymentStatus === OrderStatusEnum.PENDING ||
+            editRecord.paymentStatus === OrderStatusEnum.PROCESSING) && (
+            <Button
+              type='primary'
+              htmlType='submit'
+              className='!bg-primary-system !border-primary-system'
+              onClick={() => form.submit()}
+            >
+              Update
+            </Button>
+          )}
+          <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
+            Cancel
+          </Button>
+        </>
+      }
     >
       <Descriptions column={1} bordered size='middle'>
         <Descriptions.Item label='Code'>{editRecord.orderId}</Descriptions.Item>
@@ -84,22 +102,6 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
           </Radio.Group>
         </Form.Item>
       )}
-
-      <Row gutter={16} style={{ marginTop: 16 }}>
-        {(editRecord.paymentStatus === OrderStatusEnum.PENDING ||
-          editRecord.paymentStatus === OrderStatusEnum.PROCESSING) && (
-          <Col>
-            <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
-              Update
-            </Button>
-          </Col>
-        )}
-        <Col>
-          <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
-            Cancel
-          </Button>
-        </Col>
-      </Row>
     </CustomModalForm>
   )
 }

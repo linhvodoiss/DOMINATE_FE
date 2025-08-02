@@ -9,6 +9,7 @@ interface CustomModalFormProps {
   modalTitle?: string
   form: FormInstance
   children: ReactNode
+  footer?: ReactNode
 }
 
 export default function CustomModalForm({
@@ -18,6 +19,7 @@ export default function CustomModalForm({
   modalTitle = 'Modal',
   form,
   children,
+  footer,
 }: CustomModalFormProps) {
   useEffect(() => {
     if (visible) {
@@ -29,7 +31,14 @@ export default function CustomModalForm({
   const isMobile = !screens.md
 
   return (
-    <Modal title={modalTitle} open={visible} onCancel={onCancel} footer={null} centered>
+    <Modal
+      title={modalTitle}
+      open={visible}
+      onCancel={onCancel}
+      footer={null}
+      centered
+      styles={{ body: { padding: 0, maxHeight: '70vh', overflowY: 'auto', overflowX: 'hidden' } }}
+    >
       <Form
         className='!mt-6'
         form={form}
@@ -40,6 +49,10 @@ export default function CustomModalForm({
       >
         {children}
       </Form>
+
+      <div className='bg-primary-foreground-hover sticky bottom-0 left-0 z-10 mx-auto flex w-full justify-center gap-6 pt-4'>
+        {footer}
+      </div>
     </Modal>
   )
 }

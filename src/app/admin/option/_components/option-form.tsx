@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Switch } from 'antd'
+import { Button, Form, Input, Switch } from 'antd'
 
 import { FormInstance } from 'antd'
 import CustomModalForm from '../../_components/custom-modal-form'
@@ -34,6 +34,21 @@ export default function OptionForm({ visible, onCancel, onFinish, modalType, for
       onFinish={onFinish}
       modalTitle={modalType === 'add' ? 'Add Option' : 'Update Option'}
       form={form}
+      footer={
+        <>
+          <Button
+            type='primary'
+            htmlType='submit'
+            className='!bg-primary-system !border-primary-system'
+            onClick={() => form.submit()}
+          >
+            {modalType === 'add' ? 'Add' : 'Update'}
+          </Button>
+          <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
+            Cancel
+          </Button>
+        </>
+      }
     >
       <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Please input name!' }]}>
         <Input />
@@ -44,20 +59,6 @@ export default function OptionForm({ visible, onCancel, onFinish, modalType, for
           <Switch className='custom-switch' checkedChildren='Active' unCheckedChildren='Inactive' />
         </Form.Item>
       )}
-      <Form.Item wrapperCol={{ xs: { span: 24 }, md: { offset: 6, span: 18 } }}>
-        <Row gutter={16}>
-          <Col>
-            <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
-              {modalType === 'add' ? 'Add' : 'Update'}
-            </Button>
-          </Col>
-          <Col>
-            <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
-              Cancel
-            </Button>
-          </Col>
-        </Row>
-      </Form.Item>
     </CustomModalForm>
   )
 }

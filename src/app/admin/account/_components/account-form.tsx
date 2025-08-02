@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Switch } from 'antd'
+import { Button, Form, Input, Switch } from 'antd'
 
 import { FormInstance } from 'antd'
 import CustomModalForm from '../../_components/custom-modal-form'
@@ -44,6 +44,21 @@ export default function AccountForm({ visible, onCancel, onFinish, modalType, fo
       onFinish={handleFinish}
       modalTitle={modalType === 'add' ? 'Add Account' : modalType === 'edit' ? 'Update Account' : 'Change Password'}
       form={form}
+      footer={
+        <>
+          <Button
+            type='primary'
+            htmlType='submit'
+            className='!bg-primary-system !border-primary-system'
+            onClick={() => form.submit()}
+          >
+            {modalType === 'add' ? 'Add' : modalType === 'edit' ? 'Update' : 'Change Password'}
+          </Button>
+          <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
+            Cancel
+          </Button>
+        </>
+      }
     >
       {modalType !== 'change password' && (
         <>
@@ -98,20 +113,6 @@ export default function AccountForm({ visible, onCancel, onFinish, modalType, fo
           <Input type='password' />
         </Form.Item>
       )}
-      <Form.Item wrapperCol={{ xs: { span: 24 }, md: { offset: 6, span: 18 } }}>
-        <Row gutter={16}>
-          <Col>
-            <Button type='primary' htmlType='submit' className='!bg-primary-system !border-primary-system'>
-              {modalType === 'add' ? 'Add' : modalType === 'edit' ? 'Update' : 'Change Password'}
-            </Button>
-          </Col>
-          <Col>
-            <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
-              Cancel
-            </Button>
-          </Col>
-        </Row>
-      </Form.Item>
     </CustomModalForm>
   )
 }
