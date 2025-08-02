@@ -11,7 +11,7 @@ export default function LogoutBtn() {
 
   const logoutHandler = () => {
     startTransition(async () => {
-      await http.post(LINKS.logout_api, { baseUrl: 'api/auth' })
+      await http.post(LINKS.logout_api, { baseUrl: '/api/auth' })
       router.push('/')
       disconnectSocket()
       router.refresh()

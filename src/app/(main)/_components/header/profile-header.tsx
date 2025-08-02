@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import Link from 'next/link'
 import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover'
@@ -5,7 +6,6 @@ import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover
 import { useAuth } from '../../../_components/auth-context'
 import LockBtn from './change-pass-btn'
 import LogoutBtn from './logout-btn'
-import Image from 'next/image'
 
 import { User } from '#/user'
 
@@ -31,11 +31,12 @@ export default function ProfileHeader({ data }: { data?: User }) {
         <div className='flex cursor-pointer items-center gap-2'>
           <div className='font-bold'>{user.userName}</div>
           <div className='h-6 w-6 rounded-full'>
-            <Image
+            <img
               src={avatarSrc}
               alt='avatar'
               width={150}
               height={150}
+              loading='lazy'
               className='size-full rounded-full object-cover ring-1 ring-white'
             />
           </div>

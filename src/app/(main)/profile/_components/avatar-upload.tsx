@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -80,11 +81,12 @@ export default function AvatarUpload({ avatarUrl, isLoading }: { avatarUrl?: str
           className='pointer-events-none size-full rounded-full object-cover'
         />
       ) : currentAvatar ? (
-        <Image
+        <img
           src={`${env.SOCKET_URL}${currentAvatar}`}
           alt='avatar'
           width={500}
           height={500}
+          loading='lazy'
           className='pointer-events-none size-full rounded-full object-cover'
         />
       ) : (

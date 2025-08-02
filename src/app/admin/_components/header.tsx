@@ -91,7 +91,7 @@ export default function AdminHeader() {
 
   async function logoutHandler() {
     startTransition(async () => {
-      await http.post(LINKS.logout_api, { baseUrl: 'api/auth' })
+      await http.post(LINKS.logout_api, { baseUrl: '/api/auth' })
       router.push('/')
       disconnectSocket()
       router.refresh()
