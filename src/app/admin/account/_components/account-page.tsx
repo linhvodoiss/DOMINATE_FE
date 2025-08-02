@@ -47,7 +47,6 @@ export default function AccountPage({ listUser, pageNumber, totalElements, pageS
       router.refresh()
     })
   }
-  console.log(user)
 
   const searchParams = useSearchParams()
   const router = useRouter()

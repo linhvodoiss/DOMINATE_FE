@@ -115,7 +115,6 @@
   color: #fbfbfb !important;
 }
 
-
 .ant-table-tbody .ant-table-cell {
   background-color: transparent !important;
 }
@@ -125,7 +124,7 @@
 }
 
 .ant-table-tbody .ant-table-cell-fix-right {
-   background-color: var(--background) !important;
+  background-color: var(--background) !important;
   z-index: 1;
 }
 .ant-checkbox-inner {
@@ -196,5 +195,3 @@
 .dark .ant-dropdown-menu {
   outline: solid var(--primary-system) 2px !important;
 }
-
-

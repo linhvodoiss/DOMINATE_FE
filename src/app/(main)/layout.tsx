@@ -17,7 +17,6 @@ export default async function MainLayout({
   const user = (
     cookieStore.get(AUTH.userInfo)?.value ? JSON.parse(cookieStore.get(AUTH.userInfo)!.value) : undefined
   ) as User | undefined
-  console.log(token)
 
   return (
     <Suspense fallback={<LoadingFallback />}>

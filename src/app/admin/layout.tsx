@@ -17,7 +17,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <AntdThemeProvider>
       <AuthProvider token={token} user={user}>
-        <SideBarAdmin>{children}</SideBarAdmin>
+        <SideBarAdmin user={user as User}>{children}</SideBarAdmin>
       </AuthProvider>
     </AntdThemeProvider>
   )

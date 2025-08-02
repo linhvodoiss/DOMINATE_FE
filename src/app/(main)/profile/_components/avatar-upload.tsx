@@ -62,7 +62,6 @@ export default function AvatarUpload({ avatarUrl, isLoading }: { avatarUrl?: str
   useEffect(() => {
     setCurrentAvatar(avatarUrl ?? null)
   }, [avatarUrl])
-  console.log(isLoading + 'check loading v.v.v.v blabla')
   return (
     <div className='ring-primary-system bg-background-primary relative aspect-square h-32 w-32 rounded-full ring-2'>
       <input

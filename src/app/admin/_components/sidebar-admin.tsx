@@ -7,6 +7,7 @@ import Image from 'next/image'
 import AdminHeader from './header'
 import { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
+import { User } from '#/user'
 const { Sider, Content } = Layout
 
 function getMenuKey(pathname: string) {
@@ -18,7 +19,7 @@ function getMenuKey(pathname: string) {
   return ''
 }
 
-export default function SideBarAdmin({ children }: { children: ReactNode }) {
+export default function SideBarAdmin({ children, user }: { children: ReactNode; user: User }) {
   const pathname = usePathname()
   const selectedKey = getMenuKey(pathname)
 
@@ -68,7 +69,7 @@ export default function SideBarAdmin({ children }: { children: ReactNode }) {
         />
       </Sider>
       <Layout className='!bg-background'>
-        <AdminHeader />
+        <AdminHeader user={user} />
 
         <Content className='!bg-background !text-secondary-gray border-primary-system rounded-tl-2xl border-t-2 border-l-2'>
           <div className='min-h-[500px] rounded shadow'>{children}</div>

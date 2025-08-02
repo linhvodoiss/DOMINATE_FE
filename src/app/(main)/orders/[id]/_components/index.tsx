@@ -68,9 +68,7 @@ export default function OrderPage({ data, user, id }: Props) {
     let subscription: any = null
 
     subscribeOnceNoRegister(client => {
-      subscription = client.subscribe(topic, message => {
-        const status = message.body
-        console.log('📩 WebSocket nhận trạng thái:', status)
+      subscription = client.subscribe(topic, () => {
         fetchOrder()
       })
     })

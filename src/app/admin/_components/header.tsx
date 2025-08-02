@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
+import { User } from '#/user'
 
 const { Header } = Layout
 
@@ -54,7 +55,7 @@ function storeNotifications(notifications: NotificationItem[]) {
   }
 }
 
-export default function AdminHeader() {
+export default function AdminHeader({ user }: { user: User }) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const router = useRouter()
   const [, startTransition] = useTransition()
@@ -162,6 +163,7 @@ export default function AdminHeader() {
     {
       key: 'profile',
       label: 'Profile',
+      onClick: () => router.push('/admin/profile'),
     },
     {
       key: 'logout',
@@ -171,7 +173,7 @@ export default function AdminHeader() {
   ]
 
   return (
-    <Header className='!bg-background flex h-16 items-center justify-end pl-3'>
+    <Header className='!bg-background flex h-16 items-center justify-end !px-4'>
       <Space size='middle'>
         <ThemeChange />
 
@@ -180,9 +182,11 @@ export default function AdminHeader() {
             <Button type='text' icon={<BellOutlined />} />
           </Badge>
         </Dropdown>
-
         <Dropdown menu={{ items: userMenu }} trigger={['click']}>
-          <Avatar size='default' icon={<UserOutlined />} className='cursor-pointer' />
+          <Badge>
+            <span className='cursor-pointer pr-2'>{user?.userName}</span>
+            <Avatar size='small' icon={<UserOutlined />} className='cursor-pointer' />
+          </Badge>
         </Dropdown>
       </Space>
     </Header>
