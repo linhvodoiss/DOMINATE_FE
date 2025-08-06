@@ -9,19 +9,13 @@ import { OrderResponse } from '#/order'
 import { PAGE_SIZE } from '~/constants/paginate'
 import MyOrderPage from './_components/my-order-page'
 
-interface Props {
-  params: { id: string }
-  user: User
-}
-
-export default async function page({ params }: Props) {
-  const { id } = await params
+export default async function page() {
   const cookieStore = await cookies()
   const user = (
     cookieStore.get(AUTH.userInfo)?.value ? JSON.parse(cookieStore.get(AUTH.userInfo)!.value) : undefined
   ) as User | undefined
   const token = cookieStore.get(AUTH.token)?.value
-  const { content = [] } = await http.get<OrderResponse>(`${LINKS.order_user}/${id}`, {
+  const { content = [] } = await http.get<OrderResponse>(`${LINKS.order_user}`, {
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
     },
@@ -29,5 +23,5 @@ export default async function page({ params }: Props) {
   })
   const listOrder = content
 
-  return <MyOrderPage user={user as User} data={listOrder as OrderResponse[]} id={id} />
+  return <MyOrderPage user={user as User} data={listOrder as OrderResponse[]} />
 }

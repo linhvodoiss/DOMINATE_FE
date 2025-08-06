@@ -50,13 +50,13 @@ export default function ProfileHeader({ data }: { data?: User }) {
           Profile
         </Link>
         <Link
-          href={`/licenses/${user.id}`}
+          href={`/licenses`}
           className='hover:bg-primary-mute mx-auto block w-full cursor-pointer border-b border-white/20 px-4 pt-4 pb-2'
         >
           My Licenses
         </Link>
         <Link
-          href={`/my-order/${user.id}`}
+          href={`/my-order`}
           className='hover:bg-primary-mute mx-auto block w-full cursor-pointer border-b border-white/20 px-4 pt-4 pb-2'
         >
           My Orders

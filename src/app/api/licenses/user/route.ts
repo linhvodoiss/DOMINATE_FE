@@ -4,25 +4,25 @@ import { AUTH } from '~/constants'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const token = request.cookies.get(AUTH.token)?.value
   const page = searchParams.get('page')
   const size = searchParams.get('size')
-  const status = searchParams.get('status')
+  // const status = searchParams.get('status')
   const search = searchParams.get('search')
-  const { id } = await params
+  const type = searchParams.get('type')
 
   if (!page || !size) {
     return NextResponse.json({ error: 'Missing parameter(s)' }, { status: 400 })
   }
 
-  const res = await http.get(`${LINKS.order_user}/${id}`, {
+  const res = await http.get(`${LINKS.licenses_user}`, {
     params: {
       page,
       size,
-      status,
       search,
+      type,
     },
     headers: {
       Authorization: token ? `Bearer ${token}` : '',

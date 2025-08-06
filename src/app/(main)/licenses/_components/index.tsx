@@ -17,7 +17,6 @@ import ActiveTable from './active-table'
 import StoredTable from './stored-table'
 
 interface Props {
-  id: string
   data: LicenseResponse[]
   user: User
   totalPages: number
@@ -25,7 +24,7 @@ interface Props {
   dataLicenseUsed: LicenseResponse[]
 }
 
-export default function LicensePage({ data, id, totalPages, pageNumber, dataLicenseUsed }: Props) {
+export default function LicensePage({ data, totalPages, pageNumber, dataLicenseUsed }: Props) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [open, setOpen] = useState<boolean>(false)
@@ -39,7 +38,7 @@ export default function LicensePage({ data, id, totalPages, pageNumber, dataLice
       return
     }
     startTransition(async () => {
-      const res = await http.post<LicenseResponse>(`${LINKS.licenses_activate_next}/${id}`, {
+      const res = await http.post<LicenseResponse>(`${LINKS.licenses_activate_next}`, {
         params: {
           type: selectedTypeInModal,
         },

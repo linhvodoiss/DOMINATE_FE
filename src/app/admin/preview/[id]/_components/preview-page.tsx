@@ -81,6 +81,41 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
     })
   }
 
+  const getLicense = () => {
+    startTransition(async () => {
+      try {
+        const licenseRes = await http.post<LicenseResponse>(LINKS.licenses_create, {
+          body: JSON.stringify({ orderId: Number(id) }),
+          baseUrl: '/api',
+        })
+
+        if (CODE_SUCCESS.includes(licenseRes.code)) {
+          toast.success('License created successfully')
+          router.refresh()
+        } else {
+          toast.error(licenseRes.message || 'Create license failed')
+        }
+      } catch {
+        toast.error('Error while creating license')
+      }
+    })
+  }
+
+  const handleSyncBill = () => {
+    startTransition(async () => {
+      const res = await http.post(`${LINKS.payment_sync}/${Number(id)}`, {
+        baseUrl: '/api',
+      })
+      if (!CODE_SUCCESS.includes(res.code)) {
+        toast.error(res.message || 'Sync failed')
+        return
+      }
+
+      toast.success(res.message || 'Sync successfully')
+      router.refresh()
+    })
+  }
+
   const statusInfo = getStatusInfo(data.paymentStatus)
   const filteredStatusOptions = Object.entries(paymentStatusMap).filter(([key]) => {
     if (
@@ -196,7 +231,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
               </Descriptions.Item>
               <Descriptions.Item label='Email'>{data.buyer.email}</Descriptions.Item>
               <Descriptions.Item label='Phone Number'>{data.buyer.phoneNumber}</Descriptions.Item>
-              {data.paymentStatus === OrderStatusEnum.SUCCESS && (
+              {data.accountName ? (
                 <>
                   <Descriptions.Item label='Account Name'>{data.accountName}</Descriptions.Item>
                   <Descriptions.Item label='Account Number'>{data.accountNumber}</Descriptions.Item>
@@ -205,6 +240,17 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
                   </Descriptions.Item>
                   <Descriptions.Item label='Date Transfer'>{data?.dateTransfer}</Descriptions.Item>
                 </>
+              ) : (
+                <Descriptions.Item label='Sync'>
+                  <Button
+                    type='primary'
+                    loading={isPending}
+                    onClick={handleSyncBill}
+                    className='!bg-primary-system !border-primary-system mt-4 !inline-block w-32 px-4'
+                  >
+                    Sync bill
+                  </Button>
+                </Descriptions.Item>
               )}
             </Descriptions>
           ) : (
@@ -213,21 +259,30 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
         </div>
 
         {/* License */}
-        <div>
-          <Divider orientation='left'>License</Divider>
-          {data.license ? (
-            <Descriptions bordered size='middle' column={colResponsive}>
-              <Descriptions.Item label='Key'>{data.license.licenseKey}</Descriptions.Item>
-              <Descriptions.Item label='Day Lefts'>{data.license.daysLeft}</Descriptions.Item>
-              <Descriptions.Item label='Used?'>{data.license.canUsed ? 'Yes' : 'No'}</Descriptions.Item>
-              {data.license.activatedAt && (
-                <Descriptions.Item label='Activated At'>{data.license.activatedAt}</Descriptions.Item>
-              )}
-            </Descriptions>
-          ) : (
+        {data.license ? (
+          <Descriptions bordered size='middle' column={colResponsive}>
+            <Descriptions.Item label='Key'>{data.license.licenseKey}</Descriptions.Item>
+            <Descriptions.Item label='Day Lefts'>{data.license.daysLeft}</Descriptions.Item>
+            <Descriptions.Item label='Used?'>{data.license.canUsed ? 'Yes' : 'No'}</Descriptions.Item>
+            {data.license.activatedAt && (
+              <Descriptions.Item label='Activated At'>{data.license.activatedAt}</Descriptions.Item>
+            )}
+          </Descriptions>
+        ) : (
+          <>
             <p>No key is assign this order.</p>
-          )}
-        </div>
+            {data.paymentStatus === OrderStatusEnum.SUCCESS && (
+              <Button
+                type='primary'
+                loading={isPending}
+                onClick={getLicense}
+                className='!bg-primary-system !border-primary-system mt-4 !inline-block w-36 px-4'
+              >
+                Get License
+              </Button>
+            )}
+          </>
+        )}
       </div>
     </div>
   )

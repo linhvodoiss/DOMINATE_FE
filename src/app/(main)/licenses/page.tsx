@@ -15,8 +15,7 @@ interface Props {
   user: User
 }
 
-export default async function page({ params, searchParams }: Props) {
-  const { id } = await params
+export default async function page({ searchParams }: Props) {
   const { page, type, search } = await searchParams
 
   const cookieStore = await cookies()
@@ -28,14 +27,14 @@ export default async function page({ params, searchParams }: Props) {
     content = [],
     pageNumber,
     totalPages,
-  } = await http.get<LicenseResponse>(`${LINKS.licenses_user}/${id}`, {
+  } = await http.get<LicenseResponse>(`${LINKS.licenses_user}`, {
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
     },
     params: { page, size: PAGE_SIZE, type, search },
   })
   const listLicenses = content
-  const { data = [] } = await http.get<LicenseResponse>(`${LINKS.licenses_can_used}/${id}`, {
+  const { data = [] } = await http.get<LicenseResponse>(`${LINKS.licenses_can_used}`, {
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
     },
@@ -46,7 +45,6 @@ export default async function page({ params, searchParams }: Props) {
     <LicensePage
       data={listLicenses as LicenseResponse[]}
       dataLicenseUsed={listLicensesUsed as LicenseResponse[]}
-      id={id}
       user={user as User}
       totalPages={totalPages as number}
       pageNumber={pageNumber as number}

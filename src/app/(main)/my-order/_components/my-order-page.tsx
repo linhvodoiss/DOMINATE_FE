@@ -19,10 +19,9 @@ import { Search } from 'lucide-react'
 interface Props {
   data: OrderResponse[]
   user: User
-  id: string
 }
 
-export default function MyOrderPage({ data, id }: Props) {
+export default function MyOrderPage({ data }: Props) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -37,7 +36,7 @@ export default function MyOrderPage({ data, id }: Props) {
     const currentStatus = searchParams.get('status') || OrderStatusEnum.ALL
     const currentSearch = searchParams.get('search') || ''
 
-    const res = await http.get<OrderResponse[]>(`${LINKS.order_user}/${id}`, {
+    const res = await http.get<OrderResponse[]>(`${LINKS.order_user}`, {
       params: {
         page: pageNumber,
         size: PAGE_SIZE,
@@ -56,7 +55,7 @@ export default function MyOrderPage({ data, id }: Props) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await http.get<OrderResponse[]>(`${LINKS.order_user}/${id}`, {
+      const res = await http.get<OrderResponse[]>(`${LINKS.order_user}`, {
         params: {
           page: 1,
           size: PAGE_SIZE,
@@ -72,7 +71,7 @@ export default function MyOrderPage({ data, id }: Props) {
     }
 
     fetchData()
-  }, [id, status, searchTerm])
+  }, [status, searchTerm])
 
   const fetchNext = () => {
     setTimeout(() => {

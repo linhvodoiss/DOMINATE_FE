@@ -4,12 +4,19 @@ import { AUTH } from '~/constants'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
   const token = request.cookies.get(AUTH.token)?.value
+  const type = searchParams.get('type')
 
-  const { id } = await params
+  if (!type) {
+    return NextResponse.json({ error: 'Missing parameter(s)' }, { status: 400 })
+  }
 
-  const res = await http.get(`${LINKS.licenses_can_used}/${id}`, {
+  const res = await http.post(`${LINKS.licenses_activate_next}`, {
+    params: {
+      type,
+    },
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
     },
