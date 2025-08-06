@@ -192,7 +192,7 @@ export default function PayosPayment({
       <div className='mt-2 rounded-xl border p-4 md:p-6'>
         <h2 className='mb-3 py-2 text-xl font-semibold'>Bill Payment</h2>
 
-        {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && paymentInfo.accountName ? (
+        {paymentInfo.accountName ? (
           <div className='flex flex-col md:flex-row md:gap-6'>
             <div className='w-full'>
               <p className='mb-3'>

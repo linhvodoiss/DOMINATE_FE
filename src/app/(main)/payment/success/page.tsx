@@ -74,7 +74,7 @@ export default function SuccessPage() {
         }
 
         if (res?.data?.paymentStatus === OrderStatusEnum.PENDING) {
-          const resLicense = await http.patch<OrderResponse>(`${LINKS.order_silent}/${orderId}`, {
+          const resLicense = await http.patch<OrderResponse>(`${LINKS.order}/${orderId}`, {
             params: { newStatus: OrderStatusEnum.PROCESSING },
             baseUrl: '/api',
           })

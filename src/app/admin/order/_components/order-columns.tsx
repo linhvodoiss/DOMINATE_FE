@@ -73,17 +73,19 @@ export default function getOrderColumns({ sort, handleEdit, handleSyncBill }: Ge
       render: (_: any, record: OrderResponse) => (
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          {!record.accountName && record.paymentStatus === OrderStatusEnum.SUCCESS && (
-            <Popconfirm
-              title='Are you sure want to sync bill this order ?'
-              onConfirm={() => handleSyncBill(record)}
-              okText='Sync'
-              cancelText='Close'
-              placement='bottom'
-            >
-              <Button type='link' icon={<SyncOutlined />} />
-            </Popconfirm>
-          )}
+          {!record.accountName &&
+            (record.paymentStatus === OrderStatusEnum.SUCCESS ||
+              record.paymentStatus === OrderStatusEnum.PROCESSING) && (
+              <Popconfirm
+                title='Are you sure want to sync bill this order ?'
+                onConfirm={() => handleSyncBill(record)}
+                okText='Sync'
+                cancelText='Close'
+                placement='bottom'
+              >
+                <Button type='link' icon={<SyncOutlined />} />
+              </Popconfirm>
+            )}
         </Space>
       ),
     },

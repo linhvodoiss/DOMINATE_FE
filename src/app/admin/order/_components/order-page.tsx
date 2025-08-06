@@ -18,6 +18,8 @@ import { CODE_SUCCESS } from '~/constants'
 import { toast } from 'sonner'
 import { subscribeOnce, subscribeOnceNoRegister } from '~/app/_components/socket-link'
 import { paymentStatusMap } from '~/constants/payment-type'
+import { LicenseResponse } from '#/licenses'
+import { OrderStatusEnum } from '#/tabs-order'
 
 interface Props {
   listOrder: OrderResponse[]
@@ -66,6 +68,22 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
       if (!CODE_SUCCESS.includes(res.code)) {
         toast.error(res.message || 'Update status failed')
         return
+      }
+      if (values.paymentStatus === OrderStatusEnum.SUCCESS) {
+        try {
+          const licenseRes = await http.post<LicenseResponse>(LINKS.licenses_create, {
+            body: JSON.stringify({ orderId: Number(editRecord?.orderId) }),
+            baseUrl: '/api',
+          })
+
+          if (!CODE_SUCCESS.includes(licenseRes.code)) {
+            toast.error(licenseRes.message || 'Create license failed')
+            return
+          }
+          toast.success('License created successfully')
+        } catch {
+          toast.error('Error while creating license')
+        }
       }
 
       toast.success(res.message || 'Update status successfully')

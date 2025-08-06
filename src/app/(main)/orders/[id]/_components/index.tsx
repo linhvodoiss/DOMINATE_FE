@@ -63,20 +63,21 @@ export default function OrderPage({ data, user, id }: Props) {
   useEffect(() => {
     if (!orderId) return
 
-    const topic = `/topic/payment/${orderId}`
+    const topics = [`/topic/payment/${orderId}`, `/topic/sync/${orderId}`]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let subscription: any = null
+    let subscriptions: any[] = []
 
     subscribeOnceNoRegister(client => {
-      subscription = client.subscribe(topic, () => {
-        fetchOrder()
-      })
+      subscriptions = topics.map(topic =>
+        client.subscribe(topic, () => {
+          console.log(`Nhận socket từ ${topic} => refetch order`)
+          fetchOrder()
+        })
+      )
     })
 
     return () => {
-      if (subscription) {
-        subscription.unsubscribe()
-      }
+      subscriptions.forEach(sub => sub.unsubscribe())
     }
   }, [orderId, fetchOrder])
 
@@ -95,7 +96,7 @@ export default function OrderPage({ data, user, id }: Props) {
         setIsPaymentSubmitted={setIsPaymentSubmitted}
         isPaymentSubmitted={isPaymentSubmitted}
       />
-      <Reminder data={data} user={user} paymentInfo={paymentInfo} orderId={orderId} />
+      <Reminder data={data} paymentInfo={paymentInfo} orderId={orderId} />
     </div>
   )
 }
