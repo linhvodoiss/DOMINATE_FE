@@ -10,6 +10,7 @@ export type OrderResponse = {
   accountName?: string
   accountNumber?: string
   qrCode?: string
+  cancelReason: string
   paymentStatus?: string
   paymentMethod?: string
   userId?: number

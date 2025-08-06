@@ -15,6 +15,9 @@ import http from '~/utils/http'
 import ModalOrder from './modal-order'
 import calPriceDiscount from '~/utils/price-discount-calculate'
 import { BIN_BANK_MAP } from '~/constants/bank-list'
+import { useForm } from 'react-hook-form'
+import z from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 type ModalType = 'create' | 'cancel' | null
 
@@ -40,6 +43,20 @@ export default function PayosPayment({
   const [modalType, setModalType] = useState<ModalType>(null)
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
+
+  // form cancel
+  const ReasonSchema = z.object({
+    reason: z.string().min(1, 'No empty').max(100, 'Max 100 character'),
+  })
+
+  type ReasonData = z.infer<typeof ReasonSchema>
+
+  const form = useForm<ReasonData>({
+    resolver: zodResolver(ReasonSchema),
+    defaultValues: {
+      reason: '',
+    },
+  })
 
   // -------------------- CREATE ORDER --------------------
   const orderHandler = async () => {
@@ -101,9 +118,10 @@ export default function PayosPayment({
   }, [paymentInfo])
 
   // -------------------- CANCEL ORDER --------------------
-  const cancelOrderHandler = (newStatus: OrderStatusEnum) => {
+  const cancelOrderHandler = form.handleSubmit(async values => {
     const existingOrderId = searchParams.get('orderId')
-    const reason = 'Customer cancel order'
+    const newStatus = OrderStatusEnum.FAILED
+
     if (!existingOrderId) {
       toast.error('Missing order ID')
       return
@@ -114,7 +132,7 @@ export default function PayosPayment({
         // API cancel POS
         const resPayOS = await http.post(`${LINKS.payment_cancel}/${existingOrderId}`, {
           params: {
-            reason,
+            reason: values.reason,
           },
           baseUrl: '/api',
         })
@@ -144,7 +162,7 @@ export default function PayosPayment({
         setPending(false)
       }
     })
-  }
+  })
 
   // -------------------- MODAL CONFIG --------------------
   const modalConfig = {
@@ -156,7 +174,7 @@ export default function PayosPayment({
     cancel: {
       title: 'Cancel this order?',
       content: 'Press OK to confirm cancellation.',
-      onSubmit: () => cancelOrderHandler(OrderStatusEnum.FAILED),
+      onSubmit: cancelOrderHandler,
     },
   } as const
 
@@ -219,7 +237,7 @@ export default function PayosPayment({
                 </span>
               </p>
               <p className='mb-3'>
-                <span className='font-semibold'>Date transfer:</span> {paymentInfo.dateTransfer}
+                <span className='font-semibold'>Date transfer:</span> {paymentInfo.dateTransfer || '--'}
               </p>
             </div>
           </div>
@@ -227,6 +245,15 @@ export default function PayosPayment({
           <p className='text-center text-lg font-semibold text-green-600'>
             Something error from PayOS. Your order is confirmed
           </p>
+        ) : paymentInfo.paymentStatus === OrderStatusEnum.FAILED ? (
+          <div className='w-full'>
+            <p className='mb-3'>
+              <span className='font-semibold'>Reason cancel:</span> {paymentInfo.cancelReason}
+            </p>
+            <p className='mb-3'>
+              <span className='font-semibold'>Date cancel:</span> {paymentInfo.dateTransfer}
+            </p>
+          </div>
         ) : (
           <p className='text-center text-lg font-semibold'>No information!</p>
         )}
@@ -292,6 +319,8 @@ export default function PayosPayment({
             content={modalConfig[modalType].content}
             onSubmitOrder={modalConfig[modalType].onSubmit}
             pending={pending}
+            form={form}
+            isCancel
           />
         )}
       </div>

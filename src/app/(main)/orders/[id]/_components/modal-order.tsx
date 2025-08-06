@@ -12,6 +12,7 @@ interface DialogProps {
   title?: string
   content?: string
   isReminder?: boolean
+  isCancel?: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form?: UseFormReturn<any>
 }
@@ -22,6 +23,7 @@ export default function ModalOrder({
   onSubmitOrder,
   pending,
   isReminder,
+  isCancel,
   title = 'PAY CONFIRM',
   content = 'Please enter a message to remind admin.',
   form,
@@ -47,6 +49,22 @@ export default function ModalOrder({
                 <FormItem>
                   <FormControl>
                     <Textarea placeholder='Content reminder admin...' disabled={pending} {...field} />
+                  </FormControl>
+                  <FormMessage className='data-[error=true]:text-destructive' />
+                </FormItem>
+              )}
+            />
+          </Form>
+        )}
+        {isCancel && form && (
+          <Form {...form}>
+            <FormField
+              control={form.control}
+              name='reason'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Textarea placeholder='Reason cancel...' disabled={pending} {...field} />
                   </FormControl>
                   <FormMessage className='data-[error=true]:text-destructive' />
                 </FormItem>

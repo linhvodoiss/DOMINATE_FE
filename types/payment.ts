@@ -16,6 +16,7 @@ export type PaymentResponse = {
   checkoutUrl: string
   price?: number
   qrCode: string
+  cancelReason: string
   paymentStatus: string
   paymentLink: string
   dateTransfer: string

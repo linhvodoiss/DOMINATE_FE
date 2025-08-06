@@ -231,16 +231,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
               </Descriptions.Item>
               <Descriptions.Item label='Email'>{data.buyer.email}</Descriptions.Item>
               <Descriptions.Item label='Phone Number'>{data.buyer.phoneNumber}</Descriptions.Item>
-              {data.accountName ? (
-                <>
-                  <Descriptions.Item label='Account Name'>{data.accountName}</Descriptions.Item>
-                  <Descriptions.Item label='Account Number'>{data.accountNumber}</Descriptions.Item>
-                  <Descriptions.Item label='Account Bank'>
-                    {data?.bin && BIN_BANK_MAP[data.bin] ? BIN_BANK_MAP[data.bin] : data?.bin || '--'}
-                  </Descriptions.Item>
-                  <Descriptions.Item label='Date Transfer'>{data?.dateTransfer}</Descriptions.Item>
-                </>
-              ) : (
+              {data.paymentStatus !== OrderStatusEnum.FAILED && !data.accountName ? (
                 <Descriptions.Item label='Sync'>
                   <Button
                     type='primary'
@@ -251,6 +242,26 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
                     Sync bill
                   </Button>
                 </Descriptions.Item>
+              ) : (
+                <>
+                  {data.accountName && (
+                    <>
+                      <Descriptions.Item label='Account Name'>{data.accountName}</Descriptions.Item>
+                      <Descriptions.Item label='Account Number'>{data.accountNumber}</Descriptions.Item>
+                      <Descriptions.Item label='Account Bank'>
+                        {data?.bin && BIN_BANK_MAP[data.bin] ? BIN_BANK_MAP[data.bin] : data?.bin || '--'}
+                      </Descriptions.Item>
+                      <Descriptions.Item label='Date Transfer'>{data?.dateTransfer}</Descriptions.Item>
+                    </>
+                  )}
+                </>
+              )}
+
+              {data.cancelReason && data.paymentStatus === OrderStatusEnum.FAILED && (
+                <>
+                  <Descriptions.Item label='Cancel Reason'>{data.cancelReason}</Descriptions.Item>
+                  <Descriptions.Item label='Date Cancel'>{data?.dateTransfer}</Descriptions.Item>
+                </>
               )}
             </Descriptions>
           ) : (
