@@ -252,7 +252,8 @@ export default function PayosPayment({
         )}
 
         <div className='mt-2'>
-          {paymentInfo.paymentStatus === OrderStatusEnum.PENDING && (
+          {(paymentInfo.paymentStatus === OrderStatusEnum.PENDING ||
+            paymentInfo.paymentStatus === OrderStatusEnum.PROCESSING) && (
             <span className='font-bold text-blue-600'>Waiting for confirmation...</span>
           )}
           {paymentInfo.paymentStatus === OrderStatusEnum.SUCCESS && (

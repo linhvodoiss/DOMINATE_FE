@@ -40,12 +40,7 @@ export default function Footer() {
               <ul className='space-y-2 text-gray-300'>
                 <li>
                   <a href='#' className='transition-colors hover:text-white'>
-                    API
-                  </a>
-                </li>
-                <li>
-                  <a href='#' className='transition-colors hover:text-white'>
-                    Integrations
+                    Documentation
                   </a>
                 </li>
               </ul>
@@ -62,16 +57,6 @@ export default function Footer() {
                 <li>
                   <a href='#' className='transition-colors hover:text-white'>
                     Contact
-                  </a>
-                </li>
-                <li>
-                  <a href='#' className='transition-colors hover:text-white'>
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a href='#' className='transition-colors hover:text-white'>
-                    Blog
                   </a>
                 </li>
               </ul>
