@@ -1,16 +1,18 @@
-import { Space, Button, Tag } from 'antd'
-import { EditOutlined } from '@ant-design/icons'
+import { Space, Button, Tag, Popconfirm } from 'antd'
+import { EditOutlined, SyncOutlined } from '@ant-design/icons'
 import { SortOrder } from 'antd/es/table/interface'
 import { OrderResponse } from '#/order'
 import { paymentStatusMap, statusColorMap } from '~/constants/payment-type'
 import { typePackageMap } from '~/constants/package-type'
+import { OrderStatusEnum } from '#/tabs-order'
 
 interface GetColumnsProps {
   sort: string
   handleEdit: (record: OrderResponse) => void
+  handleSyncBill: (record: OrderResponse) => void
 }
 
-export default function getOrderColumns({ sort, handleEdit }: GetColumnsProps) {
+export default function getOrderColumns({ sort, handleEdit, handleSyncBill }: GetColumnsProps) {
   return [
     {
       title: 'ID',
@@ -71,6 +73,17 @@ export default function getOrderColumns({ sort, handleEdit }: GetColumnsProps) {
       render: (_: any, record: OrderResponse) => (
         <Space>
           <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          {!record.accountName && record.paymentStatus === OrderStatusEnum.SUCCESS && (
+            <Popconfirm
+              title='Are you sure want to sync bill this order ?'
+              onConfirm={() => handleSyncBill(record)}
+              okText='Sync'
+              cancelText='Close'
+              placement='bottom'
+            >
+              <Button type='link' icon={<SyncOutlined />} />
+            </Popconfirm>
+          )}
         </Space>
       ),
     },

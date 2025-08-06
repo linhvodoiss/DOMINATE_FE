@@ -55,7 +55,7 @@ export default function AccountForm({ visible, onCancel, onFinish, modalType, fo
             {modalType === 'add' ? 'Add' : modalType === 'edit' ? 'Update' : 'Change Password'}
           </Button>
           <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
-            Cancel
+            Close
           </Button>
         </>
       }

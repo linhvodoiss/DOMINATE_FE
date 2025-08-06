@@ -45,7 +45,7 @@ export default function OptionForm({ visible, onCancel, onFinish, modalType, for
             {modalType === 'add' ? 'Add' : 'Update'}
           </Button>
           <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
-            Cancel
+            Close
           </Button>
         </>
       }

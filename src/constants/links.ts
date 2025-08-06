@@ -23,6 +23,7 @@ export const LINKS = {
   order_email_admin: '/orders/emailAdmin',
   order_email_report: '/orders/emailReport',
   payment: '/payment',
+  payment_sync: '/payment/sync',
   payment_cancel: '/payment/cancel',
   payment_create: '/payment/create-payment',
   licenses_create: '/licenses/create',

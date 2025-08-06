@@ -2,7 +2,7 @@
 
 import { Button, Descriptions, Tag, Divider, Radio } from 'antd'
 import React, { useEffect, useState, useTransition } from 'react'
-import { paymentMethodMap, paymentStatusMap, statusColorMap } from '~/constants/payment-type'
+import { paymentStatusMap, statusColorMap } from '~/constants/payment-type'
 import { OrderResponse } from '#/order'
 import { billingCycleMap, typePackageMap } from '~/constants/package-type'
 import { BIN_BANK_MAP } from '~/constants/bank-list'
@@ -13,7 +13,6 @@ import http from '~/utils/http'
 import { LINKS } from '~/constants/links'
 import { LicenseResponse } from '#/licenses'
 import { subscribeOnce } from '~/app/_components/socket-link'
-import { formatDateTimeVN } from '~/utils/date-convert-pro'
 import { OrderStatusEnum } from '#/tabs-order'
 
 const colResponsive = { xs: 1, sm: 1, md: 1, lg: 1 }
@@ -23,10 +22,6 @@ function getStatusInfo(status: string | null | undefined) {
     label: paymentStatusMap[status as keyof typeof paymentStatusMap] || 'Unknown',
     color: statusColorMap[status as keyof typeof statusColorMap] || 'default',
   }
-}
-
-function getMethodLabel(method: string | null | undefined) {
-  return paymentMethodMap[method as keyof typeof paymentMethodMap] || 'Unknown'
 }
 
 export default function AdminOrderPreview({ data, id }: { data: OrderResponse; id: string }) {
@@ -65,7 +60,6 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
       if (status !== OrderStatusEnum.SUCCESS) {
         toast.success(res.message || 'Status updated successfully')
       }
-
       if (status === 'SUCCESS') {
         try {
           const licenseRes = await http.post<LicenseResponse>(LINKS.licenses_create, {
@@ -88,17 +82,23 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
   }
 
   const statusInfo = getStatusInfo(data.paymentStatus)
-  const methodLabel = getMethodLabel(data.paymentMethod)
+  const filteredStatusOptions = Object.entries(paymentStatusMap).filter(([key]) => {
+    if (
+      (data.paymentStatus === OrderStatusEnum.PENDING || data.paymentStatus === OrderStatusEnum.PROCESSING) &&
+      (key === OrderStatusEnum.PENDING || key === OrderStatusEnum.PROCESSING)
+    ) {
+      return false
+    }
+    return true
+  })
 
   return (
     <div className='max-w-7xl p-6'>
-      <h2 className='!mb-4 !text-2xl !font-bold'>
-        # Order Code {id} - {methodLabel}
-      </h2>
+      <h2 className='!mb-4 !text-2xl !font-bold'># Order Code {id}</h2>
       {(data.paymentStatus === OrderStatusEnum.PENDING || data.paymentStatus === OrderStatusEnum.PROCESSING) && (
         <>
           <Radio.Group optionType='button' buttonStyle='solid' value={status} onChange={e => setStatus(e.target.value)}>
-            {Object.entries(paymentStatusMap).map(([key, label]) => (
+            {filteredStatusOptions.map(([key, label]) => (
               <Radio.Button
                 key={key}
                 value={key}
@@ -203,7 +203,7 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
                   <Descriptions.Item label='Account Bank'>
                     {data?.bin && BIN_BANK_MAP[data.bin] ? BIN_BANK_MAP[data.bin] : data?.bin || '--'}
                   </Descriptions.Item>
-                  <Descriptions.Item label='Date Transfer'>{formatDateTimeVN(data?.dateTransfer)}</Descriptions.Item>
+                  <Descriptions.Item label='Date Transfer'>{data?.dateTransfer}</Descriptions.Item>
                 </>
               )}
             </Descriptions>

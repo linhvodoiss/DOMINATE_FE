@@ -15,7 +15,6 @@ import http from '~/utils/http'
 import ModalOrder from './modal-order'
 import calPriceDiscount from '~/utils/price-discount-calculate'
 import { BIN_BANK_MAP } from '~/constants/bank-list'
-import { formatDateTimeVN } from '~/utils/date-convert-pro'
 
 type ModalType = 'create' | 'cancel' | null
 
@@ -220,7 +219,7 @@ export default function PayosPayment({
                 </span>
               </p>
               <p className='mb-3'>
-                <span className='font-semibold'>Date transfer:</span> {formatDateTimeVN(paymentInfo.dateTransfer)}
+                <span className='font-semibold'>Date transfer:</span> {paymentInfo.dateTransfer}
               </p>
             </div>
           </div>
@@ -266,13 +265,7 @@ export default function PayosPayment({
                 </span>
               ) : (
                 <span className='relative inline-block -translate-y-2 font-medium'>
-                  Can&apos;t get key, click{' '}
-                  <Link
-                    className='hover:text-primary-system'
-                    href={`/payment/success?orderCode=${paymentInfo.orderId}`}
-                  >
-                    here!
-                  </Link>
+                  Your license key is can&apos;t created, remind admin
                 </span>
               )}
             </>

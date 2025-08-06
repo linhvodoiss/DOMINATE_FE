@@ -45,7 +45,7 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
             </Button>
           )}
           <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
-            Cancel
+            Close
           </Button>
         </>
       }
@@ -85,20 +85,31 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
           rules={[{ required: true, message: 'Please select new status' }]}
         >
           <Radio.Group optionType='button' buttonStyle='solid'>
-            {Object.entries(paymentStatusMap).map(([status, label]) => (
-              <Radio.Button
-                key={status}
-                value={status}
-                style={{
-                  color: '#fff',
-                  backgroundColor: statusColorMap[status],
-                  transition: 'all 0.3s',
-                }}
-                className='custom-radio-button'
-              >
-                {label}
-              </Radio.Button>
-            ))}
+            {Object.entries(paymentStatusMap)
+              .filter(([status]) => {
+                if (
+                  (editRecord.paymentStatus === OrderStatusEnum.PENDING ||
+                    editRecord.paymentStatus === OrderStatusEnum.PROCESSING) &&
+                  (status === OrderStatusEnum.PENDING || status === OrderStatusEnum.PROCESSING)
+                ) {
+                  return false
+                }
+                return true
+              })
+              .map(([status, label]) => (
+                <Radio.Button
+                  key={status}
+                  value={status}
+                  style={{
+                    color: '#fff',
+                    backgroundColor: statusColorMap[status],
+                    transition: 'all 0.3s',
+                  }}
+                  className='custom-radio-button'
+                >
+                  {label}
+                </Radio.Button>
+              ))}
           </Radio.Group>
         </Form.Item>
       )}

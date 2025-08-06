@@ -73,7 +73,21 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
       router.refresh()
     })
   }
+  const handleSyncBill = async (record: OrderResponse) => {
+    startTransition(async () => {
+      const res = await http.post(`${LINKS.payment_sync}/${record?.orderId}`, {
+        baseUrl: '/api',
+      })
+      if (!CODE_SUCCESS.includes(res.code)) {
+        toast.error(res.message || 'Sync failed')
+        return
+      }
 
+      toast.success(res.message || 'Sync successfully')
+      setIsModalOpen(false)
+      router.refresh()
+    })
+  }
   // socket
   useEffect(() => {
     subscribeOnce('/topic/payment/global', client => {
@@ -90,7 +104,7 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
       })
     })
   }, [router])
-  const columns = getOptionColumns({ sort, handleEdit })
+  const columns = getOptionColumns({ sort, handleEdit, handleSyncBill })
 
   return (
     <div className='min-h-[500px] rounded p-6 shadow'>
