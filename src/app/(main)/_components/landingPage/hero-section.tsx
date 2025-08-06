@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 export default function HeroSection() {
@@ -17,9 +18,12 @@ export default function HeroSection() {
             apps using simple, rule-based workflows.
           </p>
           <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
-            <button className='bg-primary-system hover:bg-primary-hover rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:shadow-xl'>
-              Try now
-            </button>
+            <Link
+              href='/product'
+              className='bg-primary-system hover:bg-primary-hover rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-lg transition-colors hover:shadow-xl'
+            >
+              Start Today
+            </Link>
             <button className='hover:bg-toggle-secondary rounded-xl border border-gray-300 px-8 py-4 text-lg font-semibold transition-colors'>
               Watch Demo
             </button>

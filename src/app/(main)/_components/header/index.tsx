@@ -10,7 +10,7 @@ import http from '~/utils/http'
 
 const menuItems = [
   { label: 'Home', href: '/' },
-  { label: 'Product', href: '/product' },
+  { label: 'Subscription Package', href: '/product' },
   { label: 'Doc', href: '/doc' },
   { label: 'About', href: '/about' },
 ]

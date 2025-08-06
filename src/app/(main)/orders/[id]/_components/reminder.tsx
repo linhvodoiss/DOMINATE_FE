@@ -8,7 +8,6 @@ import clsx from 'clsx'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 import { PackageResponse } from '#/package'
-import { User } from '#/user'
 import { ResponseGlobal } from '#/payment'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -17,11 +16,10 @@ import z from 'zod'
 interface Props {
   orderId: string | null
   data: PackageResponse
-  user: User
   paymentInfo?: ResponseGlobal
 }
 
-export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
+export default function Reminder({ orderId, data, paymentInfo }: Props) {
   const [isPending, startTransition] = useTransition()
   const [pending, setPending] = useState(false)
   const [isLocked, setIsLocked] = useState(false)
@@ -136,7 +134,7 @@ export default function Reminder({ orderId, data, user, paymentInfo }: Props) {
       )}
 
       <Link
-        href={`/my-order/${user.id}${paymentInfo?.paymentStatus ? `?status=${paymentInfo.paymentStatus}` : ''}`}
+        href={`/my-order${paymentInfo?.paymentStatus ? `?status=${paymentInfo.paymentStatus}` : ''}`}
         className={clsx(
           'text-destructive hover:bg-primary-foreground-hover border-destructive w-40 rounded-lg border py-3 text-center font-semibold shadow-sm',
           isPending && 'pointer-events-none opacity-50'

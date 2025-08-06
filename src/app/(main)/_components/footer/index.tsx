@@ -40,16 +40,6 @@ export default function Footer() {
               <ul className='space-y-2 text-gray-300'>
                 <li>
                   <a href='#' className='transition-colors hover:text-white'>
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href='#' className='transition-colors hover:text-white'>
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a href='#' className='transition-colors hover:text-white'>
                     API
                   </a>
                 </li>

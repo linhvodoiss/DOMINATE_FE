@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React from 'react'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
+import calPriceDiscount from '~/utils/price-discount-calculate'
 
 export default async function PricingSection() {
   const { data } = await http.get<PackageResponse[]>(`${LINKS.topPackage}`)
@@ -37,7 +38,11 @@ export default async function PricingSection() {
                   {plan.description}
                 </p>
                 <div className='flex items-end justify-center'>
-                  <span className='text-third-gray text-4xl font-bold'>{plan.price}</span>
+                  <span className='text-third-gray text-4xl font-bold'>
+                    {plan.price != null
+                      ? calPriceDiscount(plan.price, plan.discount).toLocaleString('vi-VN') + ' đ'
+                      : '--'}
+                  </span>
                   <span className='text-secondary-gray ml-1'>/{plan.billingCycle}</span>
                 </div>
               </div>
