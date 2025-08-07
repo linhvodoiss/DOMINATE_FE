@@ -25,13 +25,14 @@ interface Props {
 
 export default function OrderForm({ visible, onCancel, onFinish, form, editRecord }: Props) {
   const [cancelReasonModalOpen, setCancelReasonModalOpen] = useState(false)
-
+  const [status, setStatus] = useState<string>()
   useEffect(() => {
     if (visible && editRecord) {
       form.setFieldsValue({
         paymentStatus: editRecord.paymentStatus,
         cancelReason: '',
       })
+      setStatus(editRecord.paymentStatus)
     }
   }, [visible, editRecord, form])
 
@@ -84,11 +85,17 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
         footer={
           <>
             {(editRecord.paymentStatus === OrderStatusEnum.PENDING ||
-              editRecord.paymentStatus === OrderStatusEnum.PROCESSING) && (
-              <Button type='primary' className='!bg-primary-system !border-primary-system' onClick={handleUpdateClick}>
-                Update
-              </Button>
-            )}
+              editRecord.paymentStatus === OrderStatusEnum.PROCESSING) &&
+              (status === OrderStatusEnum.SUCCESS || status === OrderStatusEnum.FAILED) && (
+                <Button
+                  type='primary'
+                  className='!bg-primary-system !border-primary-system'
+                  onClick={handleUpdateClick}
+                >
+                  Update
+                </Button>
+              )}
+
             <Button type='primary' onClick={onCancel} className='!border-primary-system !bg-red-500'>
               Close
             </Button>
@@ -127,7 +134,15 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
             label='Select status'
             rules={[{ required: true, message: 'Please select new status' }]}
           >
-            <Radio.Group optionType='button' buttonStyle='solid'>
+            <Radio.Group
+              optionType='button'
+              buttonStyle='solid'
+              value={status}
+              onChange={e => {
+                form.setFieldValue('paymentStatus', e.target.value)
+                setStatus(e.target.value)
+              }}
+            >
               {Object.entries(paymentStatusMap)
                 .filter(([status]) => {
                   const current = editRecord.paymentStatus
@@ -174,15 +189,17 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
           },
         }}
       >
-        <Form.Item
-          name='cancelReason'
-          rules={[
-            { required: true, message: 'Please enter reason cancel' },
-            { max: 100, message: 'Max 100 characters' },
-          ]}
-        >
-          <Input.TextArea rows={4} placeholder='Enter reason cancel...' maxLength={100} showCount />
-        </Form.Item>
+        <Form form={form}>
+          <Form.Item
+            name='cancelReason'
+            rules={[
+              { required: true, message: 'Please enter reason cancel' },
+              { max: 100, message: 'Max 100 characters' },
+            ]}
+          >
+            <Input.TextArea rows={4} placeholder='Enter reason cancel...' maxLength={100} showCount />
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   )

@@ -50,7 +50,7 @@ export default function SideBarAdmin({ children, user }: { children: ReactNode; 
             {
               key: 'order',
               icon: <ProfileOutlined />,
-              label: <Link href='/admin/order'>Order</Link>,
+              label: <Link href='/admin/order'>Payment Transaction</Link>,
               className: '!text-secondary-gray',
             },
             {

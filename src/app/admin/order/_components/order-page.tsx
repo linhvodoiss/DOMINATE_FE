@@ -64,6 +64,8 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
     dateTransfer?: string
   }) => {
     const reason = values.cancelReason ?? ''
+    console.log(reason)
+
     if (values.paymentStatus === OrderStatusEnum.SUCCESS) {
       startTransition(async () => {
         const res = await http.patch(`${LINKS.order_admin}/${editRecord?.orderId}`, {
@@ -93,7 +95,7 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
           }
         }
 
-        toast.success(res.message || 'Update status successfully')
+        // toast.success(res.message || 'Update status successfully')
         setIsModalOpen(false)
         router.refresh()
       })
@@ -113,7 +115,7 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
             return
           }
           setIsModalOpen(false)
-          toast.success(resPayOS.message || 'Order cancel successfully.')
+          // toast.success(resPayOS.message || 'Order cancel successfully.')
 
           router.refresh()
         } catch (err) {

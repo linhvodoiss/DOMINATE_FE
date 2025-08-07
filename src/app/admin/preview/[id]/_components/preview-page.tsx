@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Descriptions, Tag, Divider, Radio } from 'antd'
+import { Button, Descriptions, Tag, Divider, Radio, Form } from 'antd'
 import React, { useEffect, useState, useTransition } from 'react'
 import { paymentStatusMap, statusColorMap } from '~/constants/payment-type'
 import { OrderResponse } from '#/order'
@@ -14,6 +14,7 @@ import { LINKS } from '~/constants/links'
 import { LicenseResponse } from '#/licenses'
 import { subscribeOnce } from '~/app/_components/socket-link'
 import { OrderStatusEnum } from '#/tabs-order'
+import CancelReasonModal from './modal-cancel-preview'
 
 const colResponsive = { xs: 1, sm: 1, md: 1, lg: 1 }
 
@@ -29,6 +30,9 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
   const router = useRouter()
   const [status, setStatus] = useState<string | null>(data.paymentStatus || null)
   const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false)
+  const [cancelForm] = Form.useForm()
+
+  const [cancelModalOpen, setCancelModalOpen] = useState(false)
 
   useEffect(() => {
     setStatus(data.paymentStatus || null)
@@ -46,7 +50,10 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
 
   const handleUpdateStatus = () => {
     if (!status) return toast.error('Please select a status before updating')
-
+    if (status === OrderStatusEnum.FAILED) {
+      setCancelModalOpen(true)
+      return
+    }
     startTransition(async () => {
       const res = await http.patch(`${LINKS.order_admin}/${data.orderId}`, {
         params: { newStatus: status },
@@ -148,15 +155,16 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
               </Radio.Button>
             ))}
           </Radio.Group>
-
-          <Button
-            type='primary'
-            loading={isPending}
-            onClick={handleUpdateStatus}
-            className='!bg-primary-system !border-primary-system mt-4 !block'
-          >
-            Update
-          </Button>
+          {(status === OrderStatusEnum.SUCCESS || status === OrderStatusEnum.FAILED) && (
+            <Button
+              type='primary'
+              loading={isPending}
+              onClick={handleUpdateStatus}
+              className='!bg-primary-system !border-primary-system mt-4 !block'
+            >
+              Update
+            </Button>
+          )}
         </>
       )}
       <div className='mt-6 grid grid-cols-1 gap-6'>
@@ -295,6 +303,31 @@ export default function AdminOrderPreview({ data, id }: { data: OrderResponse; i
           </>
         )}
       </div>
+      <CancelReasonModal
+        open={cancelModalOpen}
+        confirmLoading={isPending}
+        onCancel={() => {
+          setCancelModalOpen(false)
+          cancelForm.resetFields()
+        }}
+        onSubmit={(reason: string) => {
+          setCancelModalOpen(false)
+          startTransition(async () => {
+            const res = await http.post(`${LINKS.payment_cancel}/${Number(data.orderId)}`, {
+              params: { reason },
+              baseUrl: '/api',
+            })
+
+            if (!CODE_SUCCESS.includes(res.code)) {
+              toast.error(res.message || 'Cancel failed')
+              return
+            }
+
+            toast.success(res.message || 'Order canceled')
+            router.refresh()
+          })
+        }}
+      />
     </div>
   )
 }
