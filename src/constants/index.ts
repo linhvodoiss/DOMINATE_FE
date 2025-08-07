@@ -10,8 +10,8 @@ export const CODE_AUTH_ERROR = [401, 403]
 
 export const AUTH = {
   isLogged: 'isLogged',
-  token: '_token',
-  userInfo: 'user-info',
+  token: '_token-dom',
+  userInfo: 'user-info-dom',
 }
 
 export const MAX_CHARS = 2000

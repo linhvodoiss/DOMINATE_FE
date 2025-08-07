@@ -52,11 +52,6 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
   }
 
   const handleCancelConfirm = () => {
-    if (!cancelReason.trim()) {
-      toast.warning('Please enter reason cancel!')
-      return
-    }
-
     onFinish({
       orderId: Number(editRecord.orderId ?? 0),
       paymentStatus: OrderStatusEnum.FAILED,
@@ -168,12 +163,15 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
           },
         }}
       >
-        <Input.TextArea
-          rows={4}
-          placeholder='Enter reason cancel...'
-          value={cancelReason}
-          onChange={e => setCancelReason(e.target.value)}
-        />
+        <Form.Item
+          name='cancelReason'
+          rules={[
+            { required: true, message: 'Vui lòng nhập lý do hủy' },
+            { max: 100, message: 'Lý do hủy không được vượt quá 100 ký tự' },
+          ]}
+        >
+          <Input.TextArea rows={4} placeholder='Enter reason cancel...' maxLength={100} showCount />
+        </Form.Item>
       </Modal>
     </>
   )

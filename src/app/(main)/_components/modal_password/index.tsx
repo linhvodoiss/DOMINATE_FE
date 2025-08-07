@@ -62,7 +62,7 @@ export default function ModalPassword({ open, onOpenChange }: DialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='bg-primary-foreground'>
         <DialogHeader>
-          <DialogTitle className='text-xl'>Đổi mật khẩu</DialogTitle>
+          <DialogTitle className='text-xl'>Change Password</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -79,7 +79,7 @@ export default function ModalPassword({ open, onOpenChange }: DialogProps) {
                   <FormControl>
                     <Input
                       type='password'
-                      placeholder='Mật khẩu'
+                      placeholder='Old password'
                       className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                       {...field}
                     />
@@ -96,7 +96,7 @@ export default function ModalPassword({ open, onOpenChange }: DialogProps) {
                   <FormControl>
                     <Input
                       type='password'
-                      placeholder='Mật khẩu'
+                      placeholder='New password'
                       className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                       {...field}
                     />
@@ -113,7 +113,7 @@ export default function ModalPassword({ open, onOpenChange }: DialogProps) {
                   <FormControl>
                     <Input
                       type='password'
-                      placeholder='Xác nhận mật khẩu'
+                      placeholder='Confirm password'
                       className='mt-4 w-full rounded-xl border-2 px-4 py-6 !text-base'
                       {...field}
                     />
@@ -126,10 +126,10 @@ export default function ModalPassword({ open, onOpenChange }: DialogProps) {
         </Form>
         <DialogFooter>
           <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={isPending}>
-            Đổi mật khẩu
+            Change
           </Button>
           <DialogClose asChild>
-            <Button variant='outline'>Hủy</Button>
+            <Button variant='outline'>Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
