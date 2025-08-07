@@ -57,39 +57,71 @@ export default function OrderPage({ listOrder, pageNumber, totalElements, pageSi
 
   // Handle form submission for adding or editing option
   // This function is called when the form is submitted
-  const handleFinish = (values: OrderResponse) => {
-    startTransition(async () => {
-      const res = await http.patch(`${LINKS.order_admin}/${editRecord?.orderId}`, {
-        params: {
-          newStatus: values.paymentStatus,
-        },
-        baseUrl: '/api',
+  const handleFinish = (values: {
+    orderId: number
+    paymentStatus: OrderStatusEnum
+    cancelReason?: string
+    dateTransfer?: string
+  }) => {
+    const reason = values.cancelReason ?? ''
+    if (values.paymentStatus === OrderStatusEnum.SUCCESS) {
+      startTransition(async () => {
+        const res = await http.patch(`${LINKS.order_admin}/${editRecord?.orderId}`, {
+          params: {
+            newStatus: values.paymentStatus,
+          },
+          baseUrl: '/api',
+        })
+        if (!CODE_SUCCESS.includes(res.code)) {
+          toast.error(res.message || 'Update status failed')
+          return
+        }
+        if (values.paymentStatus === OrderStatusEnum.SUCCESS) {
+          try {
+            const licenseRes = await http.post<LicenseResponse>(LINKS.licenses_create, {
+              body: JSON.stringify({ orderId: Number(editRecord?.orderId) }),
+              baseUrl: '/api',
+            })
+
+            if (!CODE_SUCCESS.includes(licenseRes.code)) {
+              toast.error(licenseRes.message || 'Create license failed')
+              return
+            }
+            toast.success('License created successfully')
+          } catch {
+            toast.error('Error while creating license')
+          }
+        }
+
+        toast.success(res.message || 'Update status successfully')
+        setIsModalOpen(false)
+        router.refresh()
       })
-      if (!CODE_SUCCESS.includes(res.code)) {
-        toast.error(res.message || 'Update status failed')
-        return
-      }
-      if (values.paymentStatus === OrderStatusEnum.SUCCESS) {
+    }
+    if (values.paymentStatus === OrderStatusEnum.FAILED) {
+      startTransition(async () => {
         try {
-          const licenseRes = await http.post<LicenseResponse>(LINKS.licenses_create, {
-            body: JSON.stringify({ orderId: Number(editRecord?.orderId) }),
+          // API cancel POS
+          const resPayOS = await http.post(`${LINKS.payment_cancel}/${Number(editRecord?.orderId)}`, {
+            params: {
+              reason: reason,
+            },
             baseUrl: '/api',
           })
-
-          if (!CODE_SUCCESS.includes(licenseRes.code)) {
-            toast.error(licenseRes.message || 'Create license failed')
+          if (!CODE_SUCCESS.includes(resPayOS.code)) {
+            toast.error(resPayOS.message || 'Order cancel failed.')
             return
           }
-          toast.success('License created successfully')
-        } catch {
-          toast.error('Error while creating license')
-        }
-      }
+          setIsModalOpen(false)
+          toast.success(resPayOS.message || 'Order cancel successfully.')
 
-      toast.success(res.message || 'Update status successfully')
-      setIsModalOpen(false)
-      router.refresh()
-    })
+          router.refresh()
+        } catch (err) {
+          console.error('Error update status:', err)
+          toast.error('Something went wrong when canceling order')
+        }
+      })
+    }
   }
   const handleSyncBill = async (record: OrderResponse) => {
     startTransition(async () => {
