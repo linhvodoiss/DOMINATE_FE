@@ -166,8 +166,8 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
         <Form.Item
           name='cancelReason'
           rules={[
-            { required: true, message: 'Vui lòng nhập lý do hủy' },
-            { max: 100, message: 'Lý do hủy không được vượt quá 100 ký tự' },
+            { required: true, message: 'Please enter reason cancel' },
+            { max: 100, message: 'Max 100 characters' },
           ]}
         >
           <Input.TextArea rows={4} placeholder='Enter reason cancel...' maxLength={100} showCount />
