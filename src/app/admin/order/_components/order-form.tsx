@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, Descriptions, Divider, Form, FormInstance, Input, Modal, Radio, Tag } from 'antd'
 import { useEffect, useState } from 'react'
 import CustomModalForm from '../../_components/custom-modal-form'
@@ -5,7 +7,6 @@ import { OrderResponse } from '#/order'
 import { paymentStatusMap, statusColorMap } from '~/constants/payment-type'
 import { EyeOutlined } from '@ant-design/icons'
 import { OrderStatusEnum } from '#/tabs-order'
-import { toast } from 'sonner'
 
 type OrderUpdatePayload = {
   orderId: number
@@ -24,11 +25,13 @@ interface Props {
 
 export default function OrderForm({ visible, onCancel, onFinish, form, editRecord }: Props) {
   const [cancelReasonModalOpen, setCancelReasonModalOpen] = useState(false)
-  const [cancelReason, setCancelReason] = useState('')
 
   useEffect(() => {
     if (visible && editRecord) {
-      form.setFieldsValue({ paymentStatus: editRecord.paymentStatus })
+      form.setFieldsValue({
+        paymentStatus: editRecord.paymentStatus,
+        cancelReason: '',
+      })
     }
   }, [visible, editRecord, form])
 
@@ -36,13 +39,13 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
 
   const handleUpdateClick = async () => {
     try {
-      const values = await form.validateFields()
+      const values = await form.validateFields(['paymentStatus'])
+
       if (values.paymentStatus === OrderStatusEnum.FAILED) {
         setCancelReasonModalOpen(true)
       } else {
         onFinish({
           orderId: Number(editRecord.orderId ?? 0),
-
           paymentStatus: values.paymentStatus,
         })
       }
@@ -51,15 +54,23 @@ export default function OrderForm({ visible, onCancel, onFinish, form, editRecor
     }
   }
 
-  const handleCancelConfirm = () => {
-    onFinish({
-      orderId: Number(editRecord.orderId ?? 0),
-      paymentStatus: OrderStatusEnum.FAILED,
-      cancelReason: cancelReason,
-      dateTransfer: new Date().toISOString(),
-    })
-    setCancelReason('')
-    setCancelReasonModalOpen(false)
+  const handleCancelConfirm = async () => {
+    try {
+      const values = await form.validateFields(['cancelReason'])
+
+      onFinish({
+        orderId: Number(editRecord.orderId ?? 0),
+        paymentStatus: OrderStatusEnum.FAILED,
+        cancelReason: values.cancelReason,
+        dateTransfer: new Date().toISOString(),
+      })
+
+      // Reset field after submitting
+      form.setFieldsValue({ cancelReason: '' })
+      setCancelReasonModalOpen(false)
+    } catch {
+      // validate error
+    }
   }
 
   return (
