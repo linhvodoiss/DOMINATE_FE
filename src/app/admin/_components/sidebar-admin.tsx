@@ -1,6 +1,17 @@
 'use client'
 import { Layout, Menu } from 'antd'
-import { DashboardOutlined, UserOutlined, EllipsisOutlined, ProfileOutlined, DropboxOutlined } from '@ant-design/icons'
+import {
+  DashboardOutlined,
+  UserOutlined,
+  ProfileOutlined,
+  DropboxOutlined,
+  InboxOutlined,
+  SlidersOutlined,
+  AppstoreOutlined,
+  FileTextOutlined,
+  TagsOutlined,
+  BranchesOutlined,
+} from '@ant-design/icons'
 import Link from 'next/link'
 
 import Image from 'next/image'
@@ -15,6 +26,9 @@ function getMenuKey(pathname: string) {
   if (pathname.startsWith('/admin/order')) return 'order'
   if (pathname.startsWith('/admin/package')) return 'package'
   if (pathname.startsWith('/admin/option')) return 'option'
+  if (pathname.startsWith('/admin/doc')) return 'doc'
+  if (pathname.startsWith('/admin/category')) return 'category'
+  if (pathname.startsWith('/admin/version')) return 'version'
   if (pathname === '/admin') return 'dashboard'
   return ''
 }
@@ -33,7 +47,7 @@ export default function SideBarAdmin({ children, user }: { children: ReactNode; 
           theme='dark'
           mode='inline'
           selectedKeys={[selectedKey]}
-          className='!bg-background [&_.ant-menu-item-selected]:!bg-primary-system [&_.ant-menu-item-selected]:!text-[#ebebeb]'
+          className={`!bg-background [&_.ant-menu-item-selected]:!bg-primary-system [&_.ant-menu-submenu-selected]:!bg-primary-system [&_.ant-menu-item-selected]:!text-[#ebebeb] [&_.ant-menu-submenu-selected]:!text-[#ebebeb]`}
           items={[
             {
               key: 'dashboard',
@@ -54,16 +68,50 @@ export default function SideBarAdmin({ children, user }: { children: ReactNode; 
               className: '!text-secondary-gray',
             },
             {
-              key: 'package',
+              key: 'subscription',
               icon: <DropboxOutlined />,
-              label: <Link href='/admin/package'>Package</Link>,
+              label: 'Subscription',
               className: '!text-secondary-gray',
+              children: [
+                {
+                  key: 'package',
+                  icon: <InboxOutlined />,
+                  label: <Link href='/admin/package'>Package</Link>,
+                  className: '!text-secondary-gray',
+                },
+                {
+                  key: 'option',
+                  icon: <SlidersOutlined />,
+                  label: <Link href='/admin/option'>Option</Link>,
+                  className: '!text-secondary-gray',
+                },
+              ],
             },
             {
-              key: 'option',
-              icon: <EllipsisOutlined />,
-              label: <Link href='/admin/option'>Option</Link>,
+              key: 'resource',
+              icon: <AppstoreOutlined />,
+              label: 'Resource ',
               className: '!text-secondary-gray',
+              children: [
+                {
+                  key: 'doc',
+                  icon: <FileTextOutlined />,
+                  label: <Link href='/admin/doc'>Doc</Link>,
+                  className: '!text-secondary-gray',
+                },
+                {
+                  key: 'category',
+                  icon: <TagsOutlined />,
+                  label: <Link href='/admin/category'>Category</Link>,
+                  className: '!text-secondary-gray',
+                },
+                {
+                  key: 'version',
+                  icon: <BranchesOutlined />,
+                  label: <Link href='/admin/version'>Version</Link>,
+                  className: '!text-secondary-gray',
+                },
+              ],
             },
           ]}
         />

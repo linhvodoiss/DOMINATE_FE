@@ -9,7 +9,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   const { id } = await params
   const body = await request.json()
   const token = request.cookies.get(AUTH.token)?.value
-  const res = await http.put(`${LINKS.options}/${id}`, {
+  const res = await http.put(`${LINKS.docs}/${id}`, {
     body: JSON.stringify(body),
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
@@ -24,7 +24,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const { id } = await params
   const token = request.cookies.get(AUTH.token)?.value
-  const res = await http.delete(`${LINKS.options}/${id}`, {
+  const res = await http.delete(`${LINKS.docs}/${id}`, {
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
     },

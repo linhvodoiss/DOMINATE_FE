@@ -195,3 +195,19 @@
 .dark .ant-dropdown-menu {
   outline: solid var(--primary-system) 2px !important;
 }
+
+/* sidebar */
+
+.ant-menu-sub {
+  background-color: var(--background) !important;
+}
+.ant-menu-submenu-title {
+  color: oklch(44.6% 0.03 256.802) !important;
+}
+.dark .ant-menu-submenu-title {
+  color: white !important;
+}
+
+.ant-menu-submenu-selected .ant-menu-submenu-title {
+  color: white !important;
+}

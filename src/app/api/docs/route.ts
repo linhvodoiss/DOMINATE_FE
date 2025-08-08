@@ -7,7 +7,7 @@ import http from '~/utils/http'
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get(AUTH.token)?.value
-  const res = await http.get(LINKS.options, {
+  const res = await http.get(LINKS.docs, {
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
     },
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const token = request.cookies.get(AUTH.token)?.value
-  const res = await http.post(LINKS.options, {
+  const res = await http.post(LINKS.docs, {
     body: JSON.stringify(body),
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const body = await request.json()
   const token = request.cookies.get(AUTH.token)?.value
-  const res = await http.delete(LINKS.options, {
+  const res = await http.delete(LINKS.docs, {
     body: JSON.stringify(body),
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
