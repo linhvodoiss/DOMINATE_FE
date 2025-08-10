@@ -1,24 +1,27 @@
-import { Button, Form, Input, Switch } from 'antd'
+import { Button, Form, Input, Select, Switch } from 'antd'
 
 import { FormInstance } from 'antd'
 import CustomModalForm from '../../_components/custom-modal-form'
-import { OptionResponse } from '#/option'
 import { useEffect } from 'react'
+import { CategoryResponse } from '#/category'
+import { VersionResponse } from '#/version'
 
 interface Props {
   visible: boolean
   onCancel: () => void
-  onFinish: (values: OptionResponse) => void
+  onFinish: (values: CategoryResponse) => void
   modalType: 'add' | 'edit'
-  editRecord: OptionResponse | null
+  editRecord: CategoryResponse | null
   form: FormInstance
+  versionList: VersionResponse[]
 }
 
-export default function OptionForm({ visible, onCancel, onFinish, modalType, form, editRecord }: Props) {
+export default function CategoryForm({ visible, onCancel, onFinish, modalType, form, editRecord, versionList }: Props) {
   useEffect(() => {
     if (visible) {
       if (modalType === 'add') {
         form.resetFields()
+        form.setFieldsValue({ order: 0 })
       } else if (modalType === 'edit' && editRecord) {
         form.setFieldsValue({
           ...editRecord,
@@ -32,7 +35,7 @@ export default function OptionForm({ visible, onCancel, onFinish, modalType, for
       visible={visible}
       onCancel={onCancel}
       onFinish={onFinish}
-      modalTitle={modalType === 'add' ? 'Add Option' : 'Update Option'}
+      modalTitle={modalType === 'add' ? 'Add Category' : 'Update Category'}
       form={form}
       footer={
         <>
@@ -50,8 +53,25 @@ export default function OptionForm({ visible, onCancel, onFinish, modalType, for
         </>
       }
     >
-      <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Please input name!' }]}>
+      <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Please input name.' }]}>
         <Input />
+      </Form.Item>
+      <Form.Item name='slug' label='Slug' rules={[{ required: true, message: 'Please input slug.' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name='order' label='Order' rules={[{ required: true, message: 'Please input order.' }]}>
+        <Input type='number' className='!w-full' />
+      </Form.Item>
+      <Form.Item name='versionId' label='Version'>
+        <Select
+          placeholder='Choose version'
+          allowClear
+          className='!h-10'
+          options={versionList?.map(item => ({
+            label: item.version,
+            value: item.id,
+          }))}
+        />
       </Form.Item>
 
       {modalType === 'edit' && (

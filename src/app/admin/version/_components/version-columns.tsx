@@ -56,8 +56,8 @@ export default function getVersionColumns({ sort, handleEdit, handleDeleteOne }:
           <Popconfirm
             title='Are you sure want to delete this version ?'
             onConfirm={() => handleDeleteOne(record.id as number)}
-            okText='Xóa'
-            cancelText='Hủy'
+            okText='OK'
+            cancelText='Close'
             placement='bottom'
           >
             <Button type='link' danger icon={<DeleteOutlined />} />

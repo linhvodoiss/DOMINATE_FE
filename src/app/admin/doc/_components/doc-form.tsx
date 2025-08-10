@@ -23,6 +23,7 @@ export default function DocForm({ visible, onCancel, onFinish, modalType, form, 
     if (visible) {
       if (modalType === 'add') {
         form.resetFields()
+        form.setFieldsValue({ order: 0 })
       } else if (modalType === 'edit' && editRecord) {
         form.setFieldsValue({
           ...editRecord,
@@ -60,7 +61,7 @@ export default function DocForm({ visible, onCancel, onFinish, modalType, form, 
       <Form.Item name='slug' label='Slug' rules={[{ required: true, message: 'Please input slug!' }]}>
         <Input />
       </Form.Item>
-      <Form.Item name='order' label='Order'>
+      <Form.Item name='order' label='Order' rules={[{ required: true, message: 'Please input order.' }]}>
         <Input type='number' className='!w-full' />
       </Form.Item>
       <Form.Item name='categoryId' label='Category'>

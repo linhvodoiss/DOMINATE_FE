@@ -6,34 +6,51 @@ import TableAdmin from '../../_components/table-admin'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { startTransition, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import http from '~/utils/http'
 import { CODE_SUCCESS } from '~/constants'
 import { toast } from 'sonner'
 import { LINKS } from '~/constants/links'
 
-import { OptionResponse } from '#/option'
-import getOptionColumns from './option-columns'
-import FilterOption from './filter-option'
-import OptionForm from './option-form'
+import getCategoryColumns from './category-columns'
+import CategoryForm from './category-form'
+import FilterCategory from './filter-category'
+import { CategoryResponse } from '#/category'
+import { VersionResponse } from '#/version'
 
 interface Props {
-  listOption: OptionResponse[]
+  listCategory: CategoryResponse[]
   pageNumber: number
   pageSize: number
   totalElements: number
 }
 
-export default function OptionPage({ listOption, pageNumber, totalElements, pageSize }: Props) {
+export default function CategoryPage({ listCategory, pageNumber, totalElements, pageSize }: Props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [versionList, setVersionList] = useState<VersionResponse[]>([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [versionsRes] = await Promise.all([http.get<VersionResponse[]>(LINKS.versions_list, { baseUrl: '/api' })])
+
+        setVersionList(versionsRes?.data ?? [])
+      } catch (error) {
+        setVersionList([])
+        console.error('Failed to fetch versions:', error)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const handleDeleteMany = async () => {
     if (selectedRowKeys.length === 0) {
-      toast.warning('Please select at least one option to delete')
+      toast.warning('Please select at least one Category to delete')
       return
     }
     startTransition(async () => {
-      const res = await http.delete(LINKS.options, {
+      const res = await http.delete(LINKS.categories, {
         body: JSON.stringify(selectedRowKeys),
         baseUrl: '/api',
       })
@@ -52,11 +69,11 @@ export default function OptionPage({ listOption, pageNumber, totalElements, page
   // State cho modal
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalType, setModalType] = useState<'add' | 'edit'>('add')
-  const [editRecord, setEditRecord] = useState<OptionResponse | null>(null)
+  const [editRecord, setEditRecord] = useState<CategoryResponse | null>(null)
 
   const [form] = Form.useForm()
 
-  // Open modal for adding new option
+  // Open modal for adding new Category
   // Reset form when opening add modal
   const handleAdd = () => {
     setModalType('add')
@@ -66,7 +83,7 @@ export default function OptionPage({ listOption, pageNumber, totalElements, page
 
   // Set modal type to edit and set record to edit
   // Reset form when opening edit modal
-  const handleEdit = (record: OptionResponse) => {
+  const handleEdit = (record: CategoryResponse) => {
     setModalType('edit')
     setEditRecord(record)
     setIsModalOpen(true)
@@ -77,11 +94,11 @@ export default function OptionPage({ listOption, pageNumber, totalElements, page
     setEditRecord(null)
     form.resetFields()
   }
-  // Delete one option
+  // Delete one Category
   // This function is called when the delete button is clicked
   const handleDeleteOne = async (id: string | number) => {
     startTransition(async () => {
-      const res = await http.delete(`${LINKS.options}/${id}`, {
+      const res = await http.delete(`${LINKS.categories}/${id}`, {
         baseUrl: '/api',
       })
       if (!CODE_SUCCESS.includes(res.code)) {
@@ -92,46 +109,46 @@ export default function OptionPage({ listOption, pageNumber, totalElements, page
       router.refresh()
     })
   }
-  // Handle form submission for adding or editing option
+  // Handle form submission for adding or editing Category
   // This function is called when the form is submitted
-  const handleFinish = (values: OptionResponse) => {
+  const handleFinish = (values: CategoryResponse) => {
     if (modalType === 'add') {
       startTransition(async () => {
-        const res = await http.post(LINKS.options, {
+        const res = await http.post(LINKS.categories, {
           body: JSON.stringify(values),
           baseUrl: '/api',
         })
         if (!CODE_SUCCESS.includes(res.code)) {
-          toast.error(res.message || 'Add option failed')
+          toast.error(res.message || 'Add Category failed')
           return
         }
-        toast.success(res.message || 'Add option successfully')
+        toast.success(res.message || 'Add Category successfully')
         setIsModalOpen(false)
         router.refresh()
       })
     } else {
       startTransition(async () => {
-        const res = await http.put(`${LINKS.options}/${editRecord?.id}`, {
+        const res = await http.put(`${LINKS.categories}/${editRecord?.id}`, {
           body: JSON.stringify(values),
           baseUrl: '/api',
         })
         if (!CODE_SUCCESS.includes(res.code)) {
-          toast.error(res.message || 'Update option failed')
+          toast.error(res.message || 'Update Category failed')
           return
         }
-        toast.success(res.message || 'Update option successfully')
+        toast.success(res.message || 'Update Category successfully')
         setIsModalOpen(false)
         router.refresh()
       })
     }
   }
 
-  const columns = getOptionColumns({ sort, handleEdit, handleDeleteOne })
+  const columns = getCategoryColumns({ sort, handleEdit, handleDeleteOne })
 
   return (
     <div className='min-h-[500px] rounded p-6 shadow'>
-      <h2 className='mb-4 text-xl font-semibold'>List Option</h2>
-      <FilterOption />
+      <h2 className='mb-4 text-xl font-semibold'>List Category</h2>
+      <FilterCategory versionList={versionList} />
       <Space className='mb-4 flex w-full justify-between'>
         <Popconfirm
           title='Are you sure want to delete those items?'
@@ -155,20 +172,21 @@ export default function OptionPage({ listOption, pageNumber, totalElements, page
       </Space>
       <TableAdmin
         columns={columns}
-        dataSource={listOption}
+        dataSource={listCategory}
         currentPage={pageNumber}
         totalItems={totalElements}
         pageSize={pageSize}
         rowKey='id'
         onSelectRows={keys => setSelectedRowKeys(keys)}
       />
-      <OptionForm
+      <CategoryForm
         visible={isModalOpen}
         onCancel={handleCancel}
         onFinish={handleFinish}
         modalType={modalType}
         editRecord={editRecord}
         form={form}
+        versionList={versionList}
       />
     </div>
   )

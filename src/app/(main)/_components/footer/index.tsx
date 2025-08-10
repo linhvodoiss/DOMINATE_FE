@@ -1,8 +1,15 @@
+'use client'
+
 import { Clock, Shield, Users } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
+import { usePathname } from 'next/navigation'
 
 export default function Footer() {
+  const pathname = usePathname()
+
+  if (pathname === '/doc') return null
+
   return (
     <footer className='bg-background-primary border-primary-system h-40 w-full border-t-2'>
       <div className='bg-background-primary px-8 py-16 text-white'>

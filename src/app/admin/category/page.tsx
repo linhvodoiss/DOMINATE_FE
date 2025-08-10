@@ -1,8 +1,8 @@
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 
-import { OptionResponse } from '#/option'
-import OptionPage from './_components/option-page'
+import CategoryPage from './_components/category-page'
+import { CategoryResponse } from '#/category'
 interface Props {
   params: Promise<{ id: string }>
   searchParams: Promise<{
@@ -11,25 +11,26 @@ interface Props {
     isActive?: boolean
     sort?: string
     size?: number
+    versionId?: number
   }>
 }
 
 export default async function Page({ searchParams }: Props) {
-  const { page, search, isActive, sort, size } = await searchParams
+  const { page, search, isActive, sort, size, versionId } = await searchParams
 
   const {
     content = [],
     pageNumber,
     pageSize,
     totalElements,
-  } = await http.get<OptionResponse>(LINKS.options, {
-    params: { page, search, isActive, sort, size },
+  } = await http.get<CategoryResponse>(LINKS.categories, {
+    params: { page, search, isActive, sort, size, versionId },
   })
-  const listOption = content as OptionResponse[]
+  const listCategory = content as CategoryResponse[]
 
   return (
-    <OptionPage
-      listOption={listOption}
+    <CategoryPage
+      listCategory={listCategory}
       pageNumber={pageNumber as number}
       pageSize={pageSize as number}
       totalElements={totalElements as number}

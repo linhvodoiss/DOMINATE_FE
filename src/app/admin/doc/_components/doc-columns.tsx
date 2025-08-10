@@ -1,4 +1,4 @@
-import { Space, Tag, Button, Popconfirm } from 'antd'
+import { Space, Tag, Button, Popconfirm, Tooltip } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 
 import { SortOrder } from 'antd/es/table/interface'
@@ -29,15 +29,37 @@ export default function getDocColumns({ sort, handleEdit, handleDeleteOne }: Get
     },
     {
       title: 'Category',
-      dataIndex: ['category', 'name'],
       key: 'category',
       width: 80,
+      render: (_: unknown, record: DocResponse) => {
+        const categoryName = record.category.name || 'Unknown'
+        const isCategoryActive = record.category?.isActive
+
+        return isCategoryActive ? (
+          <>{categoryName}</>
+        ) : (
+          <Tag color='red' bordered={false}>
+            {categoryName}
+          </Tag>
+        )
+      },
     },
     {
       title: 'Version',
-      dataIndex: ['category', 'version', 'version'],
       key: 'version',
       width: 80,
+      render: (_: unknown, record: DocResponse) => {
+        const versionName = record.category?.version?.version || 'Unknown'
+        const isVersionActive = record.category?.version?.isActive
+
+        return isVersionActive ? (
+          <>{versionName}</>
+        ) : (
+          <Tag color='red' bordered={false}>
+            {versionName}
+          </Tag>
+        )
+      },
     },
     {
       title: 'Order',
@@ -62,20 +84,37 @@ export default function getDocColumns({ sort, handleEdit, handleDeleteOne }: Get
       key: 'action',
       fixed: 'right' as const,
       width: 120,
-      render: (_: unknown, record: DocResponse) => (
-        <Space>
-          <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          <Popconfirm
-            title='Are you sure want to delete this doc ?'
-            onConfirm={() => handleDeleteOne(record.id as number)}
-            okText='Xóa'
-            cancelText='Hủy'
-            placement='bottom'
-          >
-            <Button type='link' danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Space>
-      ),
+      render: (_: unknown, record: DocResponse) => {
+        const isCategoryActive = record.category?.isActive
+        const isVersionActive = record.category?.version?.isActive
+        const isEditable = isCategoryActive && isVersionActive
+
+        let tooltipMessage = 'Edit'
+        if (!isCategoryActive && !isVersionActive) {
+          tooltipMessage = 'Cannot edit because version and category inactive.'
+        } else if (!isCategoryActive) {
+          tooltipMessage = 'Cannot edit because category inactive.'
+        } else if (!isVersionActive) {
+          tooltipMessage = 'Cannot edit because version inactive.'
+        }
+
+        return (
+          <Space>
+            <Tooltip title={tooltipMessage}>
+              <Button type='link' icon={<EditOutlined />} onClick={() => handleEdit(record)} disabled={!isEditable} />
+            </Tooltip>
+            <Popconfirm
+              title='Are you sure want to delete this doc?'
+              onConfirm={() => handleDeleteOne(record.id as number)}
+              okText='OK'
+              cancelText='Close'
+              placement='bottom'
+            >
+              <Button type='link' danger icon={<DeleteOutlined />} />
+            </Popconfirm>
+          </Space>
+        )
+      },
     },
   ]
 }

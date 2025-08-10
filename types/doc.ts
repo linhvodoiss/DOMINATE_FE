@@ -12,3 +12,16 @@ export type DocResponse = {
   updatedAt?: string
   category: CategoryResponse
 }
+
+export interface DocsCustomerResponse {
+  versionId: number
+  versionName: string
+  categories: {
+    categoryId: number
+    categoryName: string
+    docs: {
+      docId: number
+      docName: string
+    }[]
+  }[]
+}
