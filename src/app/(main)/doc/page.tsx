@@ -1,7 +1,7 @@
 'use client'
 
 import * as Accordion from '@radix-ui/react-accordion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '~/components/ui/select'
 
 const versions = Array.from({ length: 20 }, (_, versionIdx) => ({
@@ -24,11 +24,17 @@ export default function DocPage() {
   const [selectedVersionId, setSelectedVersionId] = useState(versions[0].versionId)
   const selectedVersion = versions.find(v => v.versionId === selectedVersionId)!
   const [selectedDoc, setSelectedDoc] = useState<null | { docId: number; docName: string; content: string }>(null)
+  useEffect(() => {
+    document.body.classList.add('doc-page')
+    return () => {
+      document.body.classList.remove('doc-page')
+    }
+  }, [])
 
   return (
     <>
       {/* Sidebar - fixed height & sticky */}
-      <aside className='sticky top-0 h-screen w-72 shrink-0 overflow-y-auto px-4 pt-6 pb-6'>
+      <aside className='border-primary-system fixed top-22 h-screen w-72 shrink-0 overflow-y-auto rounded px-4 pt-6 pb-6'>
         {/* Version Select */}
         <div className='mb-5'>
           <Select
@@ -75,7 +81,7 @@ export default function DocPage() {
       </aside>
 
       {/* Main content */}
-      <div className='flex-1 overflow-y-auto px-6 py-6'>
+      <div className='ml-72 px-6 py-6'>
         {selectedDoc ? (
           <article className='prose max-w-full'>
             <h1>{selectedDoc.docName}</h1>

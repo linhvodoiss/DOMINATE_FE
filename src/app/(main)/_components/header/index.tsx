@@ -28,7 +28,7 @@ export default async function Header({ token }: { token?: string }) {
   }
 
   return (
-    <WebHeaderStyled className='bg-background-primary border-primary-system relative z-10 border-b-2'>
+    <WebHeaderStyled id='header' className='bg-background-primary border-primary-system z-10 border-b-2'>
       <div className='header__container relative mx-auto flex max-w-[1920px] items-center justify-between py-2 pr-4 pl-0 text-xl text-[#e5e5e5] md:pr-8 md:pl-4'>
         {/* Left side: logo + menu */}
         <div className='relative flex items-center gap-4'>

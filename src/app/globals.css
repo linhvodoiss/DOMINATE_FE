@@ -174,3 +174,12 @@ input[type='number'] {
     @apply bg-background text-foreground;
   }
 }
+
+body.doc-page #header {
+  position: sticky;
+  top: 0;
+}
+
+body.doc-page #footer {
+display: none;
+}
