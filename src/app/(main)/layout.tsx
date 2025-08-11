@@ -21,7 +21,7 @@ export default async function MainLayout({
   return (
     <Suspense fallback={<LoadingFallback />}>
       <AuthProvider token={token} user={user}>
-        <Header token={token} />
+        <Header token={token} user={user} />
         <div className='mx-auto min-h-[100vh] w-full max-w-[1440px] pb-24 md:px-8'>{children}</div>
         <Footer />
       </AuthProvider>

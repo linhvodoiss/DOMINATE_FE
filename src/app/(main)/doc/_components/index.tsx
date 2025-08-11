@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '~/components/ui/select'
 import { LINKS } from '~/constants/links'
+import DOMPurify from 'dompurify'
 import http from '~/utils/http'
 
 export default function DocPage({ listDoc }: { listDoc: DocsCustomerResponse[] }) {
@@ -151,7 +152,7 @@ export default function DocPage({ listDoc }: { listDoc: DocsCustomerResponse[] }
   return (
     <>
       {/* Sidebar - Desktop */}
-      <aside className='border-primary-system fixed top-21 hidden h-screen w-72 shrink-0 overflow-y-auto border-r px-4 pt-6 pb-6 md:block'>
+      <aside className='border-primary-system fixed top-21 left-0 hidden h-screen w-72 shrink-0 overflow-y-auto border-x px-4 pt-6 pb-6 md:block'>
         {SidebarContent}
       </aside>
 
@@ -186,8 +187,11 @@ export default function DocPage({ listDoc }: { listDoc: DocsCustomerResponse[] }
             <h1 className='after:bg-primary relative mb-4 inline-block text-2xl font-semibold after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full'>
               {dataDoc?.title}
             </h1>
-
-            <p>{dataDoc?.content}</p>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(dataDoc?.content || ''),
+              }}
+            />
           </article>
         ) : (
           <div className=''>

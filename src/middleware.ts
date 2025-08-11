@@ -14,10 +14,21 @@ interface User {
 }
 
 // Public paths that do not require authentication
-const PUBLIC_PATHS = ['login', 'register', 'about', 'doc', 'active', 'forget', '_next', 'favicon.ico', 'static']
+const PUBLIC_PATHS = [
+  'login',
+  'register',
+  'about',
+  'doc',
+  'active',
+  'forget',
+  'new-password',
+  '_next',
+  'favicon.ico',
+  'static',
+]
 
 // Public paths that should be restricted if the user is already logged in
-const AUTH_ONLY_PUBLIC_PATHS = ['login', 'register', 'forget', 'active']
+const AUTH_ONLY_PUBLIC_PATHS = ['login', 'register', 'forget', 'active', 'new-password']
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
@@ -53,10 +64,9 @@ export function middleware(request: NextRequest) {
   }
 
   // 👤 Redirect ADMIN user away from public pages
-  if (isPublic && user?.role === 'ADMIN') {
+  if (isPublic && user?.role === 'ADMIN' && !pathname.startsWith('/doc')) {
     return NextResponse.redirect(new URL('/admin', request.url))
   }
-
   // 🆓 Allow access to public pages
   if (isPublic) {
     return NextResponse.next()

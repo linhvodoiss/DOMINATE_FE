@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Form, Input, Select, Switch } from 'antd'
 
 import { FormInstance } from 'antd'
@@ -5,7 +6,8 @@ import CustomModalForm from '../../_components/custom-modal-form'
 
 import { useEffect } from 'react'
 import { DocResponse } from '#/doc'
-import TextArea from 'antd/es/input/TextArea'
+import { CKEditor } from '@ckeditor/ckeditor5-react'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import { CategoryResponse } from '#/category'
 
 interface Props {
@@ -36,9 +38,12 @@ export default function DocForm({ visible, onCancel, onFinish, modalType, form, 
     <CustomModalForm
       visible={visible}
       onCancel={onCancel}
-      onFinish={onFinish}
+      onFinish={onFinish as any}
       modalTitle={modalType === 'add' ? 'Add Doc' : 'Update Doc'}
       form={form}
+      width={800}
+      labelCol={4}
+      wrapperCol={20}
       footer={
         <>
           <Button
@@ -75,8 +80,13 @@ export default function DocForm({ visible, onCancel, onFinish, modalType, form, 
           }))}
         />
       </Form.Item>
-      <Form.Item name='content' label='Content'>
-        <TextArea autoSize={{ minRows: 3 }} />
+      <Form.Item
+        name='content'
+        label='Content'
+        valuePropName='data'
+        getValueFromEvent={(event, editor) => editor.getData()}
+      >
+        <CKEditor editor={ClassicEditor as any} data={form.getFieldValue('content') || ''} />
       </Form.Item>
 
       {modalType === 'edit' && (

@@ -10,6 +10,9 @@ interface CustomModalFormProps {
   form: FormInstance
   children: ReactNode
   footer?: ReactNode
+  width?: number | string
+  labelCol?: number
+  wrapperCol?: number
 }
 
 export default function CustomModalForm({
@@ -20,6 +23,9 @@ export default function CustomModalForm({
   form,
   children,
   footer,
+  width,
+  labelCol = 6,
+  wrapperCol = 18,
 }: CustomModalFormProps) {
   useEffect(() => {
     if (visible) {
@@ -37,14 +43,15 @@ export default function CustomModalForm({
       onCancel={onCancel}
       footer={null}
       centered
+      width={width}
       styles={{ body: { padding: 0, maxHeight: '70vh', overflowY: 'auto', overflowX: 'hidden' } }}
     >
       <Form
         className='!mt-6'
         form={form}
         layout={isMobile ? 'vertical' : 'horizontal'}
-        labelCol={isMobile ? undefined : { span: 6 }}
-        wrapperCol={isMobile ? undefined : { span: 18 }}
+        labelCol={isMobile ? undefined : { span: labelCol }}
+        wrapperCol={isMobile ? undefined : { span: wrapperCol }}
         onFinish={onFinish}
       >
         {children}

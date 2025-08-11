@@ -149,8 +149,10 @@ export default function DocPage({ listDoc, pageNumber, totalElements, pageSize }
       })
     }
   }
-
-  const columns = getDocColumns({ sort, handleEdit, handleDeleteOne })
+  const navigatePreview = (record: DocResponse) => {
+    router.push(`/doc?docId=${record.id}`)
+  }
+  const columns = getDocColumns({ sort, handleEdit, handleDeleteOne, navigatePreview })
 
   return (
     <div className='min-h-[500px] rounded p-6 shadow'>

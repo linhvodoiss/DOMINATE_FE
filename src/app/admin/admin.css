@@ -211,3 +211,7 @@
 .ant-menu-submenu-selected .ant-menu-submenu-title {
   color: white !important;
 }
+
+.ck-editor__editable {
+  min-height: 200px;
+}

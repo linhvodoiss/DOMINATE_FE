@@ -1,5 +1,5 @@
 import { Space, Tag, Button, Popconfirm, Tooltip } from 'antd'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { EditOutlined, DeleteOutlined, FileSearchOutlined } from '@ant-design/icons'
 
 import { SortOrder } from 'antd/es/table/interface'
 import { DocResponse } from '#/doc'
@@ -7,10 +7,11 @@ import { DocResponse } from '#/doc'
 interface GetColumnsProps {
   sort: string
   handleEdit: (record: DocResponse) => void
+  navigatePreview: (record: DocResponse) => void
   handleDeleteOne: (id: string | number) => void
 }
 
-export default function getDocColumns({ sort, handleEdit, handleDeleteOne }: GetColumnsProps) {
+export default function getDocColumns({ sort, handleEdit, handleDeleteOne, navigatePreview }: GetColumnsProps) {
   return [
     {
       title: 'ID',
@@ -112,6 +113,12 @@ export default function getDocColumns({ sort, handleEdit, handleDeleteOne }: Get
             >
               <Button type='link' danger icon={<DeleteOutlined />} />
             </Popconfirm>
+            <Button
+              type='link'
+              icon={<FileSearchOutlined />}
+              onClick={() => navigatePreview(record)}
+              disabled={!isEditable}
+            />
           </Space>
         )
       },
