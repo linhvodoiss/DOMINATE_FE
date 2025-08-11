@@ -5,6 +5,20 @@ import { AUTH } from '~/constants'
 import { LINKS } from '~/constants/links'
 import http from '~/utils/http'
 
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = await params
+  // const token = request.cookies.get(AUTH.token)?.value
+  const res = await http.get(`${LINKS.docs}/${id}`, {
+    // headers: {
+    //   Authorization: token ? `Bearer ${token}` : '',
+    // },
+  })
+
+  const response = NextResponse.json(res)
+
+  return response
+}
+
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const { id } = await params
   const body = await request.json()

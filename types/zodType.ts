@@ -15,13 +15,19 @@ const baseSchema = z.object({
     .max(12, { message: 'Phone number must have 10-12 digits' })
     .regex(/^[0-9]+$/, { message: 'Phone number must be digits' }),
 
-  oldPassword: z.string({ message: 'Password is required' }).min(1, { message: 'Password is required' }),
+  oldPassword: z
+    .string({ message: 'Password is required' })
+    .min(6, { message: 'Password must be at least 6 characters' }),
 
-  password: z.string({ message: 'Password is required' }).min(1, { message: 'Password is required' }),
+  password: z.string({ message: 'Password is required' }).min(6, { message: 'Password must be at least 6 characters' }),
 
-  rePassword: z.string({ message: 'Password is required' }).min(1, { message: 'Password is required' }),
+  rePassword: z
+    .string({ message: 'Password is required' })
+    .min(6, { message: 'Password must be at least 6 characters' }),
 
-  newPassword: z.string({ message: 'Password is required' }).min(1, { message: 'Password is required' }),
+  newPassword: z
+    .string({ message: 'Password is required' })
+    .min(6, { message: 'Password must be at least 6 characters' }),
 })
 
 // use for change password
@@ -76,7 +82,7 @@ export const ChangeSchema = baseSchema
   })
   .refine(data => data.newPassword === data.rePassword, {
     path: ['rePassword'],
-    message: 'Mật khẩu nhập lại không khớp',
+    message: 'Password is not match',
   })
 
 export const OrderSchema = z.object({

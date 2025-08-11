@@ -38,6 +38,7 @@ export const LINKS = {
   versions: '/versions',
   versions_list: '/versions/list',
   docs: '/docs',
+  docs_customer: '/docs/customer',
   account: '/account',
   account_change_pass: '/account/changePassword',
   account_dashboard: '/account/dashboard',
