@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --port 3001 --turbo",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port 3001",
     "format": "prettier --write './**/*.{ts,tsx,scss,css}' --config ./.prettierrc.json",
     "lint": "next lint"
   },
