@@ -113,11 +113,7 @@ export default function AccountForm({ visible, onCancel, onFinish, modalType, fo
         </>
       )}
       {modalType === 'change password' && (
-        <Form.Item
-          name='newPassword'
-          label='New Password'
-          rules={[{ required: true, message: 'Please input new password!' }]}
-        >
+        <Form.Item name='newPassword' label='New Password' rules={getValidationRules('newPassword')}>
           <Input type='password' />
         </Form.Item>
       )}

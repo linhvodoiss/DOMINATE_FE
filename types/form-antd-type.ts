@@ -87,6 +87,10 @@ const validationRulesMap: { [key: string]: Rule[] | ((getFieldValue: (name: stri
     { required: true, message: 'Please input password!' },
     { min: 6, message: 'Password must be at least 6 characters!' },
   ],
+  newPassword: [
+    { required: true, message: 'Please input new password!' },
+    { min: 6, message: 'Password must be at least 6 characters!' },
+  ],
   password_confirmation: [
     {
       required: true,
