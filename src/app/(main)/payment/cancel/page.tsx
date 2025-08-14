@@ -46,8 +46,12 @@ export default function CancelPage() {
         }
 
         if (res?.data?.paymentStatus === OrderStatusEnum.PENDING) {
-          await http.patch<OrderResponse>(`${LINKS.order}/${orderId}`, {
-            params: { newStatus: OrderStatusEnum.FAILED },
+          // await http.patch<OrderResponse>(`${LINKS.order}/${orderId}`, {
+          //   params: { newStatus: OrderStatusEnum.FAILED },
+          //   baseUrl: '/api',
+          // })
+
+          await http.post(`${LINKS.payment_cancel_pro}/${orderId}`, {
             baseUrl: '/api',
           })
         }
