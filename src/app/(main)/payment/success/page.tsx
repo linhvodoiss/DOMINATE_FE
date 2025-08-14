@@ -16,7 +16,6 @@ import ModalOrder from '../../orders/[id]/_components/modal-order'
 import z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { env } from '~/configs/env'
 
 const TIME = 5
 
@@ -125,7 +124,6 @@ export default function SuccessPage() {
       try {
         const res = await http.post(LINKS.order_email_report, {
           params: {
-            email: env.ADMIN_MAIL,
             packageId: subscriptionId,
             orderId,
             content: values.reminder,
