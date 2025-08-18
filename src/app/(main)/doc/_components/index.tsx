@@ -29,7 +29,7 @@ export default function DocPage({ listDoc }: { listDoc: DocsCustomerResponse[] }
     setReady(true)
 
     const docIdParam = searchParams.get('docId')
-    if (docIdParam) {
+    if (docIdParam && selectedVersionId === null) {
       const docId = Number(docIdParam)
       const foundVersion = listDoc.find(version =>
         version.categories.some(cat => cat.docs.some(doc => doc.docId === docId))
@@ -48,14 +48,14 @@ export default function DocPage({ listDoc }: { listDoc: DocsCustomerResponse[] }
           }
         }
       }
-    } else if (listDoc.length > 0) {
+    } else if (selectedVersionId === null && listDoc.length > 0) {
       setSelectedVersionId(listDoc[0].versionId)
     }
 
     return () => {
       document.body.classList.remove('doc-page')
     }
-  }, [listDoc, searchParams])
+  }, [listDoc, searchParams, selectedVersionId])
 
   // Fetch doc content
   useEffect(() => {
